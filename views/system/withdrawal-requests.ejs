@@ -1,0 +1,40 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/admin.css">
+<link rel="stylesheet" href="/css/main.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="main__container">
+                <h1><%= pageTitle %></h1>
+                <% if (histories.length > 0) { %>
+                <table id="myHistoryTable" class="table">
+                    <caption>Istorija:</caption>
+                    <thead>
+                      <tr>
+                        <th>Transakcioni ID</th>
+                        <th>Tip</th>
+                        <th>Šta</th>
+                        <th>Ko</th>
+                        <th>Koliko</th>
+                        <th>Datum</th>
+                        <th>Akcija</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <% histories.forEach(history => { %>
+                        <tr>
+                            <td><a class="main__link" href="/system/history/<%= history._id %>"><%= history._id %></a></td>
+                            <td><%= history.type %></td>
+                            <td><%= history.purchaseId.data.title %></td>
+                            <td><a class="main__link" href="/admin/user-details/<%= history.purchaseId.data.userId._id %>"><%= history.purchaseId.data.username %></a></td>
+                            <td><%= history.cost %> RSD</td>
+                            <td><%= history.date.toLocaleString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) %></td>
+                            <td><a class="btn" href="/system/history/<%= history._id %>">Detalji</a></td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } else { %>
+                    <p>Trenutno nema Istorije!</p>
+                <% } %>
+            </section>
+        <%- include('../includes/end.ejs') %>
+

@@ -1,0 +1,57 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/topic.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="main__container">
+                <h1 class="main__title"><%= pageTitle %></h1>
+                <h3><%= topic.category.join(", ") %></h3>
+                <div class="content__container">
+                    <div class="left-content__container">
+                        <div class="bannerImage">
+                            <img src="<%= topic.bannerImage %>" alt="<%= topic.title %>">
+                        </div>
+
+                        <div class="topic__contnet">
+                            <% topic.content.forEach(content => { %>
+                                <%- content %>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <div class="right-content__container">
+                        <div class="comments__container">
+                            <h2>Komentari:</h2>
+                            <% if(!isGuest) { %>
+                                <div class="comments__actions">
+                                    <div >
+                                        <form class="main-form" action="/zajednica/dodajte-komentar" method="POST">
+                                            <div class="main-form__group">
+                                                <input name="content" class="main-form__input" type="text" maxlength="255">
+                                            </div>
+                                            <input type="hidden" name="topicId" value="<%= topic._id %>">
+                                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn">Postavite Komentar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <p>Morate biti ulogovani da biste komentarisali! <a class="main__link" href="/prijava?redirectTo=/zajednica/<%= topic._id %>">Prijavite Se</a></p>
+                            <% } %>
+                            <br>
+                            <% topic.comments.reverse().forEach(comment => { %>
+                                <div class="commnet__container">
+                                    <div class="author__box">
+                                        <img style="max-width: 25px; max-height: 25px;" src="<%= comment.author.userImage %>" alt="<%= comment.author.username %>">
+                                        <a class="main__link" href="/korisnik-profil/<%= comment.author.authorId %>"><%= comment.author.username %> <% if (comment.author.role === 'system') { %><span>&#128081;</span><% } else if (comment.author.role === 'admin') { %><span class="shield">&#128737;</span><% } else if (comment.author.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></a> 
+                                    </div>
+                                    <div class="comment__content">
+                                        <p><%= comment.content %></p>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    <%- include('../includes/end.ejs') %>
+

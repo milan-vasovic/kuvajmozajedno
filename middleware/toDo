@@ -1,0 +1,4 @@
+Create Middleware for routes to check:
+    - Is user isLoggedIn
+    - Does it have admin role
+    - Add csrf token to post requests

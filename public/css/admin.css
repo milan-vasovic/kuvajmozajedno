@@ -1,0 +1,288 @@
+#adminRecipesTable_wrapper,
+#adminBooksTable_wrapper,
+#adminUsersTable_wrapper,
+#adminRecipeRatingsTable_wrapper,
+#adminRecipeBuyersTable_wrapper,
+#adminRecipeHistoryTable_wrapper,
+#adminBookBuyersTable_wrapper,
+#adminBookHistoryTable_wrapper {
+    width: 100%;
+}
+
+#adminRecipesTable,
+#adminBooksTable,
+#adminUsersTable,
+#adminRecipeRatingsTable,
+#adminRecipeBuyersTable,
+#adminRecipeHistoryTable,
+#adminBookBuyersTable,
+#adminBookHistoryTable {
+    width: 100% !important;
+}
+
+.search-form__container {}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.search-form__group {
+    display: flex;
+    flex-direction: row;
+}
+
+.recipe-details-card__container,
+.book-details-card__container {
+    min-width: 400px;
+}
+
+.content__container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.recipe-details-content__container,
+.book-details-content__container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.left-content__container {
+    width: 30%;
+}
+
+.right-content__container {
+    width: 70%;
+}
+
+.top-content__container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: start;
+    margin: 1rem;
+}
+
+.bottom-content__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.category__container,
+.stats__container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.author__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.author__image {
+    text-align: center;
+    max-width: 150px;
+    max-height: 150px;
+}
+
+.result__container {
+    margin: 1rem;
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+}
+
+.result__container ul {
+    list-style: none;
+}
+
+.result__container li {
+    margin-bottom: 0.5rem;
+}
+
+/* ______________________________________________________________________MOBILE STYLES___________________________________________________________________ */
+
+@media (max-width: 768px) {
+    .content__container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    .recipe-details-content__container,
+    .book-details-content__container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .left-content__container,
+    .right-content__container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .tab-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tabs {
+        justify-content: center;
+    }
+
+    /* ___________________________________________________MOBILE TABLE STYLES______________________________________________________________________________ */
+    
+    table {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    thead {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 7vh;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+
+    thead tr {
+        display: inherit;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+    }
+
+    tbody {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        border-top: 1px solid #ccc;
+    }
+
+    tbody tr:not(:first-child) {
+        margin-top: 1rem;
+    }
+
+    td {
+        display: block;
+        width: 100%;
+        font-weight: bold;
+    }
+
+    td>img {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+    }
+
+    .table__action {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+    }
+
+    .dt-type-numeric {
+        text-align: start !important;
+    }
+
+    td:before {
+        font-weight: normal;
+    }
+
+    tbody td[data-label*="ID"]:before {
+        content: "ID: ";
+    }
+    
+    tbody td[data-label*="Title"]:before {
+        content: "Title: ";
+    }
+    
+    tbody td[data-label="Category"]:before {
+        content: "Category: ";
+    }
+    
+    tbody td[data-label="Duration"]:before {
+        content: "Duration: ";
+    }
+    
+    tbody td[data-label*="Rating"]:before {
+        content: "Rating: ";
+    }
+    
+    tbody td[data-label*="Type"]:before {
+        content: "Type: ";
+    }
+    
+    tbody td[data-label*="Cost"]:before {
+        content: "Cost: ";
+    }
+    
+    tbody td[data-label*="Actions"]:before {
+        content: "Actions: ";
+    }
+    
+    tbody td[data-label*="Recipes"]:before {
+        content: "Recipes: ";
+    }
+    
+    tbody td[data-label*="User"]:before {
+        content: "User: ";
+    }
+
+    tbody td[data-label="Email"]:before {
+        content: "Email: ";
+    }
+
+    tbody td[data-label="Role"]:before {
+        content: "Role: ";
+    }
+
+    tbody td[data-label="Status"]:before {
+        content: "Status: ";
+    }
+
+    tbody td[data-label*="What"]:before {
+        content: "What: ";
+    }
+
+    tbody td[data-label*="Who"]:before {
+        content: "Who: ";
+    }
+
+    tbody td[data-label*="Date"]:before {
+        content: "Date: ";
+    }
+}

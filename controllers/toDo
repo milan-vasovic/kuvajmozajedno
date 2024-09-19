@@ -1,0 +1,83 @@
+Create controllers to manage GET and POST request to database:
+- default requests:
+    1. GET requests for Explorer page:
+      - explore
+      - terms & conditions
+      - police pravicy
+- user requests:
+    1. GET requests for User:
+      - myProfile
+      - myFeed
+      - editProfile
+      - userProfile
+      - recipeDetails
+      - addRecipe
+      - editRecipe
+      - bookDetails
+      - addBook
+      - editBook
+      - recipesByCategory
+    2. POST requests for User:
+      - editMyProfile
+      - addRecipe
+      - editRecipe
+      - addBook
+      - editBook
+      - saveRecipe
+      - saveBook
+      - deleteMyRecipe
+      - deleteSavedRecipe
+      - deleteBook
+      - rateRecipe
+      - followUser
+      - unfollowUser
+- auth requests:
+    1. GET requsets:
+      - login
+      - signup
+      - confirmEmail
+      - resetPassword
+      - newPassword
+    2. POST requests:
+      - login
+      - signup
+      - confirmEmail
+      - resetPassword
+      - newPassword
+      - logout
+- admin requests:
+    1. GET requests:
+      - adminProfile
+      - users
+      - recipes
+      - books
+      - userById
+      - recipeById
+      - bookById
+      - addUser
+      - addRecipe
+      - addBook
+      - editUser
+      - editRecipe
+      - editBook
+      - recipesByCategory
+    2. POST requests:
+      - addUser
+      - addRecipe
+      - addBook
+      - saveRateToRecipe
+      - saveRecipeToUser
+      - saveBookToUser
+      - saveFollowerToUser
+      - editUser
+      - editRecipe
+      - editBook
+      - deleteRecipe
+      - deleteBook
+      - deleteUser
+      - deleteUserRecipe
+      - deleteUserBook
+      - deleteSavedRecipe
+      - deleteSavedBook
+      - deleteFollower
+      - deleteFollowing

@@ -1,0 +1,133 @@
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.container,
+.book__container,
+.history-details__container,
+.book-details__container,
+.recipe-details__container,
+.explorer__container {
+    display: flex;
+    flex-direction: row;
+    margin: 1rem;
+    gap: 1rem;
+    width: 100%;
+    padding: 0;
+}
+
+.left__container,
+.left-history__container,
+.book-left__container,
+.right__container,
+.right-history__container,
+.book-right__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.left__container,
+.left-history__container,
+.book-left__container {
+    width: 30%;
+    margin: 10px;
+}
+
+.right__container,
+.right-history__container,
+.book-right__container {
+    width: 70%;
+    margin: 10px;
+    padding: 0.5rem;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    box-shadow: 0 0.2rem 0.4rem rgba(0, 150, 136, 0.2);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.thumbnail-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.thumbnail {
+    max-width: 100px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.tab-container {
+    justify-content: center;
+    align-items: center;
+}
+
+.author {
+    display: flex;
+    justify-content: center;
+}
+
+.author img {
+    width: 100px;
+    height: 100px;
+}
+
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+.main-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.rating {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    gap: 1rem;
+}
+
+.img__container {
+    display: flex;
+    align-items: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container,
+    .book__container,
+    .history-details__container,
+    .book-details__container,
+    .recipe-details__container,
+    .explorer__container {
+        flex-direction: column;
+    }
+    .left__container,
+    .left-history__container,
+    .book-left__container,
+    .right__container,
+    .right-history__container,
+    .book-right__container {
+        width: 100%;
+        margin: auto;
+    }
+}

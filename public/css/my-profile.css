@@ -1,0 +1,180 @@
+.my-profile__container {
+    display: flex;
+    flex-direction: row;
+    margin: 1rem;
+    gap: 1rem;
+}
+
+.left__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: left;
+    width: 30%;
+}
+
+.my-profile__card {
+    padding: 0.5rem;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    box-shadow: 0 0.2rem 0.4rem rgba(0, 150, 136, 0.2);
+    position: -webkit-sticky;
+    position: sticky;
+    top: 3.5rem;
+}
+
+.right__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+    align-items: left;
+    width: 70%;
+}
+
+.edit-user-image__container,
+.edit-sub-cost__container {
+    display: none;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.edit-user-image__container.active,
+.edit-sub-cost__container.active {
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .my-profile__container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .left__container {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .right__container {
+        margin: auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .tab-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tab-content {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    table {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    thead {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 7vh;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+    
+    thead tr {
+        display: inherit;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+    }
+    
+    tbody {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        border-top: 1px solid #ccc;
+    }
+    
+    tbody tr:not(:first-child) {
+        margin-top: 1rem;
+    }
+    
+    td {
+        display: block;
+        width: 100%;
+        font-weight: bold;
+    }
+    
+    td>img {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+    }
+    
+    .table__action {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+    }
+    
+    .dt-type-numeric {
+        text-align: start !important;
+    }
+    
+    td:before {
+        font-weight: normal;
+    }
+    
+    tbody td[data-label*="ID"]:before {
+        content: "ID: ";
+    }
+    
+    tbody td[data-label*="Title"]:before {
+        content: "Title: ";
+    }
+    
+    tbody td[data-label*="Type"]:before {
+        content: "Type: ";
+    }
+    
+    tbody td[data-label*="Cost"]:before {
+        content: "Cost: ";
+    }
+    
+    tbody td[data-label*="Actions"]:before {
+        content: "Actions: ";
+    }
+    
+    tbody td[data-label*="What"]:before {
+        content: "What: ";
+    }
+    
+    tbody td[data-label*="Who"]:before {
+        content: "Who: ";
+    }
+    
+    tbody td[data-label*="Date"]:before {
+        content: "Date: ";
+    }
+}

@@ -1,0 +1,32 @@
+<div class="tab-container">
+    <div class="tabs">
+        <button type="button" class="tab active btn" onclick="openTab('my-content__container',1)"
+            data-tab="my-content__container">Vaš Sadržaj</button>  
+        <button type="button" class="tab btn" onclick="openTab('subscriptions__container',1)"
+            data-tab="subscriptions__container">Pretplate</button>
+        <button type="button" class="tab btn" onclick="openTab('followings__container',1)"
+            data-tab="followings__container">Praćenja</button>
+        <button type="button" class="tab btn" onclick="openTab('history__container',1)"
+            data-tab="history__container">Istorija</button>
+    </div>
+    <div>
+        <label><input class="radio-input" id="cardLayout" type="radio" name="layout" checked
+                onchange="changeLayout('card')">Prikaz Kartica</label>
+        <label><input class="radio-input" id="tableLayout" type="radio" name="layout"
+                onchange="changeLayout('table')">Tabelarni Prikaz</label>
+    </div>
+</div>
+<div class="result__container">
+    <div id="my-content__container" class="tab-content active" data-tab="my-content__container">
+        <%- include('my-content.ejs') %>
+    </div>
+    <div id="subscriptions__container" class="tab-content" data-tab="subscriptions__container">
+        <%- include('subscriptions.ejs') %>
+    </div>
+    <div id="followings__container" class="tab-content" data-tab="followings__container">
+        <%- include('followings.ejs') %>
+    </div>
+    <div id="history__container" class="tab-content" data-tab="history__container">
+        <%- include("history.ejs") %>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+Create css and js files that will be shered inside the app:
+  1. CSS:
+    - main
+    - card
+    - table
+    - form
+  2. JS:
+    - main
+    - add-fields
+    - avarege-stars.js

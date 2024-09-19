@@ -1,0 +1,21 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/main.css">
+    <%- include('../includes/navigation.ejs') %>
+    <section class="main__container">
+            <div class="main-form">
+                <h1 class="main__title"><%= pageTitle %></h1>
+                <form class="main-form__form" action="/restartujte-sifru" method="POST">
+                    <div class="main-form__form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="main-form__input" value="<% if (existingData) { %><%= existingData.email %><% } %>" placeholder="Email" required>
+                    </div>
+                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                    <button class="btn" type="submit">Restartujte</button>
+                </form>
+                <% if (errorMessage) { %>
+                    <div class="user-message user-message--error"><%= errorMessage %></div>
+                <% } %>
+            </div>
+        </section>
+        <%- include('../includes/end.ejs') %>
+

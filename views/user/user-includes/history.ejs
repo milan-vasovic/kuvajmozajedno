@@ -1,0 +1,66 @@
+<% if (user.history.length> 0) { %>
+  <table id="myHistoryTable" class="table">
+    <caption>Istorija:</caption>
+    <thead>
+      <tr>
+        <th>Transakcioni ID</th>
+        <th>Tip</th>
+        <th>Šta</th>
+        <th>Ko</th>
+        <th>Cena</th>
+        <th>Datum</th>
+        <th>Akcije</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% user.history.forEach(history=> { %>
+        <tr>
+          <td data-label="ID"><a class="main__link" href="/istorija-detalji/<%= history.historyId._id %>">
+              <%= history.historyId._id %>
+            </a></td>
+          <td data-label="Type">
+            <%= history.historyId.type %>
+          </td>
+          <% if (history.historyId.type==='recipeBuy' || history.historyId.type==='bookBuy' ) { %>
+            <td data-label="What">
+              <%= history.historyId.purchaseId.data.title %>
+            </td>
+            <td data-label="Who">
+              <a class="main__link" href="/korisnik-profil/<%= history.historyId.purchaseId.data.author ? history.historyId.purchaseId.data.author._id : history.historyId.purchaseId.data.author %>">
+                <%= history.historyId.purchaseId.data.author ? history.historyId.purchaseId.data.author.username : 'Nepoznat' %>
+              </a>
+            </td>
+          <% } else { %>
+              <td data-label="What">
+                <%= history.historyId.purchaseId.data.title %>
+              </td>
+              <td data-label="Who">
+                <a class="main__link" href="/korisnik-profil/<%= history.historyId.purchaseId.data.userId ? history.historyId.purchaseId.data.userId._id : history.historyId.purchaseId.data.userId %>">
+                  <%= history.historyId.purchaseId.data.username %>
+                </a>
+              </td>
+        <% } %>
+        <td data-label="Cost" class='<%if (history.historyId.type==="recipeBuy" || history.historyId.type==="bookBuy" ||
+          history.historyId.type==="subscriptionTo" || history.historyId.type==="requestedWithdrawal" ||
+          history.historyId.type==="fulfilledWithdrawal" ) { %>negative<% } else
+          { %>positive<% } %>'>
+            <%if (history.historyId.type==="recipeBuy" || history.historyId.type==="bookBuy" ||
+              history.historyId.type==="subscriptionTo" || history.historyId.type==="requestedWithdrawal" ||
+              history.historyId.type==="fulfilledWithdrawal" ) { %> -<%= history.historyId.cost %> RSD<% } else
+              { %>+<%= history.historyId.cost %> RSD<% } %>
+          </td>
+          <td data-label="Date">
+            <%= history.historyId.date.toLocaleString('sr-RS', { day: '2-digit' , month: '2-digit' ,
+              year: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
+          </td>
+          <td data-label="Actions"><a class="btn" href="/istorija-detalji/<%= history.historyId._id %>">Vidi</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } else { %>
+    <p></p>
+    <div class="no-followers__container">
+      <h3 class="info__title">Trenutno još nema Istorije!</h3>
+    </div>
+    <% } %>

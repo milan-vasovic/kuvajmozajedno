@@ -1,0 +1,468 @@
+<!-- Include head part of html -->
+<%- include('../../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/user/history-details.css">
+<link rel="stylesheet" href="/css/main.css">
+<%- include('../../includes/navigation.ejs') %>
+    <section class="main__container">
+        <h1 class="main__title">
+            Detalji Istorije
+        </h1>
+        <div class="content__container">
+            <div class="left-content__container">
+                <h1 class="main__title">Tip: <%= history.type %></h1>
+                <h3>Transakcioni ID: <%= history._id %></h3>
+                <p>Datum: <%= history.date %></p>
+                <p>Količina: <strong><%= history.cost %> RSD</strong></p>
+
+                <% if (history.type === "recipeBuy" || history.type === "bookBuy") { %>
+                    <p>Od: <a class="main__link" href="/korisnik-profil/<%= history.purchaseId.data.author ? history.purchaseId.data.author._id : history.purchaseId.data.author %>"><%= history.purchaseId.data.author ? history.purchaseId.data.author.username :'Unknown' %></a></p>
+                <% } else { %>
+                    <p>Ko: <a class="main__link" href="/korisnik-profil/<%= history.purchaseId.data.userId ? history.purchaseId.data.userId._id : history.purchaseId.data.userId %>"><%= history.purchaseId.data.username %></a></p>
+                <% } %>
+
+                <% if (userRole === "system" && (history.type === "requestedDeposit" || history.type === "requestedWithdrawal")) { %>
+                    <form action="/system/fulfill-withdrawal" method="POST">
+                        <input type="hidden" name="historyId" value="<%= history._id %>">
+                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                        <button class="btn" type="submit">Ispuni</button>
+                    </form>
+                    <form action="/system/denay-withdrawal" method="POST">
+                        <input type="hidden" name="historyId" value="<%= history._id %>">
+                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                        <button class="btn btn-danger" type="submit">Odbij</button>
+                    </form>
+                <% } %>
+
+                <% if (haveNewVersion) { %>
+                    <form action="/nabavite-novu-verziju" method="post">
+                        <h4>Dostupna je nova verzija:</h4>
+                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                        <input type="hidden" name="purchaseId" value="<%= history.purchaseId._id %>">
+                        <button class="btn" type="submit">Ažuriraj</button>
+                    </form>
+                <% } %>
+            </div>
+            <div class="right-content__container">
+                <% if (history.type === 'requestedWithdrawal') { %>
+                    <div class="left__container">
+                        <h1><%= history.purchaseId.data.title %></h1>
+                        <img loading="lazy" class="table__image" src="<%= history.purchaseId.data.userImage ? history.purchaseId.data.userImage : '/images/default_user.png' %>" alt="<%= history.purchaseId.data.username %>">
+                        <h2><a class="main__link" href="/korisnik-profil/<%= history.purchaseId.data.userId ? history.purchaseId.data.userId._id : history.purchaseId.data.userId %>"><%= history.purchaseId.data.username %></a></h2>
+                    </div>
+                    <div class="right__container">
+                        <h3>Informacije</h3>
+                        <p>Ime: <strong><%= history.purchaseId.data.firstname %></strong></p>
+                        <p>Prezime: <strong><%= history.purchaseId.data.lastname %></strong></p>
+                        <p>Broj Računa: <strong><%= history.purchaseId.data.accountNumber %></strong></p>
+                    </div>        
+                <% } else if (history.type === 'subscriptionFrom' || history.type === 'subscriptionTo') { %>
+                    <div class="result__container">
+                        <img loading="lazy" src="<%= history.purchaseId.data.userId ? history.purchaseId.data.userId.userImage : '/images/default_user.png' %>" alt="<%= history.purchaseId.data.username %>">
+                        <h2><a class="main__link" href="/korisnik-profil/<%= history.purchaseId.data.userId ? history.purchaseId.data.userId._id : history.purchaseId.data.userId %>"><%= history.purchaseId.data.username %></a></h2>
+                    </div>
+
+
+                 <!--Deo gde ako je prikaz kupca  -->
+
+                
+                
+                <% } else if (history.type === 'recipeBoughtBy' || history.type === "bookBoughtBy") { %>
+                    <div class="result__container">
+                        <div class="left__container">
+                            <h2>
+                                <a class="main__link" href="<% if (history.type == 'recipeBoughtBy') { %>/recept-detalji/<%= history.purchaseId.data.dataId %><% } else { %>/knjiga-detalji/<%= history.purchaseId.data.dataId %><% } %>">
+                                    <%= history.purchaseId.data.title %>
+                                </a>
+                            </h2>
+                        </div>
+                        <div class="right__container">
+                            <img loading="lazy" class="table__image" src="<%= history.purchaseId.data.userId ? history.purchaseId.data.userId.userImage : '/images/default_user.png' %>" alt="<%= history.purchaseId.data.username %>">
+                            <h2><a class="main__link" href="/korisnik-profil/<%= history.purchaseId.data.userId ? history.purchaseId.data.userId._id : history.purchaseId.data.userId %>"><%= history.purchaseId.data.username %></a></h2>
+                        </div>           
+                    </div>
+
+
+                <!-- Ako je odbijeno ispunjeno deposti i withdrawal -->
+
+
+                <% } else if (history.type === "deniedWithdrawal" || history.type === "deniedDeposit" || history.type === "fulfilledWithdrawal" || history.type === "fulfilledDeposit") { %>
+                    <div class="left__container">
+                        <h1 class="main__title"><%= history.purchaseId.data.title %></h1>
+                    </div>
+                   <div class="right__container">
+                        <h2><a class="main__link" href="/korisnik-profil/<%= history.purchaseId.data.userId ? history.purchaseId.data.userId._id : history.purchaseId.data.userId %>"><%= history.purchaseId.data.username %></a></h2>
+                   </div>
+
+
+                <!-- Svi ostali slucajevi -->
+
+
+                <% } else { %>
+
+                    <!-- Provera verzije i prikaz tabova ako -->
+                    <% if (history.purchaseId.data && (history.purchaseId.data.previousVersions.length > 0)) { %>
+                            <h2 class="main__title">
+                                <% if (history.purchaseId.data.recipeId ) { %>
+                                    <a class="main__link" href="/recept-detalji/<%= history.purchaseId.data.recipeId ? history.purchaseId.data.recipeId._id : history.purchaseId.data.recipeId %>"><%= history.purchaseId.data.recipeId?.title || history.purchaseId.data.title %></a>
+                                <% } else if (history.purchaseId.data.bookId ) { %>
+                                    <a href="/knjiga-detalji/<%= history.purchaseId.data.bookId ? history.purchaseId.data.bookId._id : history.purchaseId.data.bookId %>" class="main__link"><%= history.purchaseId.data.bookId?.title || history.purchaseId.data.title %></a>
+                                <% } else { %>
+                                    <%= history.purchaseId.data.title %>
+                                <% } %>
+                            </h2>   
+                            <div class="tab-container">
+                                <div class="tabs">
+                                    <button type="button" class="tab active btn" onclick="openTab('current-version__container',1)"
+                                        data-tab="current-version__container">Trenutna</button>
+                                    <% history.purchaseId.data.previousVersions.slice().reverse().forEach(version => { %>
+                                        <button type="button" class="tab btn" onclick="openTab('previous-version__container<%= version.title %>',1)"
+                                            data-tab="previous-version__container<%= version.title %>">V <%= version.title %></button>
+                                    <% }) %>
+                                </div>
+                            </div>
+
+                            <div class="result__container">
+                                <div id="current-version__container" class="tab-content active" data-tab="current-version__container">
+
+
+                                    <!-- Ako je recepat kupljen -->
+
+                                    <% if (history.type === 'recipeBuy') { %>
+                                        <div class="left__container">
+                                            <h3>
+                                                <% history.purchaseId.data.category.forEach(c => { %>
+                                                    <%= c %>
+                                                <% }) %>
+                                            </h3>
+                                            
+                                            <h3>Opis:</h3>
+                                            <p><%= history.purchaseId.data.description %></p>
+                                            
+                                            <h3>Sastojci:</h3>
+                                            <ul>
+                                                <% history.purchaseId.data.ingredients.forEach(ingredient => { %>
+                                                    <li><%= ingredient.name %> | <%= ingredient.amount %></li>
+                                                <% }) %>
+                                            </ul>
+                                            
+                                            <h3>Prirpema:</h3>
+                                            <p>Trajanje: <%= history.purchaseId.data.preparation.duration %></p>
+                                            <p>Napomena: <%= history.purchaseId.data.preparation.note %></p>
+                                            <h3>Koraci:</h3>
+                                            <ul>
+                                                <% history.purchaseId.data.preparation.steps.forEach(step => { %>
+                                                    <li><%= step %></li>
+                                                <% }) %>
+                                            </ul>
+                                            
+                                            <h3>Nutritivne Vrednosti:</h3>
+                                            <ul>
+                                                <% history.purchaseId.data.nutritions.forEach(nutrition => { %>
+                                                    <li><%= nutrition.name %> | <%= nutrition.amount %></li>
+                                                <% }) %>
+                                            </ul>
+                                        </div>
+                                        <div class="right__container">
+                                            <div class="gallery-container">
+                                                <div class="main-image">
+                                                    <img loading="lazy" src="<%= history.purchaseId.data.featureImage %>" alt="<%= history.purchaseId.data.title %>">
+                                                </div>
+                                                <div class="thumbnail-container">
+                                                    <img loading="lazy" src="<%= history.purchaseId.data.featureImage %>" alt="<%= history.purchaseId.data.title %>" class="thumbnail"
+                                                        onclick="changeImage('<%= history.purchaseId.data.featureImage %>')">
+                                                    <% history.purchaseId.data.images.forEach(image => { %>
+                                                        <img loading="lazy" src="<%= image %>" alt="<%= history.purchaseId.data.title %>" class="thumbnail"
+                                                            onclick="changeImage('<%= image %>')">
+                                                    <% }) %>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                        
+                                        
+
+                                        <!-- Ako je knjiga ili sve ostalo u buducnosti -->
+
+                                    <% } else { %>
+                                        <div class="result__container">
+                                            <div class="left__container">
+                                                <img loading="lazy" src="<%= history.purchaseId.data.coverImage %>" alt="<%= history.purchaseId.data.title %>">
+                                                <h3>Opis:</h3>
+                                                <p><%= history.purchaseId.data.description %></p>
+                                            </div>
+                                            <div class="right__container">
+                                                <h2 class="main__title">Recepti:</h2>                  
+                                                <% history.purchaseId.data.recipes.forEach((recipe, index) => { %>
+                                                    <h3>Recipe <%= index + 1 %>: <a class="main__link" href="/recept-detalji/<%= recipe.recipeId._id %>"><%= recipe.recipeId.title %></a></h4>                              
+                                                    <h3>
+                                                        <% recipe.recipeId.category.forEach(c => { %>
+                                                            <%= c %>
+                                                        <% }) %>
+                                                    </h3>
+                                                    <h4>Opis:</h3>
+                                                    <p><%= recipe.recipeId.description %></p>
+                                                    <h4>Sastojci:</h4>
+                                                    <ul>
+                                                        <% recipe.recipeId.ingredients.forEach(ingredient => { %>
+                                                            <li><%= ingredient.name %> | <%= ingredient.amount %></li>
+                                                        <% }) %>
+                                                    </ul>
+                                                    <h4>Priprema:</h4>
+                                                    <p>Trajanje: <%= recipe.recipeId.preparation.duration %></p>
+                                                    <p>Napomena: <%= recipe.recipeId.preparation.note %></p>
+                                                    <h4>Koraci:</h4>
+                                                    <ul>
+                                                        <% recipe.recipeId.preparation.steps.forEach(step => { %>
+                                                            <li><%= step %></li>
+                                                        <% }) %>
+                                                    </ul>
+                                                    <h4>Nutritivne Vrednosti:</h4>
+                                                    <ul>
+                                                        <% recipe.recipeId.nutritions.forEach(nutrition => { %>
+                                                            <li><%= nutrition.name %> | <%= nutrition.amount %></li>
+                                                        <% }) %>
+                                                    </ul>
+                                                    <div class="gallery-container">
+                                                        <div class="main-image<%= index %>">
+                                                            <img loading="lazy" src="<%= recipe.recipeId.featureImage %>" alt="<%= recipe.recipeId.title %>">
+                                                        </div>
+                                                        <div class="thumbnail-container">
+                                                            <img loading="lazy" src="<%= recipe.recipeId.featureImage %>" alt="<%= recipe.recipeId.title %>" class="thumbnail"
+                                                                onclick="changeImage('<%= recipe.recipeId.featureImage %>','<%= index %>')">
+                                                            <% recipe.recipeId.images.forEach(image => { %>
+                                                                <img loading="lazy" src="<%= image %>" alt="<%= recipe.recipeId.title %>" class="thumbnail"
+                                                                    onclick="changeImage('<%= image %>','<%= index %>')">
+                                                            <% }) %>
+                                                        </div>
+                                                    </div>
+                                                    <div class="line__divide"></div>
+                                                <% }) %>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
+
+                                <!-- Prikaz predhodnih verzija ako postoje -->
+
+
+
+                                <% history.purchaseId.data.previousVersions.slice().reverse().forEach((version, index) => { %>
+                                    <div id="previous-version__container<%= version.title %>" class="tab-content" data-tab="previous-version__container<%= version.title %>">
+                                        <% if (history.type === 'recipeBuy') { %>
+                                            <div class="left__container">
+                                                <h3>
+                                                    <% version.recipe.category.forEach(c => { %>
+                                                        <%= c %>
+                                                    <% }) %>
+                                                </h3>
+                                                
+                                                <h3>Opis:</h3>
+                                                <p><%= version.recipe.description %></p>
+                                                
+                                                <h3>Sastojci:</h3>
+                                                <ul>
+                                                    <% version.recipe.ingredients.forEach(ingredient => { %>
+                                                        <li><%= ingredient.name %> | <%= ingredient.amount %></li>
+                                                    <% }) %>
+                                                </ul>
+                                                
+                                                <h3>Priprema:</h3>
+                                                <p>Trajanje: <%= version.recipe.preparation.duration %></p>
+                                                <p>Napomena: <%= version.recipe.preparation.note %></p>
+                                                <h3>Koraci:</h3>
+                                                <ul>
+                                                    <% version.recipe.preparation.steps.forEach(step => { %>
+                                                        <li><%= step %></li>
+                                                    <% }) %>
+                                                </ul>
+                                                
+                                                <h3>Nutritivne Vrednosti:</h3>
+                                                <ul>
+                                                    <% version.recipe.nutritions.forEach(nutrition => { %>
+                                                        <li><%= nutrition.name %> | <%= nutrition.amount %></li>
+                                                    <% }) %>
+                                                </ul>
+                                            </div>
+                                            <div class="right__container">
+                                                <div class="gallery-container">
+                                                    <div class="main-image<%= version.title %><%= index %>">
+                                                        <img loading="lazy" src="<%= version.recipe.featureImage %>" alt="<%= version.recipe.title %>">
+                                                    </div>
+                                                    <div class="thumbnail-container">
+                                                        <img loading="lazy" src="<%= version.recipe.featureImage %>" alt="<%= version.recipe.title %>" class="thumbnail"
+                                                            onclick="changeImage('<%= version.recipe.featureImage %>','<%= version.title %><%= index %>')">
+                                                        <% version.recipe.images.forEach(image => { %>
+                                                            <img loading="lazy" src="<%= image %>" alt="<%= version.recipe.title %>" class="thumbnail"
+                                                                onclick="changeImage('<%= image %>','<%= version.title %><%= index %>')">
+                                                        <% }) %>
+                                                    </div>
+                                                </div>
+                                            </div>  
+                                        <% } else { %>
+                                            <div class="result__container">
+                                                <div class="left__container">
+                                                    <img loading="lazy" src="<%= version.book.coverImage %>" alt="<%= version.book.title %>">
+                                                    <h3>Opis:</h3>
+                                                    <p><%= version.book.description %></p>
+                                                </div>
+                                                <div class="right__container">
+                                                    <h2 class="main__title">Recepti:</h2>                  
+                                                    <% version.book.recipes.forEach((recipe, index) => { %>
+                                                        <h3>Recept <%= index + 1 %>: <a class="main__link" href="/recept-detalji/<%= recipe.recipeId ? recipe.recipeId._id : recipe.recipeId %>"><%= recipe.recipeId.title %></a></h4>                              
+                                                        <h4>Opis:</h3>
+                                                        <p><%= recipe.recipeId.description %></p>
+                                                        <h4>Sastojci:</h4>
+                                                        <ul>
+                                                            <% recipe.recipeId.ingredients.forEach(ingredient => { %>
+                                                                <li><%= ingredient.name %> | <%= ingredient.amount %></li>
+                                                            <% }) %>
+                                                        </ul>
+                                                        <h4>Priprema:</h4>
+                                                        <p>Trajanje: <%= recipe.recipeId.preparation.duration %></p>
+                                                        <p>Napomena: <%= recipe.recipeId.preparation.note %></p>
+                                                        <h4>Koraci:</h4>
+                                                        <ul>
+                                                            <% recipe.recipeId.preparation.steps.forEach(step => { %>
+                                                                <li><%= step %></li>
+                                                            <% }) %>
+                                                        </ul>
+                                                        <h4>Nutritivne Vrednosti:</h4>
+                                                        <ul>
+                                                            <% recipe.recipeId.nutritions.forEach(nutrition => { %>
+                                                                <li><%= nutrition.name %> | <%= nutrition.amount %></li>
+                                                            <% }) %>
+                                                        </ul>
+                                                        <div class="gallery-container">
+                                                            <div class="main-image<%= version.title %><%= index %>">
+                                                                <img loading="lazy" src="<%= recipe.recipeId.featureImage %>" alt="<%= recipe.recipeId.title %>">
+                                                            </div>
+                                                            <div class="thumbnail-container">
+                                                                <img loading="lazy" src="<%= recipe.recipeId.featureImage %>" alt="<%= recipe.recipeId.title %>" class="thumbnail"
+                                                                    onclick="changeImage('<%= recipe.recipeId.featureImage %>','<%= version.title %><%= index %>')">
+                                                                <% recipe.recipeId.images.forEach(image => { %>
+                                                                    <img loading="lazy" src="<%= image %>" alt="<%= recipe.recipeId.title %>" class="thumbnail"
+                                                                        onclick="changeImage('<%= image %>','<%= version.title %><%= index %>')">
+                                                                <% }) %>
+                                                            </div>
+                                                        </div>
+                                                        <div class="line__divide"></div>
+                                                    <% }) %>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                    <% } else { %>
+
+
+                        <!-- Prikaz ako je recepat kupljen i nema predhodnih verzija -->
+
+                        <% if (history.type === 'recipeBuy') { %>
+                            <div class="left__container">
+                                <h2 class="main__title"><%= history.purchaseId.data.title %></h2>
+                                <h3>
+                                    <% history.purchaseId.data.category.forEach(c => { %>
+                                        <%= c %>
+                                    <% }) %>
+                                </h3>  
+                                <h3>Opis:</h3>
+                                <p><%= history.purchaseId.data.description %></p>         
+                                <h3>Sastojci:</h3>
+                                <ul>
+                                    <% history.purchaseId.data.ingredients.forEach(ingredient => { %>
+                                        <li><%= ingredient.name %> | <%= ingredient.amount %></li>
+                                    <% }) %>
+                                </ul>
+                                <h3>Priprema:</h3>
+                                <p>Trajanje: <%= history.purchaseId.data.preparation.duration %></p>
+                                <p>Napomena: <%= history.purchaseId.data.preparation.note %></p>
+                                <h3>Koraci:</h3>
+                                <ul>
+                                    <% history.purchaseId.data.preparation.steps.forEach(step => { %>
+                                        <li><%= step %></li>
+                                    <% }) %>
+                                </ul>                                   
+                                <h3>Nutritivne Vrednosti:</h3>
+                                <ul>
+                                    <% history.purchaseId.data.nutritions.forEach(nutrition => { %>
+                                        <li><%= nutrition.name %> | <%= nutrition.amount %></li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                            <div class="right__container">
+                                <div class="gallery-container">
+                                    <div class="main-image">
+                                        <img loading="lazy" src="<%= history.purchaseId.data.featureImage %>" alt="<%= history.purchaseId.data.title %>">
+                                    </div>
+                                    <div class="thumbnail-container">
+                                        <img loading="lazy" src="<%= history.purchaseId.data.featureImage %>" alt="<%= history.purchaseId.data.title %>" class="thumbnail"
+                                            onclick="changeImage('<%= history.purchaseId.data.featureImage %>')">
+                                        <% history.purchaseId.data.images.forEach(image => { %>
+                                            <img loading="lazy" src="<%= image %>" alt="<%= history.purchaseId.data.title %>" class="thumbnail"
+                                                onclick="changeImage('<%= image %>')">
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- Nema predhodnih verzija i knjiga je kupljena ili sve ostalo u buducnosti -->
+                        <% } else { %>
+                            <div class="left__container">
+                                <h1 class="main__title"><%= history.purchaseId.data.title %></h1>
+                                <img loading="lazy" src="<%= history.purchaseId.data.coverImage %>" alt="<%= history.purchaseId.data.title %>">
+                                <h3>Opis:</h3>
+                                <p><%= history.purchaseId.data.description %></p>
+                            </div>
+                            <div class="right__container">
+                                <h3>Recepti:</h3>
+                                <% history.purchaseId.data.recipes.forEach((recipe, index) => { %>
+                                    <h2>Recept <%= index + 1 %>: <%= recipe.recipeId.title %></h2>                              
+                                    <h3>Opis:</h3>
+                                    <p><%= recipe.recipeId.description %></p>
+                                    <h3>Sastojci:</h3>
+                                    <ul>
+                                        <% recipe.recipeId.ingredients.forEach(ingredient => { %>
+                                            <li><%= ingredient.name %> | <%= ingredient.amount %></li>
+                                        <% }) %>
+                                    </ul>
+                                    <h3>Priprema:</h3>
+                                    <p>Trajanje: <%= recipe.recipeId.preparation.duration %></p>
+                                    <p>Napomena: <%= recipe.recipeId.preparation.note %></p>
+                                    <h3>Koraci:</h3>
+                                    <ul>
+                                        <% recipe.recipeId.preparation.steps.forEach(step => { %>
+                                            <li><%= step %></li>
+                                        <% }) %>
+                                    </ul>
+                                    <h3>Nutritivne Vrednosti:</h3>
+                                    <ul>
+                                        <% recipe.recipeId.nutritions.forEach(nutrition => { %>
+                                            <li><%= nutrition.name %> | <%= nutrition.amount %></li>
+                                        <% }) %>
+                                    </ul>
+                                    <div class="gallery-container">
+                                        <div class="main-image<%= index %>">
+                                            <img loading="lazy" src="<%= recipe.recipeId.featureImage %>" alt="<%= recipe.recipeId.title %>">
+                                        </div>
+                                        <div class="thumbnail-container">
+                                            <img loading="lazy" src="<%= recipe.recipeId.featureImage %>" alt="<%= recipe.recipeId.title %>" class="thumbnail"
+                                                onclick="changeImage('<%= recipe.recipeId.featureImage %>','<%= index %>')">
+                                                <% recipe.recipeId.images.forEach(image => { %>
+                                                    <img loading="lazy" src="<%= image %>" alt="<%= recipe.title %>" class="thumbnail"
+                                                        onclick="changeImage('<%= image %>','<%= index %>')">
+                                                <% }) %>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>  
+                        <% } %>     
+                    <% } %>  
+                <% } %>
+            </div>
+        </div>
+    </section>
+    <%- include('../../includes/end.ejs') %>
+</body>

@@ -1,0 +1,16 @@
+<div class="tab-container">
+    <div class="tabs">
+        <button type="button" class="my-tab active btn" onclick="openTab('recipes__container',2)"
+            data-tab="recipes__container">Recepti</button>
+        <button type="button" class="my-tab btn" onclick="openTab('books__container',2)"
+            data-tab="books__container">Knjige</button>
+    </div>
+</div>
+<div class="result__container">
+    <div id="recipes__container" class="my-tab-content active" data-tab="recipes__container">
+        <%- include('recipes.ejs') %>
+    </div>
+    <div id="books__container" class="my-tab-content" data-tab="books__container">
+        <%- include('books.ejs') %>
+    </div>
+</div>

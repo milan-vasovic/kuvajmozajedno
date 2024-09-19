@@ -1,0 +1,37 @@
+<h2>
+  <%= heading %>
+</h2>
+<% if (data.count> 0 && data.users.length > 0) { %>
+  <table id="<%= tableId %>" class="table">
+    <caption>
+      <%= heading %>:
+    </caption>
+    <thead>
+      <tr>
+        <th>Korisnička Slika</th>
+        <th>Korisničko Ime</th>
+        <th>Akcije</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% data.users.forEach(user=> { %>
+        <tr>
+          <td data-label="User Image">
+            <img loading="lazy" style="max-width: 100px; max-height: 100px;" src="<%= user.userId.userImage %>"
+              alt="<%= user.userId.username %>">
+          </td>
+          <td data-label="User">
+            <%= user.userId.username %>
+          </td>
+          <td data-label="Actions">
+            <a class="btn" href="/korisnik-profil/<%= user.userId._id %>">Vidi</a>
+          </td>
+        </tr>
+        <% }) %>
+    </tbody>
+  </table>
+  <% } else { %>
+    <div class="no-followers__container">
+      <h3 class="info__title">Trenutno još nema <%= heading.toLowerCase() %>!</h3>
+    </div>
+  <% } %>

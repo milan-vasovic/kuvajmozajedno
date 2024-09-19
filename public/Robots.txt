@@ -1,0 +1,14 @@
+# Omogućava svim pretraživačima da indeksiraju sve osim /admin, /system i /user
+
+User-agent: *
+Allow: /
+Allow: /auth
+Allow: /zajednica
+
+# Blokiraj pristup određenim delovima sajta
+Disallow: /admin
+Disallow: /system
+Disallow: /user
+
+# Link ka sitemap-u
+Sitemap: https://www.kuvajmozajedno.com/sitemap.xml

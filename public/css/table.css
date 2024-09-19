@@ -1,0 +1,231 @@
+#myTable_wrapper,
+#myBooksTable_wrapper,
+#mySubscriptionsTable_wrapper,
+#myFollowersTable_wrapper,
+#myFollowingTable_wrapper,
+#myBlockingTable_wrapper,
+#myHistoryTable_wrapper,
+#recipeRatingsTable_wrapper,
+#recipeBuyersTable_wrapper,
+#recipeHistoryTable_wrapper,
+#adminRecipesTable_wrapper,
+#adminBooksTable_wrapper,
+#adminUsersTable_wrapper,
+#adminRecipeRatingsTable_wrapper,
+#adminRecipeBuyersTable_wrapper,
+#adminRecipeHistoryTable_wrapper,
+#adminBookBuyersTable_wrapper,
+#adminBookHistoryTable_wrapper {
+    width: 100%;
+}
+
+#myRecipesTable,
+#myBooksTable,
+#mySubscriptionsTable,
+#myFollowersTable,
+#myFollowingTable,
+#myBlockingTable,
+#myHistoryTable,
+#recipeRatingsTable,
+#recipeBuyersTable,
+#recipeHistoryTable,
+#adminRecipesTable,
+#adminBooksTable,
+#adminUsersTable,
+#adminRecipeRatingsTable,
+#adminRecipeBuyersTable,
+#adminRecipeHistoryTable,
+#adminBookBuyersTable,
+#adminBookHistoryTable {
+    width: 100% !important;
+}
+
+.table__container {
+    display: none;
+    justify-content: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+caption {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #009688;
+    color: #fff;
+    padding: 10px;
+}
+
+table th,
+table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    text-align: center;
+}
+
+.table__action {
+    text-align: center;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #e0e0e0;
+}
+
+.table__image {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.table__action-btn {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+/* ________________________________MOBILE STYLES__________________________ */
+
+@media (max-width: 768px) {
+    table {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    thead {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 7vh;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+    
+    thead tr {
+        display: inherit;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+    }
+    
+    tbody {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        border-top: 1px solid #ccc;
+    }
+    
+    tbody tr:not(:first-child) {
+        margin-top: 1rem;
+    }
+    
+    td {
+        display: block;
+        width: 100%;
+        font-weight: bold;
+    }
+    
+    td>img {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+    }
+    
+    .table__action {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+    }
+    
+    .dt-type-numeric {
+        text-align: start !important;
+    }
+    
+    td:before {
+        font-weight: normal;
+    }
+    
+    tbody td[data-label*="ID"]:before {
+        content: "ID: ";
+    }
+    
+    tbody td[data-label*="Title"]:before {
+        content: "Title: ";
+    }
+    
+    tbody td[data-label*="Type"]:before {
+        content: "Type: ";
+    }
+    
+    tbody td[data-label="Category"]:before {
+        content: "Category: ";
+    }
+
+    tbody td[data-label="Duration"]:before {
+        content: "Duration: ";
+    }
+    
+    tbody td[data-label*="Rating"]:before {
+        content: "Rating: ";
+    }
+
+    tbody td[data-label*="Recipes"]:before {
+        content: "Recipes: ";
+    }
+    
+    tbody td[data-label*="User"]:before {
+        content: "User: ";
+    }
+
+    tbody td[data-label="Email"]:before {
+        content: "Email: ";
+    }
+
+    tbody td[data-label="Role"]:before {
+        content: "Role: ";
+    }
+
+    tbody td[data-label="Status"]:before {
+        content: "Status: ";
+    }
+    
+    tbody td[data-label*="Cost"]:before {
+        content: "Cost: ";
+    }
+    
+    tbody td[data-label*="Actions"]:before {
+        content: "Actions: ";
+    }
+    
+    tbody td[data-label*="What"]:before {
+        content: "What: ";
+    }
+    
+    tbody td[data-label*="Who"]:before {
+        content: "Who: ";
+    }
+    
+    tbody td[data-label*="Date"]:before {
+        content: "Date: ";
+    }
+}

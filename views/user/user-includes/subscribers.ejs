@@ -1,0 +1,42 @@
+<h2>
+  <%= heading %>
+</h2>
+<% if (data.count> 0 && data.users.length > 0) { %>
+  <table id="<%= tableId %>" class="table">
+    <caption>
+      <%= heading %>:
+    </caption>
+    <thead>
+      <tr>
+        <th>Datum Isteka</th>
+        <th>Korisničko Ime</th>
+        <th>Korisnička Slika</th>
+        <th>Akcije</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% data.users.forEach(subscriber=> { %>
+        <tr>
+          <td data-label="Expiration Date">
+            <%= new Date(subscriber.expirationDate).toLocaleString('sr-RS', { day: '2-digit' , month: '2-digit' ,
+              year: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
+          </td>
+          <td data-label="User">
+            <%= subscriber.userId.username %>
+          </td>
+          <td data-label="User Image">
+            <img loading="lazy" style="max-width: 100px; max-height: 100px;" src="<%= subscriber.userId.userImage %>"
+              alt="<%= subscriber.userId.username %>">
+          </td>
+          <td data-label="Actions">
+            <a class="btn" href="/korisnik-profil/<%= subscriber.userId._id %>">Vidi</a>
+          </td>
+        </tr>
+        <% }) %>
+    </tbody>
+  </table>
+  <% } else { %>
+    <div class="no-recipes__container">
+      <h3 class="info__title">Trenutno još nema <%= heading.toLowerCase() %>!</h3>
+    </div>
+    <% } %>

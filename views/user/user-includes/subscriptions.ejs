@@ -1,0 +1,16 @@
+<div class="tab-container">
+    <div class="tabs">
+        <button type="button" class="sub-tab active btn" onclick="openTab('subscribers__container',5)"
+            data-tab="subscribers__container">Pretplatnici</button>
+        <button type="button" class="sub-tab btn" onclick="openTab('subscribed__container',5)"
+            data-tab="subscribed__container">Pretplate</button>
+    </div>
+</div>
+<div class="result__container">
+    <div id="subscribers__container" class="sub-tab-content active" data-tab="subscribers__container">
+        <%- include('subscribers', { data: user.subscribers, heading: 'Pretplatnici', tableId: 'mySubscriptionsTable' }) %>
+    </div>
+    <div id="subscribed__container" class="sub-tab-content" data-tab="subscribed__container">
+        <%- include('subscribers', { data: user.subscribed, heading: 'Pretplate', tableId: 'mySubscriptionsTable' }) %>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="pagination">
+    <% if (currentPage !== 1 && previousPage !== 1) { %>
+        <a href="?<%= searchCond ? `search=${searchCond}&` : (searchCategory ? `category=${searchCategory}&` : '') %><%= pageType %>=1">1</a>
+    <% } %>
+    <% if (hasPreviousPage) { %>
+        <a href="?<%= searchCond ? `search=${searchCond}&` : (searchCategory ? `category=${searchCategory}&` : '') %><%= pageType %>=<%= previousPage %>"><%= previousPage %></a>
+    <% } %>
+    <a class="active" href="?<%= searchCond ? `search=${searchCond}&` : (searchCategory ? `category=${searchCategory}&` : '') %><%= pageType %>=<%= currentPage %>"><%= currentPage %></a>
+    <% if (hasNextPage) { %>
+        <a href="?<%= searchCond ? `search=${searchCond}&` : (searchCategory ? `category=${searchCategory}&` : '') %><%= pageType %>=<%= nextPage %>"><%= nextPage %></a>
+    <% } %>
+    <% if (lastPage !== currentPage && nextPage !== lastPage) { %>
+        <a href="?<%= searchCond ? `search=${searchCond}&` : (searchCategory ? `category=${searchCategory}&` : '') %><%= pageType %>=<%= lastPage %>"><%= lastPage %></a>
+    <% } %>
+</div>

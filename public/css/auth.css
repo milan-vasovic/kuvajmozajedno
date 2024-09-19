@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+    .content__container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+}
