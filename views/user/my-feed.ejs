@@ -133,7 +133,7 @@
                                         <button class="btn" type="submit" disabled>Kupite Recept</button>
                                     <% } %>
                                 <% } else if (item.cond && item.type === "private") { %>
-                                    <p>Morate biti predplaćeni</p>
+                                    <p>Morate biti pretplaćeni</p>
                                 <% } else { %>
                                     <a href="/recept-detalji/<%= item._id %>" class="btn">Detalji</a>
                                 <% } %>
@@ -149,7 +149,7 @@
                                         <button class="btn" type="submit" disabled>Kupite Knjigu</button>
                                     <% } %>
                                 <% } else if (item.cond && item.type === "private") { %>
-                                    <p>Morate biti predplaćeni</p>
+                                    <p>Morate biti pretplaćeni</p>
                                 <% } else { %>
                                     <a href="/knjiga-detalji/<%= item._id %>" class="btn">Detalji</a>
                                 <% } %>

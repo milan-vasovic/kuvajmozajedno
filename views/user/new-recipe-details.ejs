@@ -1,7 +1,7 @@
 <!-- Include head part of html -->
 <%- include('../includes/head.ejs') %>
 <link rel="stylesheet" href="/css/recipe-details.css">
-<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/new-main.css">
 <%- include('../includes/navigation.ejs') %>
     <section class="main__container">
         <% function calculateAverageStars(ratings) {
@@ -154,6 +154,10 @@
                                     <% }) %>
                                 </div>
                             <% } %>
+                            <div id="overlay" class="overlay">
+                                <span class="close-btn">&times;</span>
+                                <img id="overlay-img" class="overlay-content">
+                            </div>
                         </div>
                         <p class="rating">
                             <% const ratings = recipe.ratings %>
@@ -417,5 +421,33 @@
             </div>
         </div>
     </section>
+    <script>
+        // Pronađi sve slike koje se mogu kliknuti (sličice)
+        const thumbnails = document.querySelectorAll('.card__image');
+
+        // Pronađi overlay element i sliku unutar overlay-a
+        const overlay = document.getElementById('overlay');
+        const overlayImg = document.getElementById('overlay-img');
+        const closeBtn = document.querySelector('.close-btn');
+
+        // Kada se klikne na sličicu, prikaži je u overlay-u
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                overlay.style.display = 'flex';
+                overlayImg.src = this.src; // Postavi izvor slike na overlay sliku
+            });
+        });
+
+        // Kada se klikne na dugme za zatvaranje, sakrij overlay
+        closeBtn.addEventListener('click', function() {
+        overlay.style.display = 'none';
+        });
+
+        // Opcionalno: Zatvori overlay klikom na pozadinu
+        overlay.addEventListener('click', function(event) {
+        if (event.target === overlay) {
+            overlay.style.display = 'none';
+        }
+        });
+    </script>
     <%- include('../includes/end.ejs') %>
-</body>

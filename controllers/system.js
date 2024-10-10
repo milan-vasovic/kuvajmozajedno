@@ -839,3 +839,4 @@ async function updateUsers(ids) {
         return console.error('Greška prilikom ažuriranja:', error);
     }
 };
+

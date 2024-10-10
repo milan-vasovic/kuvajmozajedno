@@ -15,6 +15,20 @@ const path = require('path');
 const ITEMS_PER_PAGE = 6;
 
 // GET Functions
+exports.getChoseApp = (req, res, next) => {
+    try {
+        return res.render("default/chose-app", {
+            path: '/',
+            pageTitle: "Izaberite aplikaciju",
+            pageDescription: "Izaberite aplikaciju koju želite, jedan nalog za sve, postanite deo zajednice!",
+            pageKeyWords: "Kuvajmo Zajedno, Pronađi, Recepti, Knjige, Fitness, Fitnes Familija, Teretane, Treneri",
+        })
+    } catch (err) {
+        const error = new Error("Error: " + err);
+        error.httpStatusCode = 500;
+        return next(error);
+    }
+}
 
 exports.getExplorer = async ( req, res, next ) => {
     try {
@@ -214,7 +228,7 @@ exports.getExplorer = async ( req, res, next ) => {
             })
             .countDocuments();
         
-            recipeTotalItems = totalItems[0].totalCount;
+            recipeTotalItems = totalItems;
         
             // Dohvatanje recepata sa paginacijom i sortiranjem
             recipes = await Recipe.find({
@@ -236,6 +250,8 @@ exports.getExplorer = async ( req, res, next ) => {
             .skip((recipePage - 1) * ITEMS_PER_PAGE)
             .limit(ITEMS_PER_PAGE)
             .select("title category description featureImage author preparation.duration ratings");
+
+            searchCond = searchRecipes;
         } else {
             // Prebrojavanje dokumenata bez pretrage
             let totalItems = await Recipe.aggregate([
@@ -411,6 +427,8 @@ exports.getExplorer = async ( req, res, next ) => {
                     $limit: ITEMS_PER_PAGE
                 }
             ])
+
+            searchCond = searchBooks;
         } else {
             let totalItems = await Book.aggregate([
                 {
@@ -516,7 +534,7 @@ exports.getExplorer = async ( req, res, next ) => {
                     }
                 },
                 {
-                    $count: "totalItems" // This will add a field `totalItems` with the count of matching documents
+                    $count: "totalCount" // This will add a field `totalItems` with the count of matching documents
                 }
             ]);
 
@@ -540,16 +558,24 @@ exports.getExplorer = async ( req, res, next ) => {
                         views: 1,
                     }
                 },
+                {
+                    $skip: (userPage - 1) * ITEMS_PER_PAGE
+                },
+                {
+                    $limit: ITEMS_PER_PAGE
+                }
             ]);
 
-            userTotalItems = totalItems.length > 0 ? totalItems[0].totalItems : 0;
+            userTotalItems = totalItems.length > 0 ? totalItems[0].totalCount : 0;
+
+            searchCond = searchUsers;
         } else {
             let totalItems = await User.find({
                 _id: {$nin: blockedUsers},
                 status: { $elemMatch: { $eq: 'active' } }
             }).countDocuments();
 
-            userTotalItems = totalItems.length > 0 ? totalItems[0].totalItems : 0;
+            userTotalItems = totalItems;
             
             users = await User.find({
                 _id: {$nin: blockedUsers},
@@ -615,7 +641,7 @@ exports.getExplorer = async ( req, res, next ) => {
         const mostViewsRecipe = mostViewsRecipeDoc.length ? mostViewsRecipeDoc[0] : null;
 
         res.render("default/new-explorer", {
-            path: "/",
+            path: "/pronadji",
             pageTitle: "Pronađi",
             pageDescription: "Pronađite nove recept, knjige i korisnike, sve na jednom mestu. Pratite šta je najpopularnije i najtrežanije! Upoznajte nove ukuse i upustitese u avanturu kuvanja sa nama!",
             pageKeyWords: "Kuvajmo Zajedno, Pronađi, Recepti, Knjige",
@@ -649,7 +675,7 @@ exports.getExplorer = async ( req, res, next ) => {
             searchCond: searchCond
         });
     } catch (err) {
-        const error = new Error("Desila se nepredviđena greška!");
+        const error = new Error("Desila se nepredviđena greška! " + err);
         error.httpStatusCode = 500;
         return next(error);
     }
@@ -705,7 +731,6 @@ exports.getImages = async (req, res, next) => {
     try {
         const imagePath = req.params.imagePath;
         const localImagePath = path.join(__dirname, '..', 'images', imagePath);
-
         fs.access(localImagePath, fs.constants.F_OK, (err) => {
             if (err) {
                 const error = new Error("File not found");
@@ -722,7 +747,7 @@ exports.getImages = async (req, res, next) => {
             imageStream.pipe(res);
         });
     } catch (err) {
-        const error = new Error("Desila se nepredviđena greška!");
+        const error = new Error("Desila se nepredviđena greška!" + err);
         error.httpStatusCode = 500;
         return next(error);
     }
@@ -746,7 +771,7 @@ exports.getClodinaryImages = async (req, res, next) => {
   
         const imagePath = req.params.imagePath;
 
-        const publicUrl = `https://res.cloudinary.com/${cloudName}/image/upload/w_300,h_300/${'uploads/' + imagePath}`;
+        const publicUrl = `https://res.cloudinary.com/${cloudName}/image/upload/w_1000,h_1000,q_auto:good/${'uploads/' + imagePath}`;
 
         const isPublicAccessible = await checkPublicUrl(publicUrl);
       

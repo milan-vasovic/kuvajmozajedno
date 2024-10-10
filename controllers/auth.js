@@ -244,6 +244,12 @@ exports.postLogin = (req, res, next) => {
                                     redirectTo: redirectUrl
                                 })
                             }
+
+                            // const currentDate = new Date()
+                            // user.subscribed.users.forEach(subUser => {
+                            //     if (subUser.expirationDate < )
+                            // });
+
                             req.session.isLoggedIn = true;
                             req.session.user = user;
                             
@@ -391,7 +397,7 @@ exports.postSignup = async (req, res, next) => {
                         <p style="color: #333; font-size: 16px; margin-bottom: 30px;">Pozdrav ${username},</p>
                         <p style="color: #333; font-size: 16px; margin-bottom: 30px;">Hvala Vam na poverenju, Vaš nalog je uspešno registrovan, Vaše informacije su:</p>
                         <p style="color: #333; font-size: 16px; margin-bottom: 10px;"><strong>Korisničko Ime:</strong> ${username}</p>
-                        <p style="color: #333; font-size: 16px; margin-bottom: 30px;"><strong>Šifra:</strong> ${password}</p>
+                        <p style="color: #333; font-size: 16px; margin-bottom: 30px;"><strong>Molimo Vas da zapišete šifru!</p>
                         <p style="color: #333; font-size: 16px; margin-bottom: 30px;">Nakon što potvrdite email, možete se prijaviti koristeći dostavljene pristupne podatke.</p>
                         <a href="https://www.kuvajmozajedno.com/potvrdite-email/${confirmToken}" style="display: inline-block; padding: 12px 24px; background-color: #009688; color: #fff; text-decoration: none; border-radius: 4px; font-size: 16px; transition: background-color 0.3s;">Potvrda Emaila</a>
                         <p style="color: #333; font-size: 16px; margin-top: 30px;">Za sva pitanja, nedoumice i asistenciju slobodno nas kontaktirajte.</p>

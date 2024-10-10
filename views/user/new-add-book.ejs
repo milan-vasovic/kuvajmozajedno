@@ -13,7 +13,7 @@
         </h1>
         <div class="content__container">
             <div class="main-form__container">
-                <form class="main-form" action="<% if (editing) { %>/izmenite-knjigu<% } else { %>/dodajte-knjigu<% } %>" method="POST" enctype="multipart/form-data">
+                <form class="main-form" action="<% if (isAdmin) { %>/admin/izmenite-knjigu<% } else if (editing) { %>/izmenite-knjigu<% } else { %>/dodajte-knjigu<% } %>" method="POST" enctype="multipart/form-data">
                     <div class="main-form__group">
                         <label for="title"><strong>Naziv:</strong></label>
                         <input class="main-form__input" type="text" id="title" name="title" placeholder="Naziv"

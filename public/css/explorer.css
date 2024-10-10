@@ -40,7 +40,7 @@
 }
 
 .left__container {
-    width: 10%;
+    width: 20svw;
 }
 
 .right__container {
@@ -49,7 +49,7 @@
     justify-content: center;
     justify-items: center;
     align-items: center;
-    width: 90%;
+    width: 80svw;
 }
 
 .books__container {
@@ -91,6 +91,7 @@
         padding: 0;
         display: flex;
         flex-direction: column;
+        flex-wrap: wrap;
     }
 
     .right-content__container {

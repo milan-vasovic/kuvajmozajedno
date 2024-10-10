@@ -14,7 +14,9 @@ const image = require('../middleware/image');
 // Define routes
 // ------------------------------------------------------------ Get -------------------------------------------------------
 
-router.get('/', defaultController.getExplorer);
+router.get('/', defaultController.getChoseApp);
+
+router.get('/pronadji', defaultController.getExplorer);
 
 router.get('/uslovi-koriscenja', defaultController.getTermsAndCondtions);
 

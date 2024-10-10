@@ -15,6 +15,7 @@ const nodemailer = require("nodemailer");
 const { validationResult } = require("express-validator");
 
 const fs = require('fs');
+const fsp = require('fs').promises;
 const path = require('path');
 
 const cloudinary = require('../middleware/cloudinary-config');
@@ -71,6 +72,16 @@ let transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_AUTH_PASS,
     },
 });
+
+async function getAllCategories(filePath) {
+    try {
+        const data = await fsp.readFile(filePath, 'utf-8');
+        const allCategories = JSON.parse(data);
+        return allCategories;
+      } catch (err) {
+        throw new Error('Error reading JSON file: ' + err);
+      }
+}
 
 //------------------------------------------ GET Functions --------------------------------------------------
 
@@ -923,7 +934,7 @@ exports.getBookDetails = (req, res, next) => {
     };
 };
 
-exports.getAddRecipe = (req, res, next) => {
+exports.getAddRecipe = async (req, res, next) => {
     try {
         const user = req.session.user;
 
@@ -935,6 +946,9 @@ exports.getAddRecipe = (req, res, next) => {
             existingData = null;
         };
 
+        const filePath = path.join(__dirname, '../public/json', 'categories.json');
+        let allCategories = await getAllCategories(filePath);
+   
         // Render addRecipe Page
         return res.status(200).render("user/new-add-recipe", {
             path: "/dodajte-recept",
@@ -945,6 +959,8 @@ exports.getAddRecipe = (req, res, next) => {
             errorMessage: "",
             userRole: user.role,
             editing: false,
+            categories: allCategories,
+            isAdmin: false
         })
     } catch (err) {
         const error = new Error("Desila se neočekivana greška!");
@@ -974,7 +990,8 @@ exports.getAddBook = (req, res, next) => {
             existingData: existingData,
             errorMessage: "",
             userRole: userRole,
-            editing: false
+            editing: false,
+            isAdmin: false
         });
     } catch (err) {
         const error = new Error("Desila se neočekivana greška!");
@@ -1003,17 +1020,33 @@ exports.getEditRecipe = (req, res, next) => {
                                 existingData = null;
                             };
 
-                            // Render addRecipe Page
-                            return res.status(200).render("user/new-add-recipe", {
-                                path: "/dodajte-recept",
-                                pageTitle: "Recept Izmena",
-                                pageDescription: "",
-                                pageKeyWords: "",
-                                existingData: existingData,
-                                errorMessage: "",
-                                userRole: user.role,
-                                editing: true,
-                                recipe: recipe
+                            const filePath = path.join(__dirname, '../public/json', 'categories.json');
+   
+                            let categories;
+                            fs.readFile(filePath, 'utf-8', (err, data) => {
+                                if (err) {
+                                const error = new Error('Error reading JSON file:', err);
+                                error.httpStatusCode = 500;
+                                return next(error);
+                                }
+
+                                // Parsiraj JSON podatke
+                                categories = JSON.parse(data);
+
+                                // Render addRecipe Page
+                                return res.status(200).render("user/new-add-recipe", {
+                                    path: "/dodajte-recept",
+                                    pageTitle: "Recept Izmena",
+                                    pageDescription: "",
+                                    pageKeyWords: "",
+                                    existingData: existingData,
+                                    errorMessage: "",
+                                    userRole: user.role,
+                                    editing: true,
+                                    isAdmin: false,
+                                    recipe: recipe,
+                                    categories: categories
+                                })
                             })
                         })
                         .catch(err => {
@@ -1067,6 +1100,7 @@ exports.getEditBook = (req, res, next) => {
                                 errorMessage: "",
                                 userRole: user.role,
                                 editing: true,
+                                isAdmin: false,
                                 book: book
                             })
                         })
@@ -1140,6 +1174,7 @@ exports.getHistoryDetails = (req, res, next) => {
                             .then(history => {
                                 let haveNewVersion;
 
+                                // Checking version of recipe
                                 if (history.purchaseId.data.recipeId) {
                                     if (history.purchaseId.data.boughtVersion < history.purchaseId.data.recipeId.__v) {
                                         const checkVersion = history.purchaseId.data.boughtVersion < history.purchaseId.data.recipeId.__v;
@@ -1147,7 +1182,7 @@ exports.getHistoryDetails = (req, res, next) => {
                                         const checkDescription = history.purchaseId.data.description === history.purchaseId.data.recipeId.description;
                                         const checkCategory = history.purchaseId.data.category.toString() === history.purchaseId.data.recipeId.category.toString();
                                         const checkPreparationDuration = history.purchaseId.data.preparation.duration.toString() === history.purchaseId.data.recipeId.preparation.duration.toString();
-                                        const checkPreparationNote = history.purchaseId.data.preparation.note === history.purchaseId.data.recipeId.preparation.note;
+                                        const checkPreparationNote = history.purchaseId.data.preparation.note.toString() === history.purchaseId.data.recipeId.preparation.note.toString();
                                         const checkPreparationSteps = history.purchaseId.data.preparation.steps.toString() === history.purchaseId.data.recipeId.preparation.steps.toString();
                                         const checkIngredients = JSON.stringify(history.purchaseId.data.ingredients) === JSON.stringify(history.purchaseId.data.recipeId.ingredients);
                                         const checkNutritions = JSON.stringify(history.purchaseId.data.nutritions) === JSON.stringify(history.purchaseId.data.recipeId.nutritions);
@@ -1158,6 +1193,9 @@ exports.getHistoryDetails = (req, res, next) => {
                                             haveNewVersion = true;
                                         }
                                     }
+
+                                // Checking version of book
+                                // Izazov je sto kada se recept izmeni a nalazi se u nekoj knjizi ne dolazi do promene verzije
                                 } else if (history.purchaseId.data.bookId) {
                                     if (history.purchaseId.data.boughtVersion < history.purchaseId.data.bookId.__v) {
                                         const checkVersion = history.purchaseId.data.boughtVersion < history.purchaseId.data.bookId.__v;
@@ -1167,32 +1205,63 @@ exports.getHistoryDetails = (req, res, next) => {
 
                                         let checkRecipes;
 
+                                        // Checking the number of recipes in book
                                         if (history.purchaseId.data.bookId.recipes.length !== history.purchaseId.data.recipes.length) {
                                             checkRecipes = false;
                                         } else {
-                                            history.purchaseId.data.bookId.recipes.forEach(recipe => {
-                                                history.purchaseId.data.recipes.forEach(otherRecipe => {
-                                                    const cond2 = otherRecipe.title === recipe.title;
-                                                    const cond3 = otherRecipe.description === recipe.description;
-                                                    const cond4 = otherRecipe.featureImage === recipe.featureImage;
-                                                    const cond5 = otherRecipe.__v === recipe.__v;
+                                            history.purchaseId.data.bookId.recipes.forEach((recipe, index) => {
+                                                const cond2 = history.purchaseId.data.recipes[index].recipeId.title === recipe.recipeId.title;
+                                                const cond3 = history.purchaseId.data.recipes[index].recipeId.description === recipe.recipeId.description;
+                                                const cond4 = history.purchaseId.data.recipes[index].recipeId.featureImage === recipe.recipeId.featureImage;
+                                                const cond5 = history.purchaseId.data.recipes[index].recipeId.__v === recipe.recipeId.__v;
+                                                console.log(recipe.recipeId.__v)
 
-                                                    const cond6 = JSON.stringify(otherRecipe.category) === JSON.stringify(recipe.category);
+                                                const cond6 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.category) === JSON.stringify(recipe.recipeId.category);
 
-                                                    const cond7 = JSON.stringify(otherRecipe.images) === JSON.stringify(recipe.images);
+                                                const cond7 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.images) === JSON.stringify(recipe.recipeId.images);
 
-                                                    const cond8 = JSON.stringify(otherRecipe.ingredients) === JSON.stringify(recipe.ingredients);
+                                                const cond8 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.ingredients) === JSON.stringify(recipe.recipeId.ingredients);
 
-                                                    const cond9 = JSON.stringify(otherRecipe.nutritions) === JSON.stringify(recipe.nutritions);
+                                                const cond9 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.nutritions) === JSON.stringify(recipe.recipeId.nutritions);
 
-                                                    const cond10 = JSON.stringify(otherRecipe.preparation) === JSON.stringify(recipe.preparation);
+                                                const cond10 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.preparation.note.toString()) === JSON.stringify(recipe.recipeId.preparation.note.toString());
+                                                const cond11 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.preparation.duration.toString()) === JSON.stringify(recipe.recipeId.preparation.duration.toString());
+                                                const cond12 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.preparation.steps.toString()) === JSON.stringify(recipe.recipeId.preparation.steps.toString());
 
-                                                    checkRecipes = cond2 && cond3 && cond4 && cond5 && cond6 && cond7 && cond8 && cond9 && cond10;
-                                                })
+                                                checkRecipes = cond2 && cond3 && cond4 && cond5 && cond6 && cond7 && cond8 && cond9 && cond10 && cond11 && cond12;
                                             })
                                         }
 
-                                        if (checkVersion && (!checkTitle || !checkDescription || !checkCoverImage || !checkRecipes)) {
+                                        if (!checkVersion || !checkTitle || !checkDescription || !checkCoverImage || !checkRecipes) {
+                                            haveNewVersion = true;
+                                        }
+                                    } else {
+                                        if (history.purchaseId.data.bookId.recipes.length !== history.purchaseId.data.recipes.length) {
+                                            checkRecipes = false;
+                                        } else {
+                                            history.purchaseId.data.bookId.recipes.forEach((recipe, index) => {
+                                                const cond2 = history.purchaseId.data.recipes[index].recipeId.title === recipe.recipeId.title;
+                                                const cond3 = history.purchaseId.data.recipes[index].recipeId.description === recipe.recipeId.description;
+                                                const cond4 = history.purchaseId.data.recipes[index].recipeId.featureImage === recipe.recipeId.featureImage;
+                                                const cond5 = history.purchaseId.data.recipes[index].recipeId.__v === recipe.recipeId.__v;
+
+                                                const cond6 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.category) === JSON.stringify(recipe.recipeId.category);
+
+                                                const cond7 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.images) === JSON.stringify(recipe.recipeId.images);
+
+                                                const cond8 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.ingredients) === JSON.stringify(recipe.recipeId.ingredients);
+
+                                                const cond9 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.nutritions) === JSON.stringify(recipe.recipeId.nutritions);
+
+                                                const cond10 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.preparation.note.toString()) === JSON.stringify(recipe.recipeId.preparation.note.toString());
+                                                const cond11 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.preparation.duration.toString()) === JSON.stringify(recipe.recipeId.preparation.duration.toString());
+                                                const cond12 = JSON.stringify(history.purchaseId.data.recipes[index].recipeId.preparation.steps.toString()) === JSON.stringify(recipe.recipeId.preparation.steps.toString());
+
+                                                checkRecipes = cond2 && cond3 && cond4 && cond5 && cond6 && cond7 && cond8 && cond9 && cond10 && cond11 && cond12;
+                                            })
+                                        }
+
+                                        if (!checkRecipes) {
                                             haveNewVersion = true;
                                         }
                                     }
@@ -1209,7 +1278,7 @@ exports.getHistoryDetails = (req, res, next) => {
                                 });
                             })
                             .catch(err => {
-                                const error = new Error("Nije moguće pronaći Istoriju!");
+                                const error = new Error("Nije moguće pronaći Istoriju! " + err);
                                 error.httpStatusCode = 500;
                                 return next(error);
                             });
@@ -1626,8 +1695,8 @@ exports.postAddRecipe = async (req, res, next) => {
             images: images,
             preparation: {
                 duration: duration,
-                steps: steps,
                 note: note,
+                steps: steps,
             },
             ingredients: ingredients,
             nutritions: nutritions,
@@ -1660,7 +1729,7 @@ exports.postAddRecipe = async (req, res, next) => {
         await session.commitTransaction();
         session.endSession();
 
-        return res.status(201).redirect("/");
+        return res.status(201).redirect("/moj-profil");
     } catch (err) {
         await session.abortTransaction();
         session.endSession();
@@ -1848,6 +1917,9 @@ exports.postEditRecipe = async (req, res, next) => {
             amount: newNutritionsAmount[index],
         })) : [];
 
+        const filePath = path.join(__dirname, '../public/json', 'categories.json');
+        let allCategories = await getAllCategories(filePath);
+
         // Data validation
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -1874,7 +1946,9 @@ exports.postEditRecipe = async (req, res, next) => {
                 },
                 recipe: new mongoose.Types.ObjectId(recipeId),
                 userRole: userRole,
-                editing: true
+                editing: true,
+                isAdmin: false,
+                categories: allCategories
             });
         }
 
@@ -1914,7 +1988,9 @@ exports.postEditRecipe = async (req, res, next) => {
                 },
                 userRole: userRole,
                 recipe: new mongoose.Types.ObjectId(recipeId),
-                editing: true
+                editing: true,
+                isAdmin: false,
+                categires: allCategories
             });
         }
 
@@ -2454,8 +2530,8 @@ exports.postBuyBook = async (req, res, next) => {
                         ingredients: recipe.recipeId.ingredients,
                         nutritions: recipe.recipeId.nutritions,
                         preparation: {
-                            note: recipe.recipeId.preparation.note,
                             duration: recipe.recipeId.preparation.duration,
+                            note: recipe.recipeId.preparation.note,
                             steps: recipe.recipeId.preparation.steps
                         },
                         __v: recipe.recipeId.__v
@@ -3132,7 +3208,7 @@ exports.postSubscribeToUser = async (req, res, next) => {
 
                         return user;
                     } else {
-                        const error = new Error("Vi ste već predplaćeni na ovog Korisnika!");
+                        const error = new Error("Vi ste već pretplaćeni na ovog Korisnika!");
                         error.httpStatusCode = 500;
                         return next(error);
                     }
@@ -3141,24 +3217,24 @@ exports.postSubscribeToUser = async (req, res, next) => {
                     let mailOptions = {
                         from: "Kuvajmo Zajedno",
                         to: user.email,
-                        subject: "Predplata od strane: " + req.session.user.username,
-                        text: "Uspešna predplata od strane: " + req.session.user.username,
+                        subject: "pretplata od strane: " + req.session.user.username,
+                        text: "Uspešna pretplata od strane: " + req.session.user.username,
                         html: `
                     <html lang="en">
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Nova Predplata!</title>
+                        <title>Nova pretplata!</title>
                     </head>
                     <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px;">
                     
                         <div style="margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     
-                            <h1 style="color: #009688; margin-bottom: 20px;">Dobiliste novog Predplatinka!</h1>
+                            <h1 style="color: #009688; margin-bottom: 20px;">Dobiliste novog pretplatinka!</h1>
                     
                             <p style="color: #333; font-size: 16px; margin-bottom: 30px;">Pozdrav ${user.username},</p>
                     
-                            <p style="color: #333; font-size: 16px; margin-bottom: 30px;">Korisnik: ${req.session.user.username} se upravo predplatio na Vas!</p>
+                            <p style="color: #333; font-size: 16px; margin-bottom: 30px;">Korisnik: ${req.session.user.username} se upravo pretplatio na Vas!</p>
     
                         </div>
                     
@@ -3250,7 +3326,7 @@ exports.postSubscribeToUser = async (req, res, next) => {
                 return next(error);
             }
         } else {
-            const error = new Error("Nemate dovoljno novca da se predplatite na ovog Korisnika!");
+            const error = new Error("Nemate dovoljno novca da se pretplatite na ovog Korisnika!");
             error.httpStatusCode = 409;
             return next(error);
         }
@@ -3280,7 +3356,7 @@ exports.postUnsubscribeFromUser = async (req, res, next) => {
                             return next(error);
                         });
                 } else {
-                    const error = new Error("This user dosn't have you as subscriber!");
+                    const error = new Error("Ovaj Korisnik vas nema kao pretplaćenog!");
                     error.httpStatusCode = 409;
                     return next(error);
                 }

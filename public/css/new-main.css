@@ -48,7 +48,8 @@ body {
     list-style: none;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: start;
+    flex-wrap: wrap;
 }
 
 /* _____________________________________BUTTON STYLES_______________________________________________________________ */
@@ -290,12 +291,15 @@ button[disabled] {
     min-height: 300px;
     max-height: 300px;
     border-radius: 10px;
+    cursor: pointer;
 }
 
 .card__categories {
     margin-top: 0.2rem;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
 }
 
@@ -325,12 +329,53 @@ button[disabled] {
 .thumbnail__container {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     margin-top: 10px;
 }
 
 .thumbnail {
     max-width: 100px;
     margin: 0 10px;
+    cursor: pointer;
+}
+
+.devider {
+    display: auto;
+}
+
+.hero__image {
+    width: 400px !important;
+    height: 400px !important;
+    min-width: 300px;
+    min-height: 300px;
+    max-width: 500px;
+    max-height: 500px;
+}
+
+.overlay {
+    display: none; /* Skriveno dok se ne klikne na sliku */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Tamna pozadina sa prozirnošću */
+    z-index: 1000; /* Da bude iznad svih drugih elemenata */
+    justify-content: center;
+    align-items: center;
+}
+  
+.overlay-content {
+    max-width: 90%;
+    max-height: 90%;
+}
+  
+.close-btn {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    font-size: 40px;
+    color: white;
     cursor: pointer;
 }
 
@@ -349,9 +394,21 @@ button[disabled] {
         justify-items: start;
         justify-content: start;
         align-items: start;
+        flex-wrap: wrap;
     }
 
     .category-list__item {
         margin: 1px;
+    }
+
+    .devider {
+        display: none;
+    }
+
+    .hero__image {
+        width: 400px !important;
+        height: 400px !important;
+        min-width: 300px;
+        min-height: 300px;
     }
 }

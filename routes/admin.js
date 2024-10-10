@@ -19,67 +19,150 @@ const isAdmin = require('../middleware/is-admin');
 // --------------------------------------------------------- GET -----------------------------------------------------------
 // All routes have '/admin/' before the rest of route
 
-router.get('/admin-profile', isAuth, isAdmin, adminController.getAdminProfile);
+router.get('/admin-profil', isAuth, isAdmin, adminController.getAdminProfile);
 
-router.get('/recipes', isAuth, isAdmin, adminController.getAdminRecipes);
+router.get('/recepti', isAuth, isAdmin, adminController.getAdminRecipes);
 
-router.get('/books', isAuth, isAdmin, adminController.getAdminBooks);
+router.get('/knjige', isAuth, isAdmin, adminController.getAdminBooks);
 
-router.get('/users', isAuth, isAdmin, adminController.getAdminUsers);
+router.get('/korisnici', isAuth, isAdmin, adminController.getAdminUsers);
 
-router.get('/recipe-details/:recipeId', isAuth, isAdmin, adminController.getAdminRecipeById);
+router.get('/recept-detalji/:recipeId', isAuth, isAdmin, adminController.getAdminRecipeById);
 
-router.get('/book-details/:bookId', isAuth, isAdmin, adminController.getAdminBookById);
+router.get('/knjiga-detalji/:bookId', isAuth, isAdmin, adminController.getAdminBookById);
 
-router.get('/user-details/:userId', isAuth, isAdmin, adminController.getAdminUserById);
+router.get('/korisnik-detalji/:userId', isAuth, isAdmin, adminController.getAdminUserById);
 
-router.get('/edit-recipe/:recipeId', isAuth, isAdmin, adminController.getAdminEditRecipe);
+router.get('/izmenite-recept/:recipeId', isAuth, isAdmin, adminController.getAdminEditRecipe);
 
-router.get('/edit-book/:bookId', isAuth, isAdmin, adminController.getAdminEditBook);
+router.get('/izmenite-knjigu/:bookId', isAuth, isAdmin, adminController.getAdminEditBook);
 
-router.get('/edit-user/:userId', isAuth, isAdmin, adminController.getAdminEditUser);
+router.get('/izmenite-korisnika/:userId', isAuth, isAdmin, adminController.getAdminEditUser);
 
-router.get('/history/:historyId', isAuth, isAdmin, [], adminController.getHistoryById);
+router.get('/istorija/:historyId', isAuth, isAdmin, [], adminController.getHistoryById);
 
 // ---------------------------------------------------------- POST -----------------------------------------------------
 // Validations needs to be added to post routes!!!
 
-router.post('/recipes-search', isAuth, isAdmin, adminController.postRecipeSearch);
+router.post('/recepti-pretraga', isAuth, isAdmin, adminController.postRecipeSearch);
 
-router.post('/books-search', isAuth, isAdmin, adminController.postBookSearch);
+router.post('/knjige-pretraga', isAuth, isAdmin, adminController.postBookSearch);
 
-router.post('/users-search', isAuth, isAdmin, adminController.postUserSearch);
+router.post('/korisnici-pretraga', isAuth, isAdmin, adminController.postUserSearch);
 
 // EDIT-RECIPE
-router.post('/edit-recipe', [], isAuth, isAdmin, adminController.postAdminEditRecipe);
+router.post('/izmenite-recept', [
+    body("title").notEmpty().withMessage("Naslov ne sme biti prazan!"),
+        body("category")
+            .exists()
+            .withMessage("Recept mora da ima bar jednu Kategoriju!")
+            .bail()
+            .custom((value) => {
+                if (!Array.isArray(value)) {
+                    // If it's not an array, consider it as a single string
+                    if (typeof value !== "string" || value.trim() === "") {
+                        throw new Error("Kategorija ne sme da bude prazna!");
+                    }
+                } else {
+                    // If it's an array, make sure every item is a non-empty strings
+                    if (
+                        value.some((item) => typeof item !== "string" || item.trim() === "")
+                    ) {
+                        throw new Error("Kategorija ne sme da bude prazna!");
+                    }
+                }
+                return true;
+            }),
+        body("description")
+            .isString()
+            .withMessage("Opis mora da bude tekst dužine bar 1 karakter!")
+            .isLength({ min: 1 })
+            .withMessage("Opis ne sme da bude prazan!"),
+        body("ingredients")
+            .exists()
+            .withMessage("Mora da postoji bar jedan Sastojak!")
+            .bail()
+            .custom((value) => {
+                if (!Array.isArray(value)) {
+                    if (typeof value !== "string" || value.trim() === "") {
+                        throw new Error("Sastojak ne sme biti prazan!");
+                    }
+                } else {
+                    if (
+                        value.some((item) => typeof item !== "string" || item.trim() === "")
+                    ) {
+                        throw new Error("Sastojak ne sme biti prazan!");
+                    }
+                }
+                return true;
+            }),
+        body("ingredientsAmount")
+            .exists()
+            .withMessage("Mora da postoji bar neka količina!")
+            .bail()
+            .custom((value) => {
+                if (!Array.isArray(value)) {
+                    if (typeof value !== "string" || value.trim() === "") {
+                        throw new Error("Količina ne sme da bude prazna!");
+                    }
+                } else {
+                    if (
+                        value.some((item) => typeof item !== "string" || item.trim() === "")
+                    ) {
+                        throw new Error("Količina ne sme da bude prazna!");
+                    }
+                }
+                return true;
+            }),
+        body("duration").isString().withMessage("Trajanje ne sme da bude prazno!"),
+        body("steps")
+            .exists()
+            .withMessage("Mora da bude bar jedan korak!")
+            .bail()
+            .custom((value) => {
+                if (!Array.isArray(value)) {
+                    if (typeof value !== "string" || value.trim() === "") {
+                        throw new Error("Korak ne sme da bude prazan!");
+                    }
+                } else {
+                    if (
+                        value.some((item) => typeof item !== "string" || item.trim() === "")
+                    ) {
+                        throw new Error("Korak ne sme da bude prazan!");
+                    }
+                }
+                return true;
+            }),
+        body("note").isString().withMessage("Napomena ne sme da bude prazna!"),
+], isAuth, isAdmin, adminController.postAdminEditRecipe);
 
 // EDIT-BOOK
-router.post('/edit-book', [], isAuth, isAdmin, adminController.postAdminEditBook);
+router.post('/izmenite-knjigu', [], isAuth, isAdmin, adminController.postAdminEditBook);
 
 // EDIT-USER
-router.post('/edit-user', [
+router.post('/izmenite-korisnika', [
     body("username").notEmpty().withMessage("Username can't be empty"),
     body('email').notEmpty().withMessage("Email can't be empty"),
     body('role').notEmpty().withMessage("Role can't be empty"),
 ], isAuth, isAdmin, adminController.postAdminEditUser);
 
 // DELETE-RECIPE
-router.post('/delete-recipe', [], isAuth, isAdmin, adminController.postAdminDeleteRecipe);
+router.post('/izbrisite-recept', [], isAuth, isAdmin, adminController.postAdminDeleteRecipe);
 
 // DELETE-BOOK
-router.post('/delete-book', [], isAuth, isAdmin, adminController.postAdminDeleteBook);
+router.post('/izbrisite-knjigu', [], isAuth, isAdmin, adminController.postAdminDeleteBook);
 
 // DELETE-USER
-router.post('/delete-user', [], isAuth, isAdmin, adminController.postAdminDeleteUser);
+router.post('/izbrisite-korisnika', [], isAuth, isAdmin, adminController.postAdminDeleteUser);
 
 // POST SUSPEND USER
-router.post('/suspend-user', [], isAuth, isAdmin, adminController.postSuspendUser);
+router.post('/suspenzija-korisnika', [], isAuth, isAdmin, adminController.postSuspendUser);
 
 // POST DEACTIVATE USER
-router.post('/deactivate-user', [], isAuth, isAdmin, adminController.postDeactivateUser);
+router.post('/deaktivacija-korisnika', [], isAuth, isAdmin, adminController.postDeactivateUser);
 
 // POST ACTIVATE USER
-router.post('/activate-user', [], isAuth, isAdmin, adminController.postActivateUser);
+router.post('/aktivacija-korisnika', [], isAuth, isAdmin, adminController.postActivateUser);
 
 // Exports router 
 module.exports = router;

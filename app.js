@@ -47,6 +47,9 @@ const systemRoutes = require("./routes/system");
 const forumRoutes = require('./routes/forum');
 const errorController = require("./controllers/error");
 
+const fitnesDefaultRouters = require('./routes/fitness/default');
+const gymRouters = require('./routes/fitness/gym');
+
 const apiRecipes = require("./routes/api-recipes");
 const Topic = require("./models/topic");
 
@@ -116,6 +119,9 @@ app.use("/system", systemRoutes);
 app.use(defaultRoutes);
 app.use(authRoutes);
 app.use('/zajednica', forumRoutes);
+
+app.use('/fitness-family', gymRouters);
+app.use('/fitness-family', fitnesDefaultRouters);
 
 app.use("/api/", apiRecipes);
 

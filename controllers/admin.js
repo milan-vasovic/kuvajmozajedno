@@ -11,7 +11,7 @@ const nodemailer = require("nodemailer");
 const { validationResult } = require("express-validator");
 const cloudinaryServices = require('../util/cloudinaryServices.js');
 
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
 const ITEMS_PER_PAGE = 5;
@@ -28,6 +28,15 @@ let transporter = nodemailer.createTransport({
     },
 });
 
+async function getAllCategories(filePath) {
+    try {
+        const data = await fs.readFile(filePath, 'utf-8');
+        const allCategories = JSON.parse(data);
+        return allCategories;
+      } catch (err) {
+        throw new Error('Error reading JSON file: ' + err);
+      }
+}
 //------------------------------------------ GET Functions --------------------------------------------------
 
 exports.getAdminProfile = (req, res, next) => {
@@ -606,15 +615,89 @@ exports.getAdminUserById = (req, res, next) => {
 
 
 exports.getAdminEditRecipe = (req, res, next) => {
-    // Fectch recipe by id
-    // Render adminEditRecipe and populate with data
-    next();
+    try {
+        const recipeId = req.params.recipeId;
+
+        const userRole = req.session.user.role;
+
+        const recipe = Recipe.findById(recipeId)
+        .then(recipe => {
+            let existingData = req.existingData;
+            if (existingData) {
+                existingData = existingData;
+            } else {
+                existingData = null;
+            };
+
+            const filePath = path.join(__dirname, '../public/json', 'categories.json');
+   
+            let categories;
+            fs.readFile(filePath, 'utf-8', (err, data) => {
+                if (err) {
+                const error = new Error('Error reading JSON file:', err);
+                error.httpStatusCode = 500;
+                return next(error);
+                }
+
+                // Parsiraj JSON podatke
+                categories = JSON.parse(data);
+
+                // Render addRecipe Page
+                return res.status(200).render("user/new-add-recipe", {
+                    path: "/dodajte-recept",
+                    pageTitle: "Recept Izmena",
+                    pageDescription: "",
+                    pageKeyWords: "",
+                    existingData: existingData,
+                    errorMessage: "",
+                    userRole: userRole,
+                    editing: true,
+                    isAdmin: true,
+                    recipe: recipe,
+                    categories: categories
+                })
+            })
+        });
+    } catch (err) {
+        const error = new Error("Desila se neocekivana greska! " + err);
+        error.httpStatusCode = 500;
+        return next(error);
+    }
 };
 
 exports.getAdminEditBook = (req, res, next) => {
-    // Fectch book by id
-    // Render adminEditBook and populate with data
-    next();
+    try {
+        const bookId = req.params.bookId;
+
+        const userRole = req.session.user.role;
+
+        const book = Book.findById(bookId)
+        .then(book => {
+            let existingData = req.existingData;
+            if (existingData) {
+                existingData = existingData;
+            } else {
+                existingData = null;
+            };
+
+            return res.status(200).render("user/new-add-book", {
+                path: "/dodajte-knjigu",
+                pageTitle: "Knjiga Izmena",
+                pageDescription: "",
+                pageKeyWords: "",
+                existingData: existingData,
+                errorMessage: "",
+                userRole: userRole,
+                editing: true,
+                isAdmin: true,
+                book: book
+            })
+        });
+    } catch (err) {
+        const error = new Error("Desila se neocekivana greska! " + err);
+        error.httpStatusCode = 500;
+        return next(error);
+    }
 };
 
 exports.getAdminEditUser = async (req, res, next) => {
@@ -625,8 +708,8 @@ exports.getAdminEditUser = async (req, res, next) => {
             .select("email username userImage role")
             .then(user => {
                 return res.status(200).render("admin/edit-user", {
-                    path: "/admin/edit-user",
-                    pageTitle: "User Edit",
+                    path: "/admin/izmenite-korisnika",
+                    pageTitle: "Izmenite Korisnika",
                     pageDescription: "",
                     pageKeyWords: "",
                     user: user,
@@ -669,7 +752,7 @@ exports.getHistoryById = (req, res, next) => {
 
                     return res.status(200).render("user/user-includes/new-history-details", {
                         path: "/istorija-detalji",
-                        pageTitle: "History Details",
+                        pageTitle: "Istorija Detalji",
                         history: {
                             _id: history._id,
                             type: history.type,
@@ -695,7 +778,7 @@ exports.getHistoryById = (req, res, next) => {
 
                 return res.status(200).render("user/user-includes/new-history-details", {
                     path: "/istorija-detalji",
-                    pageTitle: "History Details",
+                    pageTitle: "Istorija Detalji",
                     pageDescription: "",
                     pageKeyWords: "",
                     history: history,
@@ -721,7 +804,7 @@ exports.postRecipeSearch = (req, res, next) => {
     try {
         const searchParams = req.body.searchParams;
 
-        return res.redirect('/admin/recipes?search=' + searchParams);
+        return res.redirect('/admin/recepti?search=' + searchParams);
     } catch (err) {
         const error = new Error("Unable to post search params! " + err);
         error.httpStatusCode = 500;
@@ -733,7 +816,7 @@ exports.postBookSearch = (req, res, next) => {
     try {
         const searchParams = req.body.searchParams;
 
-        return res.redirect('/admin/books?search=' + searchParams);
+        return res.redirect('/admin/knjige?search=' + searchParams);
     } catch (err) {
         const error = new Error("Unable to post search params! " + err);
         error.httpStatusCode = 500;
@@ -745,7 +828,7 @@ exports.postUserSearch = (req, res, next) => {
     try {
         const searchParams = req.body.searchParams;
 
-        return res.redirect('/admin/users?search=' + searchParams);
+        return res.redirect('/admin/korisnici?search=' + searchParams);
     } catch (err) {
         const error = new Error("Unable to post search params! " + err);
         error.httpStatusCode = 500;
@@ -753,22 +836,198 @@ exports.postUserSearch = (req, res, next) => {
     }
 };
 
-exports.postAdminEditRecipe = (req, res, next) => {
-    // Get data from request.body
-    // Check data validation
-    // If not render adminEditRecipe and populate with error massge and existing data
-    // If yes fetch recipe by id
-    // Save new data to recipe and save recipe to database
-    // Render adminRecipeDetails and populate it with data
+exports.postAdminEditRecipe = async (req, res, next) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const userRole = req.session.user.role;
+        const recipeId = req.body.recipeId;
+
+        // Get data from request.body
+        const title = req.body.title;
+        const categories = Array.isArray(req.body["category"]) ? req.body["category"] : [req.body["category"]];
+        const description = req.body.description;
+        const newIngredients = Array.isArray(req.body["ingredients"]) ? req.body["ingredients"] : [req.body["ingredients"]];
+        const newIngredientsAmount = Array.isArray(req.body["ingredientsAmount"]) ? req.body["ingredientsAmount"] : [req.body["ingredientsAmount"]];
+        const duration = req.body.duration;
+        const steps = Array.isArray(req.body["steps"]) ? req.body["steps"] : [req.body["steps"]];
+        const note = req.body.note;
+        const newNutritionsName = Array.isArray(req.body["nutritions"]) ? req.body["nutritions"] : req.body["nutritions"] ? [req.body["nutritions"]] : [];
+        const newNutritionsAmount = Array.isArray(req.body["nutritionsAmount"]) ? req.body["nutritionsAmount"] : req.body["nutritionsAmount"] ? [req.body["nutritionsAmount"]] : [];
+        const type = req.body.type;
+        const cost = req.body.cost;
+
+        const featureImage = req.files.find(file => file.fieldname === 'images' && !Array.isArray(file));
+        const uploadedImages = req.files.filter(file => file.fieldname === 'images');
+        uploadedImages.splice(0, 1);
+
+        const ingredients = newIngredients.map((ingredient, index) => ({
+            name: ingredient,
+            amount: newIngredientsAmount[index],
+        }));
+
+        const nutritions = newNutritionsName.length > 0 ? newNutritionsName.map((nutrition, index) => ({
+            name: nutrition,
+            amount: newNutritionsAmount[index],
+        })) : [];
+
+        const filePath = path.join(__dirname, '../public/json', 'categories.json');
+        let allCategories = await getAllCategories(filePath);
+
+        // Data validation
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).render("user/new-add-recipe", {
+                path: "/dodajte-recept",
+                pageTitle: "Recept Izmena",
+                pageDescription: "",
+                pageKeyWords: "",
+                errorMessage: errors.array()[0].msg,
+                existingData: {
+                    title: title || ' ',
+                    category: categories || [],
+                    description: description || ' ',
+                    preparation: {
+                        duration: duration || ' ',
+                        steps: steps || [],
+                        note: note || ' '
+                    },
+                    ingredients: ingredients || { name: ' ', amount: ' ' },
+                    nutritions: nutritions || { name: ' ', amount: ' ' },
+                    images: uploadedImages || [],
+                    type: type || ' ',
+                    cost: cost || ' ',
+                },
+                recipe: new mongoose.Types.ObjectId(recipeId),
+                userRole: userRole,
+                editing: true,
+                isAdmin: true,
+                categories: allCategories
+            });
+        }
+
+        // Find the recipe by id
+        const oldRecipe = await Recipe.findById(recipeId).session(session);
+        if (!oldRecipe) {
+            throw new Error("Nije moguće pronaći Recept!");
+        }
+
+        // Update the recipe with new data
+        oldRecipe.title = title;
+        oldRecipe.category = categories;
+        oldRecipe.description = description;
+        oldRecipe.preparation.duration = duration;
+        oldRecipe.preparation.steps = steps;
+        oldRecipe.preparation.note = note;
+        oldRecipe.ingredients = ingredients;
+        oldRecipe.nutritions = nutritions;
+        oldRecipe.cost = cost;
+
+        // Process feature image
+        if (featureImage) {
+            const oldFeatureImage = oldRecipe.featureImage.replace('/images/','');
+            deleteImage(oldFeatureImage, oldRecipe.type ===  'public');
+            oldRecipe.featureImage = '/images/' + featureImage.filename;
+        }
+
+        // Process additional uploaded images
+        if (uploadedImages.length > 0) {
+            const oldImages = oldRecipe.images.map(image => {
+                return image.replace('/images/',"");
+            });
+            deleteImage(oldImages);
+            const uploadedImagePaths = uploadedImages.map(image => image.filename);
+            oldRecipe.images = uploadedImagePaths.map(id => '/images/' + id);
+        }
+
+        oldRecipe.type = type;
+
+        // Save the updated recipe to the database
+        await oldRecipe.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return res.redirect("/admin/recept-detalji/" + recipeId);
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+        const error = new Error("Nije moguće sačuvati promene na Receptu! "+ err);
+        error.httpStatusCode = 500;
+        return next(error);
+    }
 };
 
-exports.postAdminEditBook = (req, res, next) => {
-    // Get data from request.body
-    // Check data validation
-    // If not render adminEditBook and populate with error massge and existing data
-    // If yes fetch book by id
-    // Save new data to book and save book to database
-    // Render adminBookDetails and populate it with data
+exports.postAdminEditBook = async (req, res, next) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const userRole = req.session.user.role;
+        const bookId = req.body.bookId;
+
+        const oldBook = await Book.findById(bookId)
+            .select("title description author coverImage type cost")
+            .session(session);
+
+        if (!oldBook) {
+            throw new Error("Nije moguće pronaći Knjigu!");
+        }
+        
+        // Data validation
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).render("user/new-add-book", {
+                path: "/dodajte-knjigu",
+                pageTitle: "Knjiga Izmena",
+                pageDescription: "",
+                pageKeyWords: "",
+                errorMessage: errors.array()[0].msg,
+                existingData: {
+                    title: req.body.title,
+                    description: req.body.description,
+                    type: req.body.type,
+                    cost: req.body.cost
+                },
+                userRole: userRole,
+                editing: true,
+                book: oldBook,
+                isAdmin: true
+            });
+        }
+
+        oldBook.title = req.body.title;
+        oldBook.description = req.body.description;
+        oldBook.cost = req.body.cost;
+
+        const coverImage = req.files.find(file => file.fieldname === 'images' && !Array.isArray(file));
+        if (coverImage) {
+            const oldCoverImage = oldBook.coverImage.replace('/images/','');
+            deleteImage(oldCoverImage, oldBook.type ===  'public');
+
+            const coverImageUrl = coverImage.path.replace(/\\/g, '');
+            const result = await uploadImage(coverImage.path);
+            coverImageUrl = result.secure_url;
+            oldBook.coverImage = coverImageUrl;
+        }   
+
+        oldBook.type = req.body.type;
+
+        await oldBook.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return res.status(201).redirect("/admin/knjiga-detalji/" + bookId);
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+
+        const error = new Error("Nije moguće sačuvati promene na Knjizi!");
+        error.httpStatusCode = err.httpStatusCode || 500;
+        return next(error);
+    }
 };
 
 exports.postAdminEditUser = (req, res, next) => {
@@ -815,12 +1074,12 @@ exports.postAdminEditUser = (req, res, next) => {
                 }
 
                 if (!cond) {
-                    return res.status(304).redirect('/admin/user-details/' + userId);
+                    return res.status(304).redirect('/admin/korisnik-detalji/' + userId);
                 }
 
                 user.save()
                     .then(() => {
-                        return res.status(201).redirect('/admin/user-details/' + userId);
+                        return res.status(201).redirect('/admin/korisnik-detalji/' + userId);
                     })
                     .catch(err => {
                         const error = new Error("Unable to save changes to User! " + err);
@@ -890,7 +1149,7 @@ exports.postAdminDeleteRecipe = async (req, res, next) => {
         await session.commitTransaction();
         session.endSession();
 
-        return res.status(204).redirect('/admin/recipes');
+        return res.status(204).redirect('/admin/recepti');
 
     } catch (err) {
         await session.abortTransaction();
@@ -938,7 +1197,7 @@ exports.postAdminDeleteBook = async (req, res, next) => {
         await session.commitTransaction();
         session.endSession();
 
-        return res.status(204).redirect('/admin/books');
+        return res.status(204).redirect('/admin/knjige');
 
     } catch (err) {
         await session.abortTransaction();
@@ -1033,11 +1292,6 @@ exports.postAdminDeleteUser = async (req, res, next) => {
         error.httpStatusCode = 500;
         return next(error);
     }
-    // Get data from request.body
-    // Check if current user is equal with userId
-    // If yes alert current user that he/she can't delete him/herself!
-    // Delete user by id from database
-    // Render adminUser and populate with data
 };
 
 async function deleteUser(id) {
@@ -1212,7 +1466,7 @@ exports.postDeactivateUser = async (req, res, next) => {
 
             user.save()
                 .then(() => {
-                    return res.redirect('/admin/user-details/'+ userId);
+                    return res.redirect('/admin/korisnik-detalji/'+ userId);
                 })
         } else {
             const error = new Error("Ovaj korisnik je već inaktivan!");
@@ -1340,7 +1594,7 @@ exports.postSuspendUser = async (req, res, next) => {
         await session.commitTransaction();
         session.endSession();
 
-        return res.status(201).redirect("/admin/user-details/" + user._id);
+        return res.status(201).redirect("/admin/korisnik-detalji/" + user._id);
     } catch (err) {
         await session.abortTransaction();
         session.endSession();

@@ -7,7 +7,7 @@
         <nav class="main-header__nav">
             <ul class="main-header__item-list">
                 <li class="main-header__item">
-                    <a class="<%= path === '/' ? 'active' : '' %>" href="/">Pronađi</a>
+                    <a class="<%= path === '/pronadji' ? 'active' : '' %>" href="/pronadji">Pronađi</a>
                 </li>
                 <li class="main-header__item">
                     <a class="<%= path === '/zajednica' ? 'active' : '' %>" href="/zajednica">Zajednica</a>
@@ -27,13 +27,13 @@
                     </li>
                     <% if (role == "admin" || role == "system") { %>
                         <li class="main-header__item">
-                            <a class="<%= path === '/admin/recipes' ? 'active' : '' %>" href="/admin/recipes">Admin Recepti</a>
+                            <a class="<%= path === '/admin/recepti' ? 'active' : '' %>" href="/admin/recepti">Admin Recepti</a>
                         </li>
                         <li class="main-header__item">
-                            <a class="<%= path === '/admin/books' ? 'active' : '' %>" href="/admin/books">Admin Knjige</a>
+                            <a class="<%= path === '/admin/knjige' ? 'active' : '' %>" href="/admin/knjige">Admin Knjige</a>
                         </li>
                         <li class="main-header__item">
-                            <a class="<%= path === '/admin/users' ? 'active' : '' %>" href="/admin/users">Admin Korisnici</a>
+                            <a class="<%= path === '/admin/korisnici' ? 'active' : '' %>" href="/admin/korisnici">Admin Korisnici</a>
                         </li>
                     <% } %>
                     <% if (role === "system") { %>
@@ -53,9 +53,12 @@
                 <% } %>
             </ul>
             <ul class="main-header__item-list">
+                <li class="main-header__item">
+                    <a class="<%= path === '/fitness-family' ? 'active' : '' %>">Fitness Family</a>
+                </li>
                 <% if (!isAuthenticated) { %>
                     <li class="main-header__item">
-                        <a class="<%= path === '/prijava' ? 'active' : '' %>" href="/prijava">Prijava</a>
+                        <a class="<%= path === '/prijava' ? 'active' : '' %>" href="/prijava?redirectTo=/novosti">Prijava</a>
                     </li>
                     <li class="main-header__item">
                         <a class="<%= path === '/registracija' ? 'active' : '' %>" href="/registracija">Registracija</a>
@@ -73,7 +76,7 @@
         <nav class="mobile-nav">
             <ul class="mobile-nav__item-list">
                 <li class="mobile-nav__item">
-                    <a class="<%= path === '/' ? 'active' : '' %>" href="/">Pronađi</a>
+                    <a class="<%= path === '/pronadji' ? 'active' : '' %>" href="/pronadji">Pronađi</a>
                 </li>
                 <li class="mobile-nav__item">
                     <a class="<%= path === '/zajednica' ? 'active' : '' %>" href="/zajednica">Zajednica</a>
@@ -94,13 +97,13 @@
                     <% if (role == "admin" || role == "system") { %>
                         <hr>
                         <li class="mobile-nav__item">
-                            <a class="<%= path === '/admin/recipes' ? 'active' : '' %>" href="/admin/recipes">Admin Recepti</a>
+                            <a class="<%= path === '/admin/recepti' ? 'active' : '' %>" href="/admin/recepti">Admin Recepti</a>
                         </li>
                         <li class="mobile-nav__item">
-                            <a class="<%= path === '/admin/books' ? 'active' : '' %>" href="/admin/books">Admin Knjige</a>
+                            <a class="<%= path === '/admin/knjige' ? 'active' : '' %>" href="/admin/knjige">Admin Knjige</a>
                         </li>
                         <li class="mobile-nav__item">
-                            <a class="<%= path === '/admin/users' ? 'active' : '' %>" href="/admin/users">Admin Korisnici</a>
+                            <a class="<%= path === '/admin/korisnici' ? 'active' : '' %>" href="/admin/korisnici">Admin Korisnici</a>
                         </li>
                     <% } %>
                     <% if (role === "system") { %>
@@ -142,7 +145,7 @@
                 <hr>
                 <% if (!isAuthenticated) { %>
                     <li class="mobile-nav__item">
-                        <a class="<%= path === '/prijava' ? 'active' : '' %>" href="/prijava">Prijava</a>
+                        <a class="<%= path === '/prijava' ? 'active' : '' %>" href="/prijava?redirectTo=/novosti">Prijava</a>
                     </li>
                     <li class="mobile-nav__item">
                         <a class="<%= path === '/registracija' ? 'active' : '' %>" href="/registracija">Registracija</a>

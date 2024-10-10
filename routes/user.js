@@ -323,10 +323,10 @@ router.post('/zapratite-korisnika', isAuth, [], userController.postFollowUser);
 router.post('/odpratite-korisnika', isAuth, [], userController.postUnfollowUser);
 
 // SUBSCRIBE-TO-USER
-router.post('/predplatite-se-na-korisnika', isAuth, [], userController.postSubscribeToUser);
+router.post('/pretplatite-se-na-korisnika', isAuth, [], userController.postSubscribeToUser);
 
 // UNSUBSCRIBE-FROM-USER
-router.post('/prekinite-predplatu-korisniku', isAuth, [], userController.postUnsubscribeFromUser);
+router.post('/prekinite-pretplatu-korisniku', isAuth, [], userController.postUnsubscribeFromUser);
 
 // BLOCK-USER
 router.post('/blokirajte-korisnika', isAuth, [

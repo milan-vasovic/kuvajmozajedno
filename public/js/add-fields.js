@@ -1,4 +1,4 @@
- // Adding new inputs and remove button for AddIngredients
+// Adding new inputs and remove button for AddIngredients
 //  get elemebt by id and add event listener
  document.getElementById("addIngredient").addEventListener("click", function (e) {
     e.preventDefault();
@@ -48,32 +48,92 @@ document.getElementById("stepsContainer").addEventListener("click", function (e)
     }
 });
 
-document.getElementById("addCategory").addEventListener("click", function (e) {
-    e.preventDefault();
-    const categoryContainer = document.getElementById("categoryContainer");
-    const newCategory = document.createElement("div");
-    const newIndex = Date.now(); // Unique index
-    newCategory.classList.add("main-form__category-container");
+// document.getElementById("addCategory").addEventListener("click", function (e) {
+//     e.preventDefault();
+//     const categoryContainer = document.getElementById("categoryContainer");
+//     const newCategory = document.createElement("div");
+//     const newIndex = Date.now(); // Unique index
+//     newCategory.classList.add("main-form__category-container");
 
-    const input = document.createElement("input");
-    input.classList.add("main-form__input");
-    input.id = "category" + newIndex;
-    input.type = "text";
-    input.name = "category";
-    input.placeholder = "Kategorija";
-    input.required = true;
+//     const input = document.createElement("input");
+//     input.classList.add("main-form__input");
+//     input.id = "category" + newIndex;
+//     input.type = "text";
+//     input.name = "category";
+//     input.placeholder = "Kategorija";
+//     input.required = true;
 
-    const button = document.createElement("button");
-    button.type = 'button';
-    button.classList.add("btn", "btn-danger", "removeCategory");
-    button.setAttribute("data-index", newIndex);
-    button.textContent = "Izbacite";
+//     const button = document.createElement("button");
+//     button.type = 'button';
+//     button.classList.add("btn", "btn-danger", "removeCategory");
+//     button.setAttribute("data-index", newIndex);
+//     button.textContent = "Izbacite";
 
-    newCategory.appendChild(input);
-    newCategory.appendChild(button);
+//     newCategory.appendChild(input);
+//     newCategory.appendChild(button);
 
-    categoryContainer.appendChild(newCategory);
-});
+//     categoryContainer.appendChild(newCategory);
+// });
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("addCategory").addEventListener("click", async function (e) {
+        e.preventDefault();
+  
+        const categoryContainer = document.getElementById("categoryContainer");
+        const newCategory = document.createElement("div");
+        const newIndex = Date.now(); // Jedinstveni indeks
+        newCategory.classList.add("main-form__category-container");
+  
+        // Fetch podaci iz JSON fajla ili API-ja
+        try {
+          const response = await fetch('/json/categories.json');
+          const data = await response.json();
+  
+          // Kreiraj select element
+          const select = document.createElement("select");
+          select.classList.add("main-form__select");
+          select.name = "category";
+          select.required = true;
+  
+          // Popuni select opcijama iz JSON-a
+          data.categories.forEach(mainCategory => {
+            const optgroup = document.createElement("optgroup");
+            optgroup.label = mainCategory.mainCategory;
+  
+            mainCategory.subCategories.forEach(subCategory => {
+              const option = document.createElement("option");
+              option.value = subCategory;
+              option.textContent = subCategory;
+              optgroup.appendChild(option);
+            });
+  
+            select.appendChild(optgroup);
+          });
+  
+          // Kreiraj dugme za brisanje
+          const button = document.createElement("button");
+          button.type = 'button';
+          button.classList.add("btn", "btn-danger", "removeCategory");
+          button.setAttribute("data-index", newIndex);
+          button.textContent = "Izbacite";
+  
+          // Dodaj select i dugme za brisanje u novi element
+          newCategory.appendChild(select);
+          newCategory.appendChild(button);
+  
+          // Dodaj novi element u container
+          categoryContainer.appendChild(newCategory);
+  
+          // Dodaj event listener za brisanje nove kategorije
+          button.addEventListener("click", function () {
+              categoryContainer.removeChild(newCategory);
+          });
+        } catch (error) {
+          console.error("Greška pri učitavanju JSON podataka:", error);
+        }
+    });
+  });
+  
 
 // Uklanjanje polja za Category
 document.getElementById("categoryContainer").addEventListener("click", function (e) {

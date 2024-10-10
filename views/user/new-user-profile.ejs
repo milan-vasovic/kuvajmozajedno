@@ -57,13 +57,13 @@
                                     <% if (!subscriberExist) { %>
                                         <% if (user.role !== 'user' ) { %>
                                             <% if (wallet >= +user.subCost) { %>
-                                                <form action="/predplatite-se-na-korisnika" method="POST">
+                                                <form action="/pretplatite-se-na-korisnika" method="POST">
                                                     <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
                                                     <input name="userId" type="hidden" value="<%= user._id %>">
-                                                    <button class="btn" type="submit">Predplatite Se</button>
+                                                    <button class="btn" type="submit">Pretplatite Se</button>
                                                 </form>
                                             <% } else { %>
-                                                <button class="btn" type="submit" disabled>Predplatite Se</button>
+                                                <button class="btn" type="submit" disabled>Pretplatite Se</button>
                                             <% } %>
                                         <% } %>
                                         <% if (user.role !== "system") { %>
@@ -74,10 +74,10 @@
                                             </form>
                                         <% } %>
                                     <% } else { %>
-                                        <form action="/prekinite-predplatu-korisniku" method="POST">
+                                        <form action="/prekinite-pretplatu-korisniku" method="POST">
                                             <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
                                             <input name="userId" type="hidden" value="<%= user._id %>">
-                                            <button class="btn" type="submit">Prekinite Predplatu</button>
+                                            <button class="btn" type="submit">Prekinite Pretplatu</button>
                                         </form>
                                     <% } %>
                                 <% } %>

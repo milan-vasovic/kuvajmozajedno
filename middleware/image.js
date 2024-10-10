@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Recipe = require("../models/recipe");
 const Book = require("../models/book");
 const path = require('path');
+const Topic = require("../models/topic");
 
 module.exports = async (req, res, next) => {
     try {
@@ -81,7 +82,17 @@ module.exports = async (req, res, next) => {
                     return next(error);
                 }
 
-                if (!recipe && !book && (lockedImagePath === imagePath)) {
+                const topic = await Topic.findOne({'bannerImage' : imagePath});
+
+                if (topic) {
+                    return next();
+                }
+
+                if (!recipe && !book && !topic && (lockedImagePath === imagePath)) {
+                    return next();
+                }
+
+                if (imagePath == '/images/kuvajmozajedno_hero.png' || imagePath == '/images/fitnesfamilija_hero.png') {
                     return next();
                 }
 
@@ -122,6 +133,16 @@ module.exports = async (req, res, next) => {
             const error = new Error("Unauthorized!");
             error.httpStatusCode = 403;
             return next(error);
+        }
+
+        const topic = await Topic.findOne({'bannerImage' : imagePath});
+
+        if (topic) {
+            return next();
+        }
+
+        if (imagePath == '/images/kuvajmozajedno_hero.png' || imagePath == '/images/fitnesfamilija_hero.png') {
+            return next();
         }
 
         const error = new Error("There is no such image!");

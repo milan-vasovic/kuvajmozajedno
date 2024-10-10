@@ -7,7 +7,7 @@
         </h1>
         <div class="content__container">
             <div class="main-form__container">
-                <form class="main-form" action="<% if (editing) { %>/izmenite-recept<% } else { %>/dodajte-recept<% } %>" method="POST" enctype="multipart/form-data">
+                <form class="main-form" action="<% if (isAdmin) { %>/admin/izmenite-recept<% } else if (editing) { %>/izmenite-recept<% } else { %>/dodajte-recept<% } %>" method="POST" enctype="multipart/form-data">
                     <div class="main-form__group">
                         <label for="title"><strong>Naziv:</strong></label>
                         <input class="main-form__input" type="text" id="title" name="title" placeholder="Naziv" value="<% if(existingData) { %><%= existingData.title %><% } else if (editing) { %><%= recipe.title %><% } %>" required>
@@ -18,7 +18,17 @@
                             <% existingData.category.forEach((category, index) => { %>
                                 <label for="category<%= index %>"><strong>Kategorije:</strong></label>
                                 <div class="main-form__category-container">
-                                    <input class="main-form__input" id="category<%= index %>" type="text" name="category" value="<%= category %>" placeholder="Kategorija" required>
+                                    <select class="main-form__select" name="category" id="category-select" required>
+                                        <% categories.categories.forEach(mainCategory => { %>
+                                          <optgroup label="<%= mainCategory.mainCategory %>">
+                                            <option value="<%= existingData.category %>" selected><% existingData.category %></option>
+                                            <% mainCategory.subCategories.forEach(subCategory => { %>
+                                                <!-- Proveri da li se category podudara sa subCategory -->
+                                                <option value="<%= subCategory %>"><%= subCategory %></option>
+                                            <% }) %>
+                                          </optgroup>
+                                        <% }) %>
+                                    </select>
                                     <button type="button" class="btn btn-danger removeCategory" data-index="<%= index %>">Izbacite</button>
                                 </div>
                             <% }) %>
@@ -28,7 +38,16 @@
                             <% recipe.category.forEach((category, index) => { %>
                                 <label for="category<%= index %>"><strong>Kategorije:</strong></label>
                                 <div class="main-form__category-container">
-                                    <input class="main-form__input" id="category<%= index %>" type="text" name="category" value="<%= category %>" placeholder="Kategorija" required>
+                                    <select class="main-form__select" name="category" id="category-select" required>
+                                        <option value="<%= category %>" selected><%= category %></option>
+                                    <% categories.categories.forEach(mainCategory => { %>
+                                      <optgroup label="<%= mainCategory.mainCategory %>">
+                                        <% mainCategory.subCategories.forEach(subCategory => { %>
+                                          <option value="<%= subCategory %>"><%= subCategory %></option>
+                                        <% }) %>
+                                      </optgroup>
+                                    <% }) %>
+                                </select>
                                     <button type="button" class="btn btn-danger removeCategory" data-index="<%= index %>">Izbacite</button>
                                 </div>
                             <% }) %>
@@ -37,7 +56,15 @@
                         <div class="main-form__group" id="categoryContainer">
                             <label for="category0"><strong>Kategorije:</strong></label>
                             <div class="main-form__category-container">
-                                <input class="main-form__input" id="category0" type="text" name="category" placeholder="Kategorija" required>
+                                <select class="main-form__select" name="category" id="category-select" required>
+                                    <% categories.categories.forEach(mainCategory => { %>
+                                      <optgroup label="<%= mainCategory.mainCategory %>">
+                                        <% mainCategory.subCategories.forEach(subCategory => { %>
+                                          <option value="<%= subCategory %>"><%= subCategory %></option>
+                                        <% }) %>
+                                      </optgroup>
+                                    <% }) %>
+                                </select>
                                 <button type="button" class="btn btn-danger removeCategory" data-index="0">Izbacite</button>
                             </div>
                         </div>

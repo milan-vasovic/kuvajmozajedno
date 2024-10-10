@@ -19,25 +19,25 @@
                     </div>
                     <div class="author__container">
                         <img class="author__image" src="<%= book.author.userImage %>" alt="<%= book.author.username %>">
-                        <a class="main__link" href="/admin/user-details/<%= book.author._id %>">
+                        <a class="main__link" href="/admin/korisnik-detalji/<%= book.author._id %>">
                             <%= book.author.username %>
                         </a>
                     </div>
                 </div>
                 <div class="card__content">
-                    <p>Created at: <%= book.createdAt.toLocaleString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></p>
-                    <p>Description: <%= book.description %></p>
+                    <p>Napravljena: <%= book.createdAt.toLocaleString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></p>
+                    <p>Opis: <%= book.description %></p>
                     <div class="stats__container">
-                        <p>Views: <strong><%= book.views.count %></strong></p>
-                        <p>Saves: <strong><%= book.saves.count %></strong></p>
+                        <p>Pregledi: <strong><%= book.views.count %></strong></p>
+                        <p>Čuvanja: <strong><%= book.saves.count %></strong></p>
                     </div>
                 </div>
                 <div class="card__actions">
-                    <a class="btn" href="/admin/edit-book/<%= book._id %>">Edit</a>
-                    <form action="/admin/delete-book" method="POST">
+                    <a class="btn" href="/admin/izmenite-knjigu/<%= book._id %>">Izmenite</a>
+                    <form action="/admin/izbrisite-knjigu" method="POST">
                         <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
                         <input name="bookId" type="hidden" value="<%= book._id %>">
-                        <button class="btn btn-danger" type="submit">Delete</button>
+                        <button class="btn btn-danger" type="submit">Izbrišite</button>
                     </form>
                 </div>
             </div>
@@ -45,17 +45,17 @@
         <div class="right-content__container">
             <div class="top-content__container">
                 <div>
-                    <strong>Description: </strong><%= book.description %>
+                    <strong>Opis: </strong><%= book.description %>
                 </div>
             </div>
             <div class="bottom-content__container">
                 <div class="tab-container">
                     <div class="tabs">
-                        <button type="button" class="tab active btn" onclick="openTab('recipes__container',1)" data-tab="recipes__container">Recipes</button>
+                        <button type="button" class="tab active btn" onclick="openTab('recipes__container',1)" data-tab="recipes__container">Recepti</button>
                         <% if (book.type === 'protected') { %>
-                            <button type="button" class="tab btn" onclick="openTab('buyers__container',1)" data-tab="buyers__container">Buyers</button>
+                            <button type="button" class="tab btn" onclick="openTab('buyers__container',1)" data-tab="buyers__container">Kupci</button>
                             <button type="button" class="tab btn" onclick="openTab('history__container', 1)"
-                            data-tab="history__container">History</button>
+                            data-tab="history__container">Istorija</button>
                         <% } %>
                     </div>
                 </div>
@@ -63,12 +63,12 @@
                     <div id="recipes__container" class="tab-content active" data-tab="recipes__container">
                         <% if (book.recipes.length > 0) { %>
                             <table id="bookRecipesTable" class="table">
-                                <caption>Recipes:</caption>
+                                <caption>Recepti:</caption>
                                 <thead>
                                     <tr>
-                                        <th>Recipe Image</th>
-                                        <th>Title</th>
-                                        <th>Action</th>
+                                        <th>Slika</th>
+                                        <th>Naziv</th>
+                                        <th>Akcije</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -76,25 +76,25 @@
                                         <tr>
                                             <td><img class="table__image" src="<%= recipe.recipeId.featureImage %>" alt="<%= recipe.recipeId.title %>"></td>
                                             <td><%= recipe.recipeId.title %></td>
-                                            <td><a class="btn" href="/recept-detalji/<%= recipe.recipeId._id %>">View</a></td>
+                                            <td><a class="btn" href="/recept-detalji/<%= recipe.recipeId._id %>">Detalji</a></td>
                                         </tr>
                                     <% }) %>
                                 </tbody>
                             </table>
                         <% } else { %>
-                            <p>There aren't any recipes in this book!</p>
+                            <p>Trenutno nema Recepata!</p>
                         <% } %>
                     </div>
                     <% if (book.type === 'protected') { %>
                         <div id="buyers__container" class="tab-content" data-tab="buyers__container">
                             <% if (book.buyers.length > 0) { %>
                                 <table id="bookBuyersTable" class="table">
-                                    <caption>Buyers:</caption>
+                                    <caption>Kupci:</caption>
                                     <thead>
                                         <tr>
-                                            <th>User Image</th>
-                                            <th>Username</th>
-                                            <th>Action</th>
+                                            <th>Slika</th>
+                                            <th>Korisničko Ime</th>
+                                            <th>Akcije</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -102,34 +102,34 @@
                                             <tr>
                                                 <td><img class="table__image" src="<%= buyer.userId.userImage %>" alt="<%= buyer.userId.username %>"></td>
                                                 <td><%= buyer.userId.username %></td>
-                                                <td><a class="btn" href="/korisnik-profil/<%= buyer.userId._id %>">View</a></td>
+                                                <td><a class="btn" href="/korisnik-profil/<%= buyer.userId._id %>">Detalji</a></td>
                                             </tr>
                                         <% }) %>
                                     </tbody>
                                 </table>
                             <% } else { %>
-                                <p>There aren't any buyers yet!</p>
+                                <p>Trenutno nema Kupaca!</p>
                             <% } %>
                         </div>
                         <div id="history__container" class="tab-content" data-tab="history__container">
                             <% if (book.history.length> 0) { %>
                                 <table id="adminBookHistoryTable" class="table">
-                                    <caption>History:</caption>
+                                    <caption>Istroija:</caption>
                                     <thead>
                                         <tr>
-                                            <th>Transaction ID</th>
-                                            <th>Type</th>
-                                            <th>What</th>
-                                            <th>Who</th>
-                                            <th>Cost</th>
-                                            <th>Date</th>
-                                            <th>Action</th>
+                                            <th>Transakcioni ID</th>
+                                            <th>Tip</th>
+                                            <th>Šta</th>
+                                            <th>ko</th>
+                                            <th>Cena</th>
+                                            <th>Datum</th>
+                                            <th>Akcije</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% book.history.forEach(history=> { %>
                                             <tr>
-                                                <td data-label="ID"><a class="main__link" href="/admin/history/<%= history.historyId._id %>">
+                                                <td data-label="ID"><a class="main__link" href="/admin/istorija/<%= history.historyId._id %>">
                                                         <%= history.historyId._id %>
                                                     </a></td>
                                                 <td data-label="Type">
@@ -160,14 +160,14 @@
                                                                     hour: '2-digit' , minute: '2-digit' }) %>
                                                             </td>
                                                             <td data-label="Actions">
-                                                                <a class="btn" href="/admin/history/<%= history.historyId._id %>">View</a>
+                                                                <a class="btn" href="/admin/istorija/<%= history.historyId._id %>">Detalji</a>
                                                             </td>
                                             </tr>
                                             <% }) %>
                                     </tbody>
                                 </table>
                                 <% } else { %>
-                                    <p>There aren't any history yet!</p>
+                                    <p>Trenutno nema Istorije!</p>
                                 <% } %>
                         </div>
                     <% } %>

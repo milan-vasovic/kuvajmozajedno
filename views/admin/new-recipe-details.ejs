@@ -1,6 +1,6 @@
 <%- include('../includes/head.ejs') %>
 <link rel="stylesheet" href="/css/admin.css">
-<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/new-main.css">
     <%- include('../includes/navigation.ejs') %>
         <section class="main__container">
             <% function calculateAverageStars(ratings) {
@@ -24,13 +24,19 @@
                             <h1><%= recipe.title %></h1>
                             <h4>ID: <%= recipe._id %></h4>
                             <div class="gallery__container">
-                                <img class="card__image" src="<%= recipe.featureImage %>" alt="<%= recipe.title %>">
+                                <div class="main-image">
+                                    <img class="card__image" src="<%= recipe.featureImage %>" alt="<%= recipe.title %>">
+                                </div>
                                 <div class="thumbnail__container">
                                     <img class="thumbnail" src="<%= recipe.featureImage %>" alt="<%= recipe.title %>"  onclick="changeImage('<%= recipe.featureImage %>')">
                                     <% recipe.images.forEach(image=> { %>
                                         <img src="<%= image %>" alt="<%= recipe.title %>" class="thumbnail"
                                             onclick="changeImage('<%= image %>')">
                                     <% }) %>
+                                </div>
+                                <div id="overlay" class="overlay">
+                                    <span class="close-btn">&times;</span>
+                                    <img id="overlay-img" class="overlay-content">
                                 </div>
                             </div>
                             <p class="rating">
@@ -65,7 +71,7 @@
                             <div class="category__container">
                                 <% recipe.category.forEach( c=> { %>
                                     <h4>
-                                        <a class="main__link" href="/recipes-category/<%= c %>">
+                                        <a class="main__link" href="/recepti-kategorije/<%= c %>">
                                             <%= c %>
                                         </a>
                                     </h4>
@@ -84,17 +90,17 @@
                             </div>
                             <div class="author__container">
                                 <img class="author__image" src="<%= recipe.author.userImage %>" alt="<%= recipe.author.username %>">
-                                <a class="main__link" href="/admin/user-details/<%= recipe.author._id %>">
+                                <a class="main__link" href="/admin/korisnik-detalji/<%= recipe.author._id %>">
                                     <%= recipe.author.username %>
                                 </a>
                             </div>
                         </div>
                         <div class="card__actions">
-                            <a class="btn" href="/admin/edit-recipe/<%= recipe._id %>">Edit</a>
-                            <form action="/admin/delete-recipe" method="POST">
+                            <a class="btn" href="/admin/izmenite-recept/<%= recipe._id %>">Izmenite</a>
+                            <form action="/admin/izbrisite-recept" method="POST">
                                 <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
                                 <input name="recipeId" type="hidden" value="<%= recipe._id %>">
-                                <button class="btn btn-danger" type="submit">Delete</button>
+                                <button class="btn btn-danger" type="submit">Izbrišite</button>
                             </form>
                         </div>
                     </div>
@@ -102,31 +108,31 @@
                 <div class="right-content__container">
                     <div class="top-content__container">
                         <div>
-                            <strong>Description: </strong><%= recipe.description %>
+                            <strong>Opis: </strong><%= recipe.description %>
                         </div>
                     </div>
                     <div class="bottom-content__container">
                         <div class="tab-container">
                             <div class="tabs">
                                 <button type="button" class="tab active btn" onclick="openTab('ingredients__container', 1)"
-                                    data-tab="ingredients__container">Ingredients</button>
+                                    data-tab="ingredients__container">Sastojci</button>
                                 <button type="button" class="tab btn" onclick="openTab('nutritions__container', 1)"
-                                    data-tab="nutritions__container">Nutritions</button>
+                                    data-tab="nutritions__container">Nutritivne Vrednosti</button>
                                 <button type="button" class="tab btn" onclick="openTab('preparation__container', 1)"
-                                    data-tab="preparation__container">Prepariton</button>
+                                    data-tab="preparation__container">Priprema</button>
                                 <button type="button" class="tab btn" onclick="openTab('ratings__container', 1)"
-                                    data-tab="ratings__container">Ratings</button>
+                                    data-tab="ratings__container">Ocene</button>
                                 <% if (recipe.type=="protected" ) { %>
                                     <button type="button" class="tab btn" onclick="openTab('buyers__container', 1)"
-                                        data-tab="buyers__container">Buyers</button>
+                                        data-tab="buyers__container">Kupci</button>
                                     <button type="button" class="tab btn" onclick="openTab('history__container', 1)"
-                                        data-tab="history__container">History</button>
+                                        data-tab="history__container">Istorija</button>
                                     <% } %>
                             </div>
                         </div>
                         <div class="result__container">
                             <div id="ingredients__container" class="tab-content active" data-tab="ingredients__container">
-                                <h4>Ingredients:</h4>
+                                <h4>Sastojci:</h4>
                                 <ul>
                                     <% recipe.ingredients.forEach(ingredinet=> { %>
                                         <li>
@@ -136,7 +142,7 @@
                                 </ul>
                             </div>
                             <div id="nutritions__container" class="tab-content" data-tab="nutritions__container">
-                                <h4>Nutritions:</h4>
+                                <h4>Nutritivne Vrednosti:</h4>
                                 <ul>
                                     <% recipe.nutritions.forEach(nutrition=> { %>
                                         <li>
@@ -146,7 +152,7 @@
                                 </ul>
                             </div>
                             <div id="preparation__container" class="tab-content" data-tab="preparation__container">
-                                <h4>Prepartion:</h4>
+                                <h4>Priprema:</h4>
                                 <p>
                                     <strong>
                                         <%= recipe.preparation.note %>
@@ -165,12 +171,12 @@
                             </div>
                             <div id="ratings__container" class="tab-content" data-tab="ratings__container">
                                         <table id="adminRecipeRatingsTable">
-                                            <caption>Recipe Ratings</caption>
+                                            <caption>Ocene</caption>
                                             <thead>
                                                 <tr>
-                                                    <th>User Image</th>
-                                                    <th>Username</th>
-                                                    <th>Stars</th>
+                                                    <th>Slika</th>
+                                                    <th>Korisničko Ime</th>
+                                                    <th>Zvezde</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -210,12 +216,12 @@
                             <div id="buyers__container" class="user tab-content" data-tab="buyers__container">
                                 <% if (recipe.buyers.length> 0) { %>
                                     <table id="adminRecipeBuyersTable" class="table">
-                                        <caption>Buyers:</caption>
+                                        <caption>Kupci:</caption>
                                         <thead>
                                             <tr>
-                                                <th>User Image</th>
-                                                <th>Username</th>
-                                                <th>Action</th>
+                                                <th>Slika</th>
+                                                <th>Korisničko Ime</th>
+                                                <th>Akcije</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -237,21 +243,21 @@
                                         </tbody>
                                     </table>
                                     <% } else { %>
-                                        <p>There aren't any buyer yet!</p>
+                                        <p>Trenutno nema Ocena!</p>
                                         <% } %>
                             </div>
                             <div id="history__container" class="tab-content" data-tab="history__container">
                                 <% if (recipe.history.length> 0) { %>
                                     <table id="adminRecipeHistoryTable" class="table">
-                                        <caption>History:</caption>
+                                        <caption>Istroija:</caption>
                                         <thead>
                                             <tr>
-                                                <th>ID</th>
-                                                <th>Type</th>
-                                                <th>What</th>
-                                                <th>Who</th>
-                                                <th>Cost</th>
-                                                <th>Date</th>
+                                                <th>Transakcioni ID</th>
+                                                <th>Tip</th>
+                                                <th>Šta</th>
+                                                <th>Ko</th>
+                                                <th>Cena</th>
+                                                <th>Datum</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -292,7 +298,7 @@
                                         </tbody>
                                     </table>
                                     <% } else { %>
-                                        <p>There aren't any history yet!</p>
+                                        <p>Trenutno nema Istorije!</p>
                                     <% } %>
                             </div>
                         </div>
@@ -300,4 +306,33 @@
                 </div>
             </div>
         </section>
+        <script>
+            // Pronađi sve slike koje se mogu kliknuti (sličice)
+            const thumbnails = document.querySelectorAll('.card__image');
+
+            // Pronađi overlay element i sliku unutar overlay-a
+            const overlay = document.getElementById('overlay');
+            const overlayImg = document.getElementById('overlay-img');
+            const closeBtn = document.querySelector('.close-btn');
+
+            // Kada se klikne na sličicu, prikaži je u overlay-u
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    overlay.style.display = 'flex';
+                    overlayImg.src = this.src; // Postavi izvor slike na overlay sliku
+                });
+            });
+
+            // Kada se klikne na dugme za zatvaranje, sakrij overlay
+            closeBtn.addEventListener('click', function() {
+            overlay.style.display = 'none';
+            });
+
+            // Opcionalno: Zatvori overlay klikom na pozadinu
+            overlay.addEventListener('click', function(event) {
+            if (event.target === overlay) {
+                overlay.style.display = 'none';
+            }
+            });
+        </script>
     <%- include('../includes/end.ejs') %>

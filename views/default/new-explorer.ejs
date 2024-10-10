@@ -43,7 +43,7 @@
                                     <% categories.forEach(category => { %>
                                         <li class="category-list__item">
                                             <a class="main__link" href="?category=<%=category._id %>">
-                                                <%= category._id %>
+                                                <%= category._id %><spna class="devider"> | </spna>
                                             </a>
                                         </li>
                                     <% }) %>
@@ -111,7 +111,7 @@
                                         <h3 class="info__title">Trenutno nema Recepta!</h3>
                                     </div>
                                 <% } %>
-                                <%- include('../includes/pagination.ejs', {currentPage: currentRecipePage, nextPage: nextRecipePage, previousPage: previousRecipePage, lastPage: lastRecipePage, hasNextPage: hasNextRecipePage, hasPreviousPage: hasPreviousRecipePage, pageType: 'recipePage'}) %>
+                                <%- include('../includes/pagination.ejs', {currentPage: currentRecipePage, nextPage: nextRecipePage, previousPage: previousRecipePage, lastPage: lastRecipePage, hasNextPage: hasNextRecipePage, hasPreviousPage: hasPreviousRecipePage, pageType: 'recipePage', searchCond: searchCond}) %>
                             </div>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
                                 <h3 class="info__title">Trenutno nema Knjiga!</h3>
                             </div>
                         <% } %>
-                        <%- include('../includes/pagination.ejs', {currentPage: currentBookPage, nextPage: nextBookPage, previousPage: previousBookPage, lastPage: lastBookPage, hasNextPage: hasNextBookPage, hasPreviousPage: hasPreviousBookPage, pageType: 'bookPage'}) %>
+                        <%- include('../includes/pagination.ejs', {currentPage: currentBookPage, nextPage: nextBookPage, previousPage: previousBookPage, lastPage: lastBookPage, hasNextPage: hasNextBookPage, hasPreviousPage: hasPreviousBookPage, pageType: 'bookPage', searchCond: searchCond}) %>
                     </div>
                     <div id="users__container" class="users__container tab-content <%= activeUser %>" data-tab="users__container">
                         <h2 class="sub__title">Korisnici</h2>
@@ -184,7 +184,7 @@
                                 <h3 class="info__title">Trenutno nema Korisnika!</h3>
                             </div>
                         <% } %>
-                        <%- include('../includes/pagination.ejs', {currentPage: currentUserPage, nextPage: nextUserPage, previousPage: previousUserPage, lastPage: lastUserPage, hasNextPage: hasNextUserPage, hasPreviousPage: hasPreviousUserPage, pageType: 'userPage'}) %>
+                        <%- include('../includes/pagination.ejs', {currentPage: currentUserPage, nextPage: nextUserPage, previousPage: previousUserPage, lastPage: lastUserPage, hasNextPage: hasNextUserPage, hasPreviousPage: hasPreviousUserPage, pageType: 'userPage', searchCond: searchCond}) %>
                     </div>
                 </div>
             </div>
