@@ -1,0 +1,417 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+@import url('/css/form.css');
+@import url('/css/tabs.css');
+@import url('/css/table.css');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.main__container {
+    min-height: 83vh;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+}
+
+/* ___________________________________TITLES, LINKS AND LIST STYLES_________________________________________________________________ */
+
+.main__title {
+    text-align: center;
+}
+
+.info__title {
+    text-align: center;
+}
+
+.sub__title {
+    text-align: center;
+}
+
+.main__link {
+    text-decoration: none;
+    color: #009688;
+}
+
+.category__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    flex-wrap: wrap;
+}
+
+.text {
+    text-align: left;
+}
+/* _____________________________________BUTTON STYLES_______________________________________________________________ */
+
+.btn {
+    display: inline-block;
+    padding: 0.25rem 1rem;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid #009688;
+    color: #009688;
+    background: white;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.btn:hover,
+.btn:active {
+    background-color: #009688;
+    color: white;
+}
+
+.btn-danger {
+    border: 1px solid #ad1b1b;
+    background-color: white;
+    color: #ad1b1b;
+}
+
+.btn-danger:hover,
+.btn-danger:active {
+    background-color: #ad1b1b;
+    color: white;
+}
+
+.btn-success {
+    width: 100%;
+    display: inline-block;
+    padding: 0.25rem 1rem;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid #009688;
+    color: white;
+    background: #009688;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.btn-success:hover,
+.btn-success:active {
+    color: #009688;
+    background: white;
+}
+
+button[disabled] {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+/* __________________________________________PRICE/AMOUNT STYLES_______________________________________________________ */
+
+.positive {
+    font-weight: bold;
+    color: #009688;
+}
+
+.negative {
+    font-weight: bold;
+    color: #ad1b1b;
+}
+
+.neutral {
+    font-weight: bold;
+    color: #f5a623;
+}
+
+/* ___________________________________________BADGE STYLES______________________________________________________________ */
+
+.public {
+    width: 75px;
+    height: 25px;
+    text-align: center;
+    background-color: aquamarine;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.private {
+    width: 75px;
+    height: 25px;
+    text-align: center;
+    background-color: brown;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.protected {
+    width: 75px;
+    height: 25px;
+    text-align: center;
+    background-color: burlywood;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.stars {
+    display: inline-block;
+    font-size: 20px;
+    color: #f5a623;
+}
+
+.star {
+    margin: 0 2px;
+    font-size: 20px;
+}
+
+.filled {
+    color: #f5a623;
+}
+
+.half {
+    position: relative;
+    color: #f5a623;
+}
+
+.half-star {
+    margin: 0 2px;
+    font-size: 15px;
+}
+
+.half-filled {
+    color: #f5a623;
+}
+
+.half-empty {
+    color: black;
+}
+
+.empty {
+    color: black;
+}
+
+.shield, .check_mark {
+    color: #009688;
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+
+/* ___________________________________________PAGINATION STYLES________________________________________________ */
+
+.pagination {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.pagination a {
+    text-decoration: none;
+    color: #009688;
+    padding: 0.5rem;
+    border: 1px solid #009688;
+    margin: 0 1rem;
+}
+
+.pagination a:hover,
+.pagination a:active,
+.pagination a.active {
+    background: #009688;
+    color: white;
+}
+
+/* _______________________________________________CARD STYLES____________________________________________________ */
+
+.cards__container {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.card__container {
+    min-width: 250px;
+    max-width: 350px;
+    padding: 0.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0.2rem 0.4rem rgba(0, 150, 136, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: top;
+}
+
+.author__box {
+    width: 100%;
+    display: flex;
+}
+
+.author__box.advance {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.author-box__link {
+    display: flex;
+    justify-content: space-between;
+}
+
+.author-box__image {
+    max-width: 25px;
+    max-height: 25px;
+}
+
+.card__title {
+    width: 100%;
+    text-align: center;
+}
+
+.card__image {
+    min-width: 300px;
+    max-width: 300px;
+    min-height: 300px;
+    max-height: 300px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.card__categories {
+    margin-top: 0.2rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.card__time {
+    font-size: 20px;
+}
+
+.card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.description {
+    text-align: left;
+}
+
+/* __________________________________IMAGES STYLES____________________________________________ */
+.gallery__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+.thumbnail__container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.thumbnail {
+    max-width: 100px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.devider {
+    display: auto;
+}
+
+.hero__image {
+    width: 400px !important;
+    height: 400px !important;
+    min-width: 300px;
+    min-height: 300px;
+    max-width: 500px;
+    max-height: 500px;
+}
+
+.overlay {
+    display: none; /* Skriveno dok se ne klikne na sliku */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Tamna pozadina sa prozirnošću */
+    z-index: 1000; /* Da bude iznad svih drugih elemenata */
+    justify-content: center;
+    align-items: center;
+}
+  
+.overlay-content {
+    max-width: 90%;
+    max-height: 90%;
+}
+  
+.close-btn {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+}
+
+/* ___________________________ DESKTOP STYLES_______________________________________________ */
+
+@media (min-width: 768px) {
+    .main__container {
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .category__list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        justify-items: start;
+        justify-content: start;
+        align-items: start;
+        flex-wrap: wrap;
+    }
+
+    .category-list__item {
+        margin: 1px;
+    }
+
+    .devider {
+        display: none;
+    }
+
+    .hero__image {
+        width: 400px !important;
+        height: 400px !important;
+        min-width: 300px;
+        min-height: 300px;
+    }
+}

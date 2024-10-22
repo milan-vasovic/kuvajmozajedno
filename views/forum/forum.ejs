@@ -1,0 +1,73 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/explorer.css">
+<link rel="stylesheet" href="/css/new-main.css">
+<link rel="stylesheet" href="/css/forum.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="main__container">
+                <h1 class="main__title"><%= pageTitle %></h1>
+                <div class="content__container">
+                    <div class="left-content__container">
+                        <div class="left__container">
+                            <h1>Kategorije</h1>
+                            <ul class="categories__list">
+                                <% categories.forEach(category => { %>
+                                    <a class="main__link" href="/zajednica?category=<%= category._id %>">
+                                        <li class="list__item"><%= category._id %><span> | </span></li>
+                                    </a>
+                                <% }) %>
+                            </ul>
+                        </div>
+                        <div class="right__container">
+                            <h4>Pozivamo Vas da pročitate i učestvujete u diskusijama. Podelite iskustva, okačite vaše recepte i postanete član naše zajednice.</h4>
+                            <% topics.forEach(topic => { %>
+                                <div class="cards__container">
+                                    <div class="card__container">
+                                        <div class="recipe__card">
+                                            <div class="author__box">
+                                                <img style="max-width: 25px; max-height: 25px;" src="<%= topic.author.userImage %>" alt="<%= topic.author.username %>">
+                                                <a class="main__link" href="/korisnik-profil/<%= topic.author.authorId %>"><%= topic.author.username %> <% if (topic.author.role === 'system') { %><span>&#128081;</span><% } else if (topic.author.role === 'admin') { %><span class="shield">&#128737;</span><% } else if (topic.author.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></a> 
+                                            </div>
+                                            <div class="card__header">
+                                                <h2 class="card__title"><%= topic.title %></h2>
+                                                <img src="<%= topic.bannerImage %>" alt="<%= topic.title %>" class="card__image">
+                                            </div>
+                                            <div class="card__content">
+                                                <h4><%= topic.category.join(", ") %></h4>
+                                                <p class="description"><%= topic.shortDescription %></p>
+                                            </div>
+                                            <div class="card__actions">
+                                                <a class="btn" href="/zajednica/<%= topic._id %>">Pogledaj</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <div class="right-content__container">
+                        <h1>Najčitanije</h1>
+                        <div class="card__container">
+                            <div class="recipe__card">
+                                <div class="author__box">
+                                    <img style="max-width: 25px; max-height: 25px;" src="<%= mostViewedTopic.author.userImage %>" alt="<%= mostViewedTopic.author.username %>">
+                                    <a class="main__link" href="/korisnik-profil/<%= mostViewedTopic.author.authorId %>"><%= mostViewedTopic.author.username %> <% if (mostViewedTopic.author.role === 'system') { %><span>&#128081;</span><% } else if (mostViewedTopic.author.role === 'admin') { %><span class="shield">&#128737;</span><% } else if (mostViewedTopic.author.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></a> 
+                                </div>
+                                <div class="card__header">
+                                    <h2 class="card__title"><%= mostViewedTopic.title %></h2>
+                                    <img src="<%= mostViewedTopic.bannerImage %>" alt="<%= mostViewedTopic.title %>" class="card__image">
+                                </div>
+                                <div class="card__content">
+                                    <h4><%= mostViewedTopic.category.join(", ") %></h4>
+                                    <p class="description"><%= mostViewedTopic.shortDescription %></p>
+                                </div>
+                                <div class="card__actions">
+                                    <a class="btn" href="/zajednica/<%= mostViewedTopic._id %>">Pogledaj</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    <%- include('../includes/end.ejs') %>
+

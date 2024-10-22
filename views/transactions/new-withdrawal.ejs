@@ -1,0 +1,44 @@
+<!-- Include head part of html -->
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/main.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="main__container">
+                <h1 class="title"><%= pageTitle %></h1>
+                <form class="main-form" action="/nova-isplata" method="POST" >
+                    <div class="main-form__group">
+                        <label for="firstname"><strong>Ime:</strong></label>
+                        <input class="main-form__input" type="text" id="firstname" name="firstname" placeholder="Firstname"
+                            value="<% if(existingData) { %><%= existingData.firstname %><% } %>" required>
+                    </div>
+                    <div class="main-form__group">
+                        <label for="lastname"><strong>Prezime:</strong></label>
+                        <input class="main-form__input" type="text" id="lastname" name="lastname" placeholder="Lastname"
+                            value="<% if(existingData) { %><%= existingData.lastname %><% } %>" required>
+                    </div>
+                    <div class="main-form__group">
+                        <label for="accountNumber"><strong>Broj Računa:</strong></label>
+                        <input class="main-form__input" type="text" id="accountNumber" name="accountNumber" placeholder="Account Number"
+                            value="<% if(existingData) { %><%= existingData.accountNumber %><% } %>" required>
+                    </div>
+                    <div class="main-form__group">
+                        <label for="amount"><strong>Količina:</strong></label>
+                        <input class="main-form__input" type="number" id="amount" name="amount" min="<%= min %>" max="<% if (wallet) { %><%= wallet %><% } %>" placeholder="Amount to withdraw"
+                            value="<% if(existingData) { %><%= existingData.amount %><% } %>" required>
+                    </div>
+                    <% if (errorMessage) { %>
+                        <div class="user-message user-message--error">
+                            <%= errorMessage %>
+                        </div>
+                    <% } %>
+
+                    <% if (userRole === 'system' && isSystem === true) { %>
+                        <input type="hidden" name="isSystem" value="true" required>
+                    <% } %>
+                    <input type="hidden" name="userId" value="<%= userId %>" required>
+                    <input type="hidden" name="withdrawalToken" value="<%= withdrawalToken %>" required>
+                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>" required>
+                    <button class="btn" type="submit">Napravi Zahtev za Isplatu</button>
+                </form>
+            </section>
+
+    <%- include('../includes/end.ejs') %>

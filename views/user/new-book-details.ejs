@@ -1,0 +1,214 @@
+<!-- Include head part of html -->
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/recipe-details.css">
+<link rel="stylesheet" href="/css/main.css">
+<%- include('../includes/navigation.ejs') %>
+    <section class="main__container">
+        <h1 class="main__title">
+            <%= pageTitle %>
+        </h1>
+        <div class="recipe-details-content__container">
+            <div class="left-content__container">
+                <div class="recipe-details-card__container">
+                    <div class="card__actions">
+                        <% if (book.author._id.toString() === user._id.toString()) { %>
+                            <a class="btn" href="/izmenite-knjigu/<%= book._id %>">Izmeni</a>
+                            <form action="/izbrisite-knjigu" method="POST">
+                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                <input name="bookId" type="hidden" value="<%= book._id %>">
+                                <button class="btn btn-danger" type="submit">Izbrišite</button>
+                            </form>
+                        <% } else { %>
+                            <% if (book.type != "private" && !book.cond) { %>
+                                <% const bookExist = user.savedBooks.find(sBook => sBook.bookId._id.toString() === book._id.toString()); %>
+                                <% if (!bookExist) { %>
+                                    <form action="/sacuvajte-knjigu" method="POST">
+                                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                        <input name="bookId" type="hidden" value="<%= book._id %>">
+                                        <button class="btn" type="submit">Sačuvajte</button>
+                                    </form>
+                                <% } else { %>
+                                    <form action="/izbacite-sacuvanu-knjigu" method="POST">
+                                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                        <input name="bookId" type="hidden" value="<%= book._id %>">
+                                        <button class="btn" type="submit">Prekinite Čuvanje</button>
+                                    </form>
+                                <% } %>
+                            <% } %>
+                        <% } %>
+                    </div>
+                    <div class="card__header">
+                        <h1><%= book.title %></h1>
+                        <% if (book.author._id.toString() === user._id.toString()) { %>
+                            <h4>ID: <%= book._id %></h4>
+                        <% } %>
+                        <img loading="lazy" class="card__image" src="<%= book.coverImage %>" alt="<%= book.title %>">
+                    </div>
+                    <div class="card__content">
+                        <% if (book.type !== 'private' && (book.cost > 0 )) { %>
+                            <h3>Cena: <%= book.cost %> RSD</h3>
+                        <% } %>
+                        <div class="author__container">
+                            <img loading="lazy" class="author__image" src="<%= book.author.userImage %>" alt="<%= book.author.username %>">
+                            <a class="main__link" href="/admin/user-details/<%= book.author._id %>"><%= book.author.username %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-content__container">
+                <% if (!book.cond) { %>
+                    <div class="top-content__container">
+                        <div class="description">
+                            <strong>Opis: </strong>
+                            <%= book.description %>
+                        </div>
+                    </div>
+                    <div class="bottom-content__container">
+                        <div class="tab-container">
+                            <div class="tabs">
+                                <button type="button" class="tab active btn" onclick="openTab('recipes__container', 1)" data-tab="recipes__container">Recipes</button>
+                                <% if (book.author._id.toString() == user._id.toString()) { %>
+                                    <% if (book.type == "protected") { %>
+                                        <button type="button" class="tab btn" onclick="openTab('buyers__container', 1)" data-tab="buyers__container">Buyers</button>
+                                        <button type="button" class="tab btn" onclick="openTab('history__container', 1)" data-tab="history__container">History</button>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="result__container">
+                            <div id="recipes__container" class="tab-content active" data-tab="recipes__container">
+                                <% if (book.recipes.length > 0) { %>
+                                    <table id="myRecipesTable">
+                                        <caption>Recepti</caption>
+                                        <thead>
+                                            <tr>
+                                                <th>Naziv</th>
+                                                <th>Slika</th>
+                                                <th>Akcije</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% book.recipes.forEach(recipe => { %>
+                                                <tr>
+                                                    <td data-label="Title">
+                                                        <%= recipe.recipeId.title %>
+                                                    </td>
+                                                    <td data-label="Image">
+                                                        <img loading="lazy" class="table__image" 
+                                                            src="<%= recipe.recipeId.featureImage %>"
+                                                            alt="<%= recipe.recipeId.title %>">
+                                                    </td>
+                                                    <td data-label="Actions" class="table__action">
+                                                        <a href="/recept-detalji/<%= recipe.recipeId._id %>" class="btn">Vidite</a>
+                                                        
+                                                        <% if ((user._id.toString() ===  recipe.recipeId.author._id.toString()) || (user.role === "system") || (user.role === "admin")) { %>
+                                                            <form action="/izbacite-recept-iz-knjige?fromBook=true&bookId=<%= book._id %>" method="POST">
+                                                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                                                <input name="recipeId" type="hidden" value="<%= recipe.recipeId._id %>">
+                                                                <button class="btn btn-danger" type="submit">Izbacite</button>
+                                                            </form>
+                                                        <% } %>
+                                                    </td>
+                                                </tr>
+                                            <% }) %>
+                                        </tbody>
+                                    </table>
+                                <% } else { %>
+                                    <div class="info__container">
+                                        <h1>Trenutno nema Recepta!</h1>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <% if (book.author._id.toString() == user._id.toString()) { %>
+                                <% if (book.type === "protected") { %>
+                                    <div id="buyers__container" class="tab-content" data-tab="buyers__container">
+                                        <% if (book.buyers.length > 0) { %>
+                                            <table id="recipeBuyersTable" class="table">
+                                                <caption>Kupci:</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Korisnička Slika</th>
+                                                        <th>Username</th>
+                                                        <th>Akcije</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% book.buyers.forEach(buyer => { %>
+                                                        <tr>
+                                                            <td data-label="Image">
+                                                                <img loading="lazy" style="max-width: 100px; max-height: 100px;" src="<%= buyer.userId.userImage %>" alt="<%= buyer.userId.userImage %>">
+                                                            </td>
+                                                            <td data-label="Username">
+                                                                <%= buyer.userId.username %>
+                                                            </td>
+                                                            <td data-label="Actions">
+                                                                <a class="btn" href="/korisnik-profil/<%= buyer.userId._id %>">Vidi</a>
+                                                            </td>
+                                                        </tr>
+                                                    <% }) %>
+                                                </tbody>
+                                            </table>
+                                        <% } else { %>
+                                            <p>Trenutno nema Kupaca!</p>
+                                        <% } %>
+                                    </div>
+                                    <div id="history__container" class="tab-content" data-tab="history__container">
+                                        <% if (book.history.length > 0) { %>
+                                            <table id="recipeHistoryTable" class="table">
+                                                <caption>Istorija:</caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Transakcioni ID</th>
+                                                        <th>Tip</th>
+                                                        <th>Šta</th>
+                                                        <th>Ko</th>
+                                                        <th>Koliko</th>
+                                                        <th>Datum</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% book.history.forEach(history => { %>
+                                                        <tr>
+                                                            <td data-label="ID"><a class="main__link" href="/istorija-detalji/<%= history.historyId._id %>"><%= history.historyId._id %></a></td>
+                                                            <td data-label="Type"><%= history.historyId.type %></td>
+                                                            <% if (history.historyId.type === 'recipeBuy' || history.historyId.type === 'bookBuy') { %>
+                                                                <td data-label="What"><%= history.historyId.purchaseId.data.title %></td>
+                                                                <td data-label="Who"><%= history.historyId.purchaseId.data.author.username %></td>
+                                                            <% } else { %>
+                                                                <td data-label="What"><%= history.historyId.purchaseId.data.dataTitle %></td>
+                                                                <td data-label="Who"><%= history.historyId.purchaseId.data.username %></td>
+                                                            <% } %>
+                                                            <td data-label="Cost"><%= history.historyId.cost %> $</td>
+                                                            <td data-label="Date"><%= history.historyId.date.toLocaleString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></td>
+                                                        </tr>
+                                                    <% }) %>
+                                                </tbody>
+                                            </table>
+                                        <% } else { %>
+                                            <p>Trenutno nema Istorije!</p>
+                                        <% } %>
+                                    </div>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    <% } else { %>
+                        <div class="info__container">
+                            <% if (book.cType === 'sub') { %>
+                                <h1>Morate se Predplatiti na korinsika da biste videli ovaj sadržaj!</h1>
+                                <a class="btn" href="/korisnik-profil/<%= book.author._id %>">Idite na Profil</a>
+                            <% } if (book.cType === 'buy') { %>
+                                <h1>Morate kupiti ovaj sadržaj da biste videli!</h1>
+                                <form action="/kupite-knjigu" method="POST">
+                                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                    <input name="bookId" type="hidden" value="<%= book._id %>">
+                                    <button class="btn" type="submit">Kupite Knjigu</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+    <%- include('../includes/end.ejs') %>
+</body>

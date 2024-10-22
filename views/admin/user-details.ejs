@@ -1,0 +1,137 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/my-profile.css">
+<%- include('../includes/navigation.ejs') %>
+
+    <section class="my-profile__container">
+        <div class="left__container">
+            <div class="my-profile__card">
+                <div class="card__header">
+                    <img src="<%= user.userImage %>" alt="<%= user.userImage %>">
+                    <h2>
+                        <a class="main__link" href="/korisnik-profil/<%= user._id %>">
+                            <%= user.username %> <% if (user.role === 'system') { %><span>&#128081;</span><% } else if (user.status.find(elem => elem === 'suspended')) { %><span class="shield">&#10060;</span><% } else if (user.status.find(elem => elem === 'inactive')) { %><span class="shield">&#128123;</span><% } else if (user.role === 'admin') { %><span class="shield">&#128110;</span><% } else if (user.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %>
+                        </a>               
+                    </h2>
+                    <h3><%= user.email %></h3>
+                    <h3><%= user.wallet %> RSD</h3>
+                </div>
+                <div class="card__content">
+                    <p>
+                        Uloga: <strong><%= user.role %></strong>
+                    </p>
+                    <p>
+                        Status: <strong><%= user.status.join(" | ") %></strong>
+                    </p>
+                    <hr>
+                    <p>Recepti: <strong>
+                            <%= user.userRecipes.length %>
+                        </strong></p>
+                    <p>Knjige: <strong>
+                            <%= user.userBooks.length %>
+                        </strong></p>
+                    <hr>
+                    <p>
+                        Pretplaćeni Na: <strong><%= user.subscribed.count %></strong>
+                    </p>
+                    <p>
+                        Pretplatnici: <strong><%= user.subscribers.count %></strong>
+                    </p>
+                    <hr>
+                    <p>Pratioci: <strong>
+                            <%= user.followers.count %>
+                        </strong></p>
+                    <p>Praćenja: <strong>
+                            <%= user.following.count %>
+                        </strong></p>
+                    <% if (user.role != 'user') { %>
+                        <h3>Cena Pretplate: <%= user.subCost %> RSD</h3>
+                    <% } %>
+                </div>
+                <div class="card__actions">
+                    <% if (user.status.find(elem => elem === "active") && user.status.find(elem => elem === "requestedDeactivation")) { %>
+                    <form action="/admin/deaktivacija-korisnika" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                        <button class="btn btn-danger">Deaktivirajte</button>
+                    </form>
+                    <% } else { %>
+                        <% if (user.status.find(elem => elem === "inactive")) { %>
+                            <form action="/admin/aktivacija-korisnika" method="POST">
+                                <input type="hidden" name="userId" value="<%= user._id %>">
+                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                <button class="btn">Aktivirajte</button>
+                            </form>
+                        <% } %>
+                    <% } %>
+                    <% if (!user.status.find(elem => elem === "suspended") && !user.status.find(elem => elem === "requestedWithdrawal")) { %>
+                    <form action="/admin/suspenzija-korisnika" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                        <button class="btn btn-danger">Suspenzija</button>
+                    </form>
+                    <% } else { %>
+                        <% if (!user.status.find(elem => elem === "requestedWithdrawal")) { %>
+                        <form action="/admin/unsuspend-user" method="POST">
+                            <input type="hidden" name="userId" value="<%=    user._id %>">
+                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                            <button class="btn">Obnavljanje</button>
+                        </form>
+                        <% } %>
+                    <% } %>
+                    <a class="btn" href="/admin/izmenite-korisnika/<%= user._id %>">Izmenite</a>
+                    <% if (user.deleteDate < Date.now()) { %>
+                        <form action="/admin/izbrisite-korisnika" method="POST">
+                            <input type="hidden" name="userId" value="<%= user._id %>">
+                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                            <button class="btn btn-danger">Izbrišite</button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        
+        <div class="right__container">
+            <% if (user.history.length > 0) { %>
+                <table id="myHistoryTable" class="table">
+                    <caption>Istorija:</caption>
+                    <thead>
+                      <tr>
+                        <th>Transakcioni ID</th>
+                        <th>Tip</th>
+                        <th>Šta</th>
+                        <th>Ko</th>
+                        <th>Cena</th>
+                        <th>Datum</th>
+                        <th>Akcije</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <% user.history.forEach(history => { %>
+                        <tr>
+                            <td data-label="ID"><a class="main__link" href="/istorija-detalji/<%= history.historyId._id %>"><%= history.historyId._id %></a></td>
+                            <td data-label="Type"><%= history.historyId.type %></td>
+                            <% if (history.historyId.type === 'recipeBuy' || history.historyId.type === 'bookBuy') { %>
+                              <td data-label="Title"><%= history.historyId.purchaseId.data.title %></td>
+                              <td data-label="Username"><%= history.historyId.purchaseId.data.author.username %></td>
+                            <% } else { %>
+                              <td data-label="Title"><%= history.historyId.purchaseId.data.title %></td>
+                              <td data-label="Username"><%= history.historyId.purchaseId.data.username %></td>
+                            <% } %>
+                            <td data-label="Cost" class='<%if (history.historyId.type==="recipeBuy" || history.historyId.type==="bookBuy" ||
+                            history.historyId.type==="subscriptionTo" || history.historyId.type==="requestedWithdrawal" ||
+                            history.historyId.type==="fulfilledWithdrawal" ) { %>negative<% } else
+                            { %>positive<% } %>'><%if (history.historyId.type === "recipeBuy" || history.historyId.type === "bookBuy" || history.historyId.type === "subscriptionTo" || history.historyId.type === "requestedWithdrawal" || history.historyId.type === "fulfilledWithdrawal") { %> -<%= history.historyId.cost %> RSD<% } else { %>+<%= history.historyId.cost %> RSD<% } %></td>
+                            <td data-label="Date"><%= history.historyId.date.toLocaleString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) %></td>
+                            <td data-label="Actions"><a class="btn" href="/admin/istorija/<%= history.historyId._id %>">View</a></td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } else { %>
+                    <p>Ovaj korisnik trenutno nema Istoriju!</p>
+                <% } %>
+        </div>
+    </section>
+    <script src="/js/my-profile-tabs.js"></script>
+    <%- include('../includes/end.ejs') %>

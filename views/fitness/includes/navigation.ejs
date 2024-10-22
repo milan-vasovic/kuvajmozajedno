@@ -1,0 +1,113 @@
+<!-- Creat navigation that is mobile responsive and have checks for isAuth and isAdmin -->
+</head>
+<body>
+    <div class="backdrop"></div>
+    <header class="main-header">
+        <button id="side-menu-toggle">Meni</button>
+        <nav class="main-header__nav">
+            <ul class="main-header__item-list">
+                <li class="main-header__item">
+                    <a class="<%= path === '/fitness-family/' ? 'active' : '' %>" href="/fitness-family">Početna</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/fitness-family//teretane' ? 'active' : '' %>" href="/fitness-family/teretane">Teretane</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/fitness-family//treneri' ? 'active' : '' %>" href="/fitness-family/treneri">Treneri</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/fitness-family/zajednica' ? 'active' : '' %>" href="/fitness-family/zajednica">Zajednica</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/fitness-family/prodavnica' ? 'active' : '' %>" href="/fitness-family/prodavnica">Prodavnica</a>
+                </li>
+                <% if (isAuthenticated) { %>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/fitness-family/moj-profil' ? 'active' : '' %>" href="/fitness-family/moj-profil">Moj Profil</a>
+                    </li>
+                <% } %>
+            </ul>
+            <ul class="main-header__item-list">
+                <li class="main-header__item">
+                    <a class="<%= path === '/' ? 'active' : '' %>" href="/pronadji">Kuvajmo Zajedno</a>
+                </li>
+                <% if (!isAuthenticated) { %>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/prijava' ? 'active' : '' %>" href="/prijava?redirectTo=/fitness-family">Prijava</a>
+                    </li>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/registracija' ? 'active' : '' %>" href="/registracija">Registracija</a>
+                    </li>
+                <% } else { %>
+                    <li class="main-header__item">
+                        <form action="/logout" method="POST">
+                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                            <button class="btn" type="submit">Odjava</button>
+                        </form>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+        <nav class="mobile-nav">
+            <ul class="mobile-nav__item-list">
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/fitness-family/' ? 'active' : '' %>" href="/fitness-family/">Početna</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/fitness-family/zajednica' ? 'active' : '' %>" href="/fitness-family/teretane">Teretane</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/fitness-family/zajednica' ? 'active' : '' %>" href="/fitness-family/treneri">Treneri</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/fitness-family/zajednica' ? 'active' : '' %>" href="/fitness-family/zajednica">Zajednica</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/fitness-family/zajednica' ? 'active' : '' %>" href="/fitness-family/prodavnica">Prodavnica</a>
+                </li>
+                <% if (isAuthenticated) { %>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/moj-profil' ? 'active' : '' %>" href="/fitness-family/moj-profil">Moj Profil</a>
+                    </li>
+                <% } %>
+                <hr>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/tutorijali' ? 'active' : '' %>" href="https://www.youtube.com/playlist?list=PLFnv2VazqCCPU3aPbuQWnIQG9fbBookYv">Tutorijali</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/uslovi-koriscenja' ? 'active' : '' %>" href="/uslovi-koriscenja">Uslovi Korišćenja</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/politika-privatnosti' ? 'active' : '' %>" href="/politika-privatnosti">Politika Privatnosti</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/o-nama' ? 'active' : '' %>" href="/o-nama">O Nama</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/support' ? 'active' : '' %>" href="https://forms.gle/GZ8Bygy5J89Viz7f9">Pomoć</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/feedback' ? 'active' : '' %>" href="https://forms.gle/4gioWf65pVqfBQVc6">Sugestije</a>
+                </li>                
+                <hr>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/' ? 'active' : '' %>" href="/">Kuvajmo Zajedno</a>
+                </li>
+                <% if (!isAuthenticated) { %>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/prijava' ? 'active' : '' %>" href="/prijava?redirectTo=/fitness-family">Prijava</a>
+                    </li>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/registracija' ? 'active' : '' %>" href="/registracija">Registracija</a>
+                    </li>
+                <% } else { %>
+                    <li class="mobile-nav__item">
+                        <form action="/logout" method="POST">
+                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                            <button class="btn" type="submit">Odjava</button>
+                        </form>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+    </header>

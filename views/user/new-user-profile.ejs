@@ -1,0 +1,126 @@
+<!-- Include head part of html -->
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/new-my-profile.css">
+<link rel="stylesheet" href="/css/main.css">
+<%- include('../includes/navigation.ejs') %>
+    <section class="main__container">
+        <h1 class="main__title">Profil Korisnika</h1>
+        <div class="content__container">
+            <% if (isBlocked) { %>
+                <h2 class="main__title">Ne možete da vidite ovaj profil!</h2>
+            <% } else { %>
+                <div class="left-content__container">
+                    <div class="card__container profile">
+                        <div class="card__header">
+                            <img loading="lazy" class="card__image" src="<%= user.userImage %>" alt="<%= user.userImage %>">
+                            <h2 class="main__title">
+                                <%= user.username %><% if (user.role === 'system') { %><span>&#128081;</span><% } else if (user.role === 'admin') { %><span class="shield">&#128737;</span><% } else if (user.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %>
+                            </h2>
+                        </div>
+                        <div class="card__content">
+                            <% if (!isBlocking) { %>
+                                <p>Recepti Korisnika: <strong>
+                                        <%= user.userRecipes.length %>
+                                    </strong></p>
+                                <p>Knjige Korisnika: <strong>
+                                        <%= user.userBooks.length %>
+                                    </strong></p>
+                                <hr>
+                                <p>Pratioci: <strong>
+                                        <%= user.followers.count %>
+                                    </strong></p>
+                                <p>Prati: <strong>
+                                        <%= user.following.count %>
+                                    </strong></p>
+                                <% if (user.role != 'user') { %>
+                                    <h3>Cena Pretplate: <%= user.subCost %> RSD</h3>
+                                <% } %>
+                            <% } %>
+                        </div>
+                        <div class="card__actions">
+                            <% if (isBlocking) { %>
+                                <form action="/odblokirajte-korisnika" method="POST">
+                                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                    <input name="userId" type="hidden" value="<%= user._id %>">
+                                    <button class="btn" type="submit">Odblokirajte</button>
+                                </form>      
+                            <% } else { %>
+                                <% const userExist = user.followers.users.find(user => user.userId._id.toString() === loginUser._id.toString()); %>
+                                <% if (!userExist) { %>
+                                    <form action="/zapratite-korisnika" method="POST">
+                                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                        <input name="userId" type="hidden" value="<%= user._id %>">
+                                        <button class="btn" type="submit">Zapratite</button>
+                                    </form>
+                                <% } else { %>
+                                    <% const subscriberExist = user.subscribers.users.find(user => user.userId._id.toString() === loginUser._id.toString()); %>
+                                    <% if (!subscriberExist) { %>
+                                        <% if (user.role !== 'user' ) { %>
+                                            <% if (wallet >= +user.subCost) { %>
+                                                <form action="/pretplatite-se-na-korisnika" method="POST">
+                                                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                                    <input name="userId" type="hidden" value="<%= user._id %>">
+                                                    <button class="btn" type="submit">Pretplatite Se</button>
+                                                </form>
+                                            <% } else { %>
+                                                <button class="btn" type="submit" disabled>Pretplatite Se</button>
+                                            <% } %>
+                                        <% } %>
+                                        <% if (user.role !== "system") { %>
+                                            <form action="/odpratite-korisnika" method="POST">
+                                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                                <input name="userId" type="hidden" value="<%= user._id %>">
+                                                <button class="btn" type="submit">Odpratite</button>
+                                            </form>
+                                        <% } %>
+                                    <% } else { %>
+                                        <form action="/prekinite-pretplatu-korisniku" method="POST">
+                                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                            <input name="userId" type="hidden" value="<%= user._id %>">
+                                            <button class="btn" type="submit">Prekinite Pretplatu</button>
+                                        </form>
+                                    <% } %>
+                                <% } %>
+                                <% if (user.role !== "system") { %>
+                                    <form action="/blokirajte-korisnika" method="POST">
+                                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                        <input name="userId" type="hidden" value="<%= user._id %>">
+                                        <button class="btn" type="submit">Blokirajte</button>
+                                    </form>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-content__container">
+                    <% if (!isBlocking) { %>
+                        <div class="tab-container">
+                            <div class="tabs">
+                                <button type="button" class="tab active btn" onclick="openTab('userRecipes', 1)"
+                                    data-tab="userRecipes">Recepti</button>
+                                <button type="button" class="tab btn" onclick="openTab('userBooks', 1)"
+                                    data-tab="userBooks">Knjige</button>
+                            </div>
+                            <div>
+                                <label><input class="radio-input" id="cardLayout" type="radio" name="layout" checked
+                                        onchange="changeLayout('card')"> Prikaz Kartica</label>
+                                <label><input class="radio-input" id="tableLayout" type="radio" name="layout"
+                                        onchange="changeLayout('table')"> Tabelarni Prikaz</label>
+                            </div>
+                        </div>
+                        <div id="userRecipes" class="tab-content active" data-tab="userRecipes">
+                            <%- include('user-includes/user-recipes.ejs', {from:user['userRecipes'], text:'User Recipes', authorBox:false}) %>
+                        </div>
+                        <div id="userBooks" class="tab-content" data-tab="userBooks">
+                            <%- include('user-includes/user-books.ejs', {from:user['userBooks'], text:'User Books', authorBox:false}) %>
+                        </div>
+                    <% } else { %>
+                        <h2 class="title">Vi ste Blokirali ovog korisnika!</h2>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+    </section>
+    <script src="/js/my-profile-tabs.js"></script>
+<%- include('../includes/end.ejs') %>
+</body>

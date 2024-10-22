@@ -1,0 +1,173 @@
+{
+    "categories": [
+      {
+        "mainCategory": "Doga]aji",
+        "subCategories": [
+          "Noć Veštica"
+        ]
+      },
+      {
+        "mainCategory": "Predjela",
+        "subCategories": [
+          "Salate",
+          "Namazi",
+          "Finger food",
+          "Supi i Čorbe",
+          "Meze",
+          "Bruskete",
+          "Pite i Krompirače"
+        ]
+      },
+      {
+        "mainCategory": "Glavna jela",
+        "subCategories": [
+          "Mesna jela",
+          "Riblja jela",
+          "Vegetarijanska jela",
+          "Veganska jela",
+          "Jela sa testeninom",
+          "Rižoto",
+          "Jela ispod sača",
+          "Roštilj",
+          "Pečenje",
+          "Jela u tiganju",
+          "Jela od mlevenog mesa"
+        ]
+      },
+      {
+        "mainCategory": "Tradicionalna jela",
+        "subCategories": [
+          "Sarma",
+          "Musaka",
+          "Gibanica",
+          "Podvarak",
+          "Pasulj",
+          "Ćevapi",
+          "Punjene paprike",
+          "Karadjordjeva šnicla",
+          "Prebranac",
+          "Karaš"
+        ]
+      },
+      {
+        "mainCategory": "Prilozi",
+        "subCategories": [
+          "Povrće",
+          "Pirinač",
+          "Testenina",
+          "Krompir",
+          "Grilovano povrće",
+          "Pire krompir",
+          "Pohovano povrće",
+          "Kiseli kupus"
+        ]
+      },
+      {
+        "mainCategory": "Peciva",
+        "subCategories": [
+          "Hleb",
+          "Pogače",
+          "Pite",
+          "Pogačice",
+          "Kiflice",
+          "Burek",
+          "Projice",
+          "Zemičke"
+        ]
+      },
+      {
+        "mainCategory": "Deserti",
+        "subCategories": [
+          "Torte",
+          "Kolači",
+          "Keksi",
+          "Mafini",
+          "Palačinke",
+          "Sladoled",
+          "Knedle",
+          "Baklava",
+          "Šampite",
+          "Pita sa jabukama",
+          "Tulumbe"
+        ]
+      },
+      {
+        "mainCategory": "Zimnica",
+        "subCategories": [
+          "Ajvar",
+          "Kiseli krastavci",
+          "Turšija",
+          "Džemovi",
+          "Slatko",
+          "Sirup od zove",
+          "Pekmez od šljiva",
+          "Sušeni paradajz"
+        ]
+      },
+      {
+        "mainCategory": "Pića",
+        "subCategories": [
+          "Topli napici",
+          "Bezalkoholni kokteli",
+          "Alkoholni kokteli",
+          "Smoothie",
+          "Čajevi",
+          "Domaća rakija",
+          "Vino",
+          "Kompot"
+        ]
+      },
+      {
+        "mainCategory": "Specijalne prilike",
+        "subCategories": [
+          "Uskršnja jela",
+          "Božićna jela",
+          "Posna jela",
+          "Slavska trpeza",
+          "Rođendani",
+          "Svadbene torte",
+          "Ketering"
+        ]
+      },
+      {
+        "mainCategory": "Internacionalna kuhinja",
+        "subCategories": [
+          "Italijanska kuhinja",
+          "Grčka kuhinja",
+          "Francuska kuhinja",
+          "Kineska kuhinja",
+          "Indijska kuhinja",
+          "Meksička kuhinja",
+          "Američka kuhinja",
+          "Japanska kuhinja"
+        ]
+      },
+      {
+        "mainCategory": "Zdrava ishrana",
+        "subCategories": [
+          "Bez glutena",
+          "Bez šećera",
+          "Bez laktoze",
+          "Niskokalorična jela",
+          "Proteinska jela",
+          "Smoothie posude",
+          "Salate sa integralnim žitaricama",
+          "Raw food"
+        ]
+      },
+      {
+        "mainCategory": "Brza hrana",
+        "subCategories": [
+          "Burgeri",
+          "Pizze",
+          "Tortilje",
+          "Sendviči",
+          "Hot-dog",
+          "Pohovane grickalice",
+          "Pomfrit",
+          "Kebabi"
+        ]
+      }
+    ]
+  }
+  

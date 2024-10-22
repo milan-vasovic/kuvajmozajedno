@@ -1,0 +1,84 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="main__container">
+                <h1 class="main__title">Svi Recepti</h1>
+                <div class="content__container">
+                    <div class="search-form__container">
+                        <form class="search-form" action="/admin/recepti-pretraga" method="post">
+                            <div class="search-form__group">
+                                <input class="main-form__input" name="searchParams" type="text" placeholder="Search..">
+                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                <button class="btn">Pretraga</button>
+                            </div>
+                        </form>
+                        <% if (recipes.length> 0) { %>
+                            <table id="adminRecipesTable">
+                                <caption>Svi Recepti:</caption>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Slika</th>
+                                        <th>Naslov</th>
+                                        <th>Kategorije</th>
+                                        <th>Trajanje</th>
+                                        <th>Ocena</th>
+                                        <th>Tip</th>
+                                        <th>Cena</th>
+                                        <th>Autor</th>
+                                        <th>Akcije</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% recipes.forEach(recipe=> { %>
+                                        <tr>
+                                            <td data-label="ID">
+                                                <%= recipe._id %>
+                                            </td>
+                                            <td data-label="Image">
+                                                <img loading="lazy" class="table__image" src="<%= recipe.featureImage %>" alt="<%= recipe.title %>">
+                                            </td>
+                                            <td data-label="Title">
+                                                <%= recipe.title %>
+                                            </td>
+                                            <td data-label="Category">
+                                                <%= recipe.category.join(', ') %></td>
+                                            <td data-label="Duration"><%= recipe.preparation.duration %></td>
+                                            <td data-label="Rating">
+                                                <% if (recipe.ratings.length > 0) { %>
+                                                    <%= (function() { 
+                                                        if (!recipe.ratings || recipe.ratings.length === 0) {
+                                                            return 0;
+                                                        }
+                                                        let sum = 0;
+                                                        for (let rating of recipe.ratings) {
+                                                            sum += rating.stars;
+                                                        }
+                                                        const average = sum / recipe.ratings.length;
+                                                        return average.toFixed(1);
+                                                    })() %>  
+                                                <% } else { %>
+                                                    No Ratings Yet
+                                                <% } %>
+                                            </td>
+                                            <td data-label="Type"><%= recipe.type %></td>
+                                            <td data-label="Cost"><%= recipe.cost %> RSD</td>
+                                            <td data-label="User"><a class="main__link" href="/admin/korisnik-detalji/<%= recipe.author._id %>"><%= recipe.author.username %></a></td>
+                                            <td data-label="Actions" class="table__action">
+                                                <a href="/admin/izmenite-recept/<%= recipe._id %>" class="btn">Izmenite</a>
+                                                <a href="/admin/recept-detalji/<%= recipe._id %>" class="btn">Detalji</a>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        <% } else { %>
+                            <h1>Trenutno nisu pronađeni Recepti!</h1>
+                        <% } %>
+            <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, previousPage: previousPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPreviousPage: hasPreviousPage, pageType: 'recipePage' }) %>
+                    </div>
+                </div>
+            </section>
+        </body>
+        <%- include('../includes/end.ejs') %>

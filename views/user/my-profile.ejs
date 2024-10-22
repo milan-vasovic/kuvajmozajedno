@@ -1,0 +1,20 @@
+<!-- Include head part of html -->
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/new-my-profile.css">
+<link rel="stylesheet" href="/css/main.css">
+    <%- include('../includes/navigation.ejs') %>
+        </head>
+        <body>
+            <section class="main__container">
+                <h1 class="main__title">My Profile</h1>
+                <div class="content__container">
+                    <div class="left-content__container">
+                        <%- include("user-includes/my-profile-card.ejs") %>
+                    </div>
+                    <div class="right-content__container">
+                        <%- include("user-includes/my-profile-tabs.ejs") %>
+                    </div>
+                </div>             
+            </section>
+            <script src="/js/my-profile-tabs.js"></script>
+    <%- include('../includes/end.ejs') %>

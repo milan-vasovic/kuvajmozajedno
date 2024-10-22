@@ -1,0 +1,45 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/admin.css">
+<link rel="stylesheet" href="/css/main.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="main__container">
+                <h1>Zatraženi Depoziti</h1>
+                <% if (users.length > 0) { %>
+                <table id="myHistoryTable" class="table">
+                    <caption>Korisnici:</caption>
+                    <thead>
+                      <tr>
+                        <th>Datum Isteka</th>
+                        <th>Slika</th>
+                        <th>Username</th>
+                        <th>Akcije</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(user => { %>
+                        <tr>
+                            <td><%= user.depositRequestExpiration.toLocaleString('sr-RS', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) %></td>
+                            <td><img style="max-width: 100px; max-height: 100px;" src="<%= user.userImage %>" alt="user.username"></td>
+                            <td><a class="main__link" href="/admin/user-details/<%= user._id %>"><%= user.username %></a></td>    
+                            <td>
+                                <div style="display: flex; flex-direction: row; gap: 10px;">
+                                    <a class="btn" href="/system/deposit-fulfill/<%= user._id %>">Realizuj</a>
+                                    <% if (user.depositRequestExpiration < Date.now()) { %>
+                                        <form action="/system/denay-deposit" method="post">
+                                            <input type="hidden" name="userId" value="<%= user._id %>">
+                                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                            <button class="btn btn-danger" type="submit">Odbi</button>
+                                        </form>
+                                    <% } %>
+                                </div> 
+                            </td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                <% } else { %>
+                    <p>Nema zatraženih tepozita još!</p>
+                <% } %>
+            </section>
+        <%- include('../includes/end.ejs') %>
+

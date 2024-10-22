@@ -1,0 +1,205 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        .content__container {
+            text-align: left;
+        }
+
+        h2 {
+            margin-bottom: 2rem;
+        }
+    </style>
+    <%- include('../includes/navigation.ejs') %>
+        <section class="main__container">
+            <h1 class="main__title">
+                <%= pageTitle %>
+            </h1>
+            <div class="content__container">
+                <p><strong>Datum poslednje izmene:</strong> 22.08.2024</p>
+
+                <p>Dobrodošli na našu web aplikaciju. Molimo vas da pažljivo pročitate sledeće Uslove korišćenja.
+                    Kreiranjem naloga na ovoj aplikaciji, prihvatate ove Uslove korišćenja i Politiku privatnosti. Ako
+                    se ne slažete sa bilo kojim delom ovih uslova, molimo vas da ne koristite našu aplikaciju.</p>
+
+                <p>Naš oficijalni i jedini email nalog je: recipesbook.web.official@gmail.com</p>
+                <p>Naše oficijalne društvene mreže su:</p>
+                <ul>
+                    <li><a class="main__link" href="https://www.youtube.com/@kuvajmo" target="_blank" rel="noopener noreferrer">
+                        YouTube
+                    </a></li>
+                    <li><a class="main__link" href="https://www.instagram.com/kuvajmo.zajedno" target="_blank" rel="noopener noreferrer">
+                        Instagram
+                    </a></li>
+                    <li><a class="main__link" href="https://www.tiktok.com/@kuvajmozajedno" target="_blank" rel="noopener noreferrer">
+                        TikTok
+                    </a></li>
+                </ul>
+                <h2>1. Uvod</h2>
+                <p>Ova aplikacija je namenjena za kreiranje, čuvanje i prodaju recepata i knjiga recepata. Korisnici
+                    mogu koristiti aplikaciju kao gost, ulogovani korisnik, kreator ili administrator, u zavisnosti od
+                    privilegija koje im se dodeljuju.</p>
+
+                <h2>2. Kategorije korisnika</h2>
+                <ul>
+                    <li><strong>Gost (Guest)</strong>: Gost može pristupiti samo stranici explorer, stranici za prijavu
+                        (login) i registraciju (signup), kao i stranici sa Uslovima korišćenja, Politikom privatnosti,
+                        informacijama o aplikaciji (about), stranici za povratne informacije (feedback) i podršku
+                        (support).</li>
+                    <li><strong>Ulogovani korisnik (User)</strong>: Svi kreirani korisnici automatski dobijaju ulogu
+                        User. Ulogovani korisnik može kreirati nove recepte i knjige recepata, koji mogu biti javni
+                        (public) ili privatni (private). Korisnik može, ali nije obavezan, da zatraži da postane
+                        Creator.</li>
+                    <li><strong>Kreator (Creator)</strong>: Kreator može kreirati sadržaj koji može biti i zaštićen
+                        (protected), postavljati cenu za pretplatu i omogućiti korisnicima da se pretplate na njegov
+                        profil, kao i prodavati zaštićeni sadržaj.</li>
+                    <li><strong>Administrator (Admin)</strong>: Administrator ima dodatne privilegije u vezi sa
+                        upravljanjem aplikacijom i korisnicima.</li>
+                </ul>
+
+                <h2>3. Sadržaj korisnika</h2>
+                <p>Korisnici ne smeju postavljati sadržaj koji je uvredljiv, politički, sadrži maloletnu i dečiju
+                    pornografiju ili bilo koji drugi sadržaj koji bi mogao biti kategorizovan kao neprimeren ili
+                    nezakonit. Svaki korisnik zadržava autorska prava na svoj sadržaj, ali aplikacija ne preuzima
+                    odgovornost za zaštitu tih prava. Korisnici ne smeju kopirati tuđi sadržaj, deliti zaštićeni sadržaj
+                    ili deliti sadržaj sa ove aplikacije na drugim aplikacijama bez odobrenja.</p>
+                <p>Sadržaj može biti:</p>
+                <ul>
+                    <li><strong>Javan (Public)</strong>: Svi korisnici mogu da vide sadržaj.</li>
+                    <li><strong>Privatan (Private)</strong>: Samo autor i pretplaćeni korisnici mogu da vide sadržaj.
+                    </li>
+                    <li><strong>Zaštićen (Protected)</strong>: Samo korisnici koji su kupili sadržaj mogu da ga vide.
+                    </li>
+                </ul>
+
+                <h2>4. Plaćanja</h2>
+                <ul>
+                    <li><strong>Depozit</strong>: Svaki korisnik može izvršiti depozit. Nakon što korisnik zatraži
+                        depozit, dobiće instrukcije putem email-a. Korisnik ima <strong>24 sata</strong> da izvrši
+                        depozit prema
+                        dobijenim instrukcijama. Ukoliko depozit nije izvršen u roku od <strong>24 sata</strong>, zahtev
+                        za depozit će
+                        biti obrisan. Platforma ima do <strong>72 sata</strong> da evidentira depozit u aplikaciji.</li>
+                    <li><strong>Isplata (Withdrawal)</strong>: Korisnik može zatražiti isplatu ako ima više od
+                        <strong>10.000
+                            RSD </strong> na svom balansu. Ovo važi za sve korisnike, bez obzira na to da li imaju
+                        status Kreatora.
+                        Nakon što korisnik zatraži isplatu, dobiće instrukcije putem email-a.
+                        Platforma ima do <strong>72 sata</strong> da izvrši isplatu (prihvati i isplati ili odbije
+                        zahtev).
+                    </li>
+                    <li><strong>Partnerski odnos</strong>: Svi korisnici, bez obzira na status Kreatora, ulaze u
+                        partnerski odnos sa platformom u odnosu <strong>80% / 20%</strong>. To znači da prilikom svake
+                        isplate (withdrawal)
+                        platforma zadržava <strong>20%</strong> od isplaćene sume.</li>
+                    <li><strong>Refundacije</strong>: Pošto je u pitanju elektronski sadržaj, nema mogućnosti za
+                        refundaciju prilikom kupovine ili pretplate na sadržaj.</li>
+                </ul>
+
+                <h2>5. Neaktivnost i Suspendovanje</h2>
+
+                <h3>Verifikacija Email-a</h3>
+                <p>
+                    Prilikom registracije, korisnik dobija email sa linkom za potvrdu svoje email adrese. Korisnik ima
+                    rok od <strong>1 sat</strong> da izvrši verifikaciju. Ukoliko ne potvrdi email u tom roku,
+                    registracija neće biti dovršena i nalog neće biti aktiviran i biće obrisan.
+                </p>
+
+                <h3>Automatske Provere</h3>
+                <p>
+                    Platforma automatski i periodično vrši provere aktivnosti korisnika. U zavisnosti od rezultata ovih
+                    provera, platforma preduzima odgovarajuće akcije, kao što je promena statusa korisnika (npr.
+                    prelazak iz <strong>active</strong> u <strong>inactive</strong> ili <strong>suspended</strong>
+                    status ili brisanje korisnika).
+                </p>
+
+                <h3>Neaktivnost</h3>
+                <p>
+                    Ako korisnik nije ulogovan na platformu više od <strong>30 dana</strong>, njegov status prelazi iz
+                    aktivnog u <strong>inactive</strong>. U ovom statusu korisnik neće moći da kreira novi sadržaj niti
+                    da prodaje postojeći sadržaj.
+                </p>
+
+                <h3>Suspendovanje</h3>
+                <p>
+                    Ako korisnik ostane neaktivan još <strong>30 dana</strong> nakon što je postao
+                    <strong>inactive</strong>, njegov status prelazi u <strong>suspended</strong>. U ovom trenutku,
+                    korisnik će dobiti email sa instrukcijama kako da zatraži isplatu (withdrawal) za preostali iznos na
+                    svom balansu. Rok za podnošenje zahteva za isplatu je 27 dana od momenta prelaska u status
+                    <strong>suspended</strong>.
+                </p>
+
+                <h3>Preostali Balans</h3>
+                <p>
+                    Ako korisnik ne podnese zahtev za isplatu u roku od <strong>27 dana</strong>, preostali iznos na
+                    njegovom balansu će biti prebačen na platformu, bez mogućnosti naknadnog vraćanja sredstava
+                    korisniku.
+                </p>
+
+                <h2>6. Autorska prava</h2>
+                <p>Korisnici zadržavaju sva autorska prava na sadržaj koji postavljaju na aplikaciju. Međutim,
+                    aplikacija ne preuzima odgovornost za povrede autorskih prava koje mogu nastati usled postavljanja
+                    sadržaja od strane korisnika. Korisnici su odgovorni za osiguravanje da njihov sadržaj ne krši prava
+                    drugih.</p>
+
+                <h2>7. Prava i obaveze aplikacije</h2>
+                <p>Aplikacija i njeni vlasnici zadržavaju pravo da u bilo kom trenutku izmene ili obustave bilo koji deo
+                    aplikacije, uključujući ove Uslove korišćenja. Takođe, zadržavamo pravo da bez obrazloženja
+                    izbrišemo, suspendujemo ili deaktiviramo korisničke naloge koji ne poštuju ove Uslove korišćenja.
+                </p>
+
+                <h2>8. Odricanje od odgovornosti</h2>
+                <p>Aplikacija ne snosi odgovornost za gubitak podataka, štetu ili bilo koje druge posledice koje mogu
+                    proizaći iz korišćenja aplikacije. Korisnici koriste aplikaciju na sopstvenu odgovornost i sami su
+                    odgovorni za sve rizike vezane za korišćenje sadržaja iz aplikacije, uključujući, ali ne
+                    ograničavajući se na zdravstvene rizike (alergije i slično).</p>
+
+                <h2>9. Zdravstvena odgovornost</h2>
+                <p>Korisnici su sami odgovorni za proveru sastojaka u receptima i vođenje računa o svom zdravlju
+                    prilikom korišćenja sadržaja sa aplikacije. Aplikacija ne snosi odgovornost za eventualne
+                    zdravstvene probleme koji mogu nastati usled konzumacije recepata sa platforme.</p>
+
+                <h2>10. Izmene Uslova korišćenja</h2>
+                <p>Ovi Uslovi korišćenja mogu biti promenjeni u bilo kom trenutku. O svim izmenama korisnici će biti
+                    obavešteni putem aplikacije. Nastavak korišćenja aplikacije nakon izmena znači da korisnici
+                    prihvataju nove Uslove korišćenja.</p>
+
+                <h2>11. Kontakt informacije</h2>
+                <p>Ako imate bilo kakva pitanja u vezi sa ovim Uslovima korišćenja, molimo vas da nas kontaktirate na
+                    email: <a class="main__link" href="mailto:recipesbook.web.official@gmail.com">recipesbook.web.official@gmail.com</a> ili putem <a class="main__link"
+                        href="https://forms.gle/GZ8Bygy5J89Viz7f9">Support</a>.</p>
+
+                <h2>12. Bezbednost naloga</h2>
+                <p>
+                    Korisnici su odgovorni za zaštitu svojih naloga, uključujući čuvanje lozinki. Ako posumnjate da je
+                    vaš nalog kompromitovan, molimo vas da odmah obavestite podršku. Aplikacija ne snosi odgovornost za
+                    gubitke ili štetu koja može nastati usled neovlašćenog pristupa vašem nalogu.
+                </p>
+
+                <h2>13. Privatnost podataka</h2>
+                <p>
+                    Vaša privatnost nam je važna. Molimo vas da pročitate našu <a class="main__link" href="/privacy-policy">Politiku privatnosti</a> kako
+                    biste saznali više o tome kako prikupljamo, koristimo i štitimo vaše lične podatke.
+                </p>
+
+                <h2>14. Reklamacije i sporovi</h2>
+                <p>
+                    Ako imate bilo kakve reklamacije u vezi sa korišćenjem aplikacije, molimo vas da nas kontaktirate
+                    putem Support. Pokušaćemo da rešimo sve sporove u dobroj veri i na obostrano zadovoljstvo.
+                </p>
+
+                <h2>15. Nadležnost</h2>
+                <p>
+                    Ovi Uslovi korišćenja regulišu se zakonima Republike Srbije. Svi sporovi koji proizađu iz ili u vezi
+                    sa korišćenjem aplikacije biće rešavani pred nadležnim sudovima u Srbiji.
+                </p>
+
+                <h2>16. Uslovi za pretplate</h2>
+                <p>
+                    Pretplate na zaštićeni sadržaj se obnavljaju automatski na mesečnom nivou, osim ako ih korisnik ne
+                    otkaže pre isteka tekućeg obračunskog perioda. Otkazivanje pretplate ne daje pravo na povrat novca
+                    za već plaćeni period.
+                </p>
+            </div>
+            </div>
+        </section>
+        <%- include('../includes/end.ejs') %>

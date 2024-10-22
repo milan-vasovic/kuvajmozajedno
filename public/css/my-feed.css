@@ -1,0 +1,46 @@
+.public {
+    width: 75px;
+    height: 25px;
+    text-align: center;
+    background-color: aquamarine;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.private {
+    width: 75px;
+    height: 25px;
+    text-align: center;
+    background-color: brown;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.protected {
+    width: 75px;
+    height: 25px;
+    text-align: center;
+    background-color: burlywood;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.top__banner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.author__box {
+    display: flex;
+    justify-content: center;
+}

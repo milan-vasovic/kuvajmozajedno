@@ -1,0 +1,338 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/admin.css">
+<link rel="stylesheet" href="/css/new-main.css">
+    <%- include('../includes/navigation.ejs') %>
+        <section class="main__container">
+            <% function calculateAverageStars(ratings) {
+                if (!ratings || ratings.length === 0) {
+                    return 0;
+                }
+                let sum = 0;
+                for (let rating of ratings) {
+                    sum += rating.stars;
+                }
+                const average = sum / ratings.length;
+                return average;
+            } %>
+            <h1 class="main__title">
+                <%= pageTitle %>
+            </h1>
+            <div class="recipe-details-content__container">
+                <div class="left-content__container">
+                    <div class="recipe-details-card__container">
+                        <div class="card__header">
+                            <h1><%= recipe.title %></h1>
+                            <h4>ID: <%= recipe._id %></h4>
+                            <div class="gallery__container">
+                                <div class="main-image">
+                                    <img class="card__image" src="<%= recipe.featureImage %>" alt="<%= recipe.title %>">
+                                </div>
+                                <div class="thumbnail__container">
+                                    <img class="thumbnail" src="<%= recipe.featureImage %>" alt="<%= recipe.title %>"  onclick="changeImage('<%= recipe.featureImage %>')">
+                                    <% recipe.images.forEach(image=> { %>
+                                        <img src="<%= image %>" alt="<%= recipe.title %>" class="thumbnail"
+                                            onclick="changeImage('<%= image %>')">
+                                    <% }) %>
+                                </div>
+                                <div id="overlay" class="overlay">
+                                    <span class="close-btn">&times;</span>
+                                    <img id="overlay-img" class="overlay-content">
+                                </div>
+                            </div>
+                            <p class="rating">
+                                <% const ratings = recipe.ratings %>
+                                <% if (ratings) { %>
+                                    <% const averageStars = calculateAverageStars(ratings); %>
+                                    <% if (averageStars > 0) { %>
+                                        <div class="stars">
+                                            <%= averageStars %>
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <span class="star <%= i <= Math.floor(averageStars) ? 'filled' : '' %>">
+                                                <% if (i <= Math.floor(averageStars)) { %>
+                                                    &#9733;
+                                                <% } else if (averageStars - Math.floor(averageStars) >= 0.5 && averageStars > i - 1) { %>
+                                                    <span class="half-star">
+                                                        <span class="half-filled">&#9733;</span>
+                                                        <span class="half-empty">&#9734;</span>
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="empty">&#9734;</span>
+                                                <% } %>
+                                            </span>
+                                        <% } %>
+                                        </div>
+                                    <% } else { %>
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <span class="star">&#9734;</span>
+                                        <% } %>
+                                    <% } %>
+                                <% } %>
+                            </p>
+                            <div class="category__container">
+                                <% recipe.category.forEach( c=> { %>
+                                    <h4>
+                                        <a class="main__link" href="/recepti-kategorije/<%= c %>">
+                                            <%= c %>
+                                        </a>
+                                    </h4>
+                                <% }) %> 
+                            </div>  
+                        </div>
+                        <div class="card__content">
+                            <h3>Cost: <%= recipe.cost %> RSD</h3>
+                            <div class="stats__container">
+                                <p>Views: <strong><%= recipe.views.count %></strong></p>
+                                <p>Saves: <strong><%= recipe.saves.count %></strong></p>
+                                <p>Ratings <strong><%= recipe.ratings.length %></strong></p>
+                                <% if (recipe.type === 'protected') { %>
+                                    <p>Boughts: <strong><%= recipe.views.count %></strong></p>
+                                <% } %>
+                            </div>
+                            <div class="author__container">
+                                <img class="author__image" src="<%= recipe.author.userImage %>" alt="<%= recipe.author.username %>">
+                                <a class="main__link" href="/admin/korisnik-detalji/<%= recipe.author._id %>">
+                                    <%= recipe.author.username %>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card__actions">
+                            <a class="btn" href="/admin/izmenite-recept/<%= recipe._id %>">Izmenite</a>
+                            <form action="/admin/izbrisite-recept" method="POST">
+                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                <input name="recipeId" type="hidden" value="<%= recipe._id %>">
+                                <button class="btn btn-danger" type="submit">Izbrišite</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-content__container">
+                    <div class="top-content__container">
+                        <div>
+                            <strong>Opis: </strong><%= recipe.description %>
+                        </div>
+                    </div>
+                    <div class="bottom-content__container">
+                        <div class="tab-container">
+                            <div class="tabs">
+                                <button type="button" class="tab active btn" onclick="openTab('ingredients__container', 1)"
+                                    data-tab="ingredients__container">Sastojci</button>
+                                <button type="button" class="tab btn" onclick="openTab('nutritions__container', 1)"
+                                    data-tab="nutritions__container">Nutritivne Vrednosti</button>
+                                <button type="button" class="tab btn" onclick="openTab('preparation__container', 1)"
+                                    data-tab="preparation__container">Priprema</button>
+                                <button type="button" class="tab btn" onclick="openTab('ratings__container', 1)"
+                                    data-tab="ratings__container">Ocene</button>
+                                <% if (recipe.type=="protected" ) { %>
+                                    <button type="button" class="tab btn" onclick="openTab('buyers__container', 1)"
+                                        data-tab="buyers__container">Kupci</button>
+                                    <button type="button" class="tab btn" onclick="openTab('history__container', 1)"
+                                        data-tab="history__container">Istorija</button>
+                                    <% } %>
+                            </div>
+                        </div>
+                        <div class="result__container">
+                            <div id="ingredients__container" class="tab-content active" data-tab="ingredients__container">
+                                <h4>Sastojci:</h4>
+                                <ul>
+                                    <% recipe.ingredients.forEach(ingredinet=> { %>
+                                        <li>
+                                            <%= ingredinet.name %> | <%= ingredinet.amount %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                            </div>
+                            <div id="nutritions__container" class="tab-content" data-tab="nutritions__container">
+                                <h4>Nutritivne Vrednosti:</h4>
+                                <ul>
+                                    <% recipe.nutritions.forEach(nutrition=> { %>
+                                        <li>
+                                            <%= nutrition.name %> | <%= nutrition.amount %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                            </div>
+                            <div id="preparation__container" class="tab-content" data-tab="preparation__container">
+                                <h4>Priprema:</h4>
+                                <p>
+                                    <strong>
+                                        <%= recipe.preparation.note %>
+                                    </strong>
+                                </p>
+                                <p>
+                                    <%= recipe.preparation.duration %>
+                                </p>
+                                <ul>
+                                    <% recipe.preparation.steps.forEach(step=> { %>
+                                        <li>
+                                            <%= step %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                            </div>
+                            <div id="ratings__container" class="tab-content" data-tab="ratings__container">
+                                        <table id="adminRecipeRatingsTable">
+                                            <caption>Ocene</caption>
+                                            <thead>
+                                                <tr>
+                                                    <th>Slika</th>
+                                                    <th>Korisničko Ime</th>
+                                                    <th>Zvezde</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% recipe.ratings.forEach(rating=> { %>
+                                                    <tr>
+                                                        <td data-label="Image">
+                                                            <img class="table__image"
+                                                                src="<%= rating.userId.userImage %>"
+                                                                alt="<%= rating.userId.userImage %>">
+                                                        </td>
+                                                        <td data-label="User">
+                                                            <a class="main__link" href="/korisnik-profil/<%= rating.userId._id %>">
+                                                                <%= rating.userId.username %>
+                                                            </a>
+                                                        </td>
+                                                        <td data-label="Rating">
+                                                            <% const stars=rating.stars; %>
+                                                                <div class="stars">
+                                                                    <%= stars %>
+                                                                        <% for (let i=1; i <=5; i++) { %>
+                                                                            <span
+                                                                                class="star <%= i <= stars ? 'filled' : 'empty' %>">
+                                                                                <% if (i <=stars) { %>
+                                                                                    &#9733;
+                                                                                    <% } else { %>
+                                                                                        &#9734;
+                                                                                        <% } %>
+                                                                            </span>
+                                                                            <% } %>
+                                                                </div>
+                                                        </td>
+                                                    </tr>
+                                                    <% }) %>
+                                            </tbody>
+                                        </table>
+                            </div>
+                            <div id="buyers__container" class="user tab-content" data-tab="buyers__container">
+                                <% if (recipe.buyers.length> 0) { %>
+                                    <table id="adminRecipeBuyersTable" class="table">
+                                        <caption>Kupci:</caption>
+                                        <thead>
+                                            <tr>
+                                                <th>Slika</th>
+                                                <th>Korisničko Ime</th>
+                                                <th>Akcije</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% recipe.buyers.forEach(buyer=> { %>
+                                                <tr>
+                                                    <td data-label="Image">
+                                                        <img style="max-width: 100px; max-height: 100px;"
+                                                            src="<%= buyer.userId.userImage %>"
+                                                            alt="<%= buyer.userId.userImage %>">
+                                                    </td>
+                                                    <td data-label="Username">
+                                                        <%= buyer.userId.username %>
+                                                    </td>
+                                                    <td data-label="Actions">
+                                                        <a class="btn" href="/korisnik-profil/<%= buyer.userId._id %>">View</a>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                    <% } else { %>
+                                        <p>Trenutno nema Ocena!</p>
+                                        <% } %>
+                            </div>
+                            <div id="history__container" class="tab-content" data-tab="history__container">
+                                <% if (recipe.history.length> 0) { %>
+                                    <table id="adminRecipeHistoryTable" class="table">
+                                        <caption>Istroija:</caption>
+                                        <thead>
+                                            <tr>
+                                                <th>Transakcioni ID</th>
+                                                <th>Tip</th>
+                                                <th>Šta</th>
+                                                <th>Ko</th>
+                                                <th>Cena</th>
+                                                <th>Datum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% recipe.history.forEach(history=> { %>
+                                                <tr>
+                                                    <td data-label="ID"><a class="main__link" href="/istorija-detalji/<%= history.historyId._id %>">
+                                                            <%= history.historyId._id %>
+                                                        </a></td>
+                                                    <td data-label="Type">
+                                                        <%= history.historyId.type %>
+                                                    </td>
+                                                    <% if (history.historyId.type==='recipeBuy' ||
+                                                        history.historyId.type==='bookBuy' ) { %>
+                                                        <td data-label="What">
+                                                            <%= history.historyId.purchaseId.data.title %>
+                                                        </td>
+                                                        <td data-label="Who">
+                                                            <%= history.historyId.purchaseId.data.author.username %>
+                                                        </td>
+                                                        <% } else { %>
+                                                            <td data-label="What">
+                                                                <%= history.historyId.purchaseId.data.dataTitle %>
+                                                            </td>
+                                                            <td data-label="Who">
+                                                                <%= history.historyId.purchaseId.data.username %>
+                                                            </td>
+                                                            <% } %>
+                                                                <td data-label="Cost">
+                                                                    <%= history.historyId.cost %> $
+                                                                </td>
+                                                                <td data-label="Date">
+                                                                    <%= history.historyId.date.toLocaleString('sr-RS', {
+                                                                        day: '2-digit' , month: '2-digit' , year: 'numeric' ,
+                                                                        hour: '2-digit' , minute: '2-digit' }) %>
+                                                                </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                    <% } else { %>
+                                        <p>Trenutno nema Istorije!</p>
+                                    <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>
+            // Pronađi sve slike koje se mogu kliknuti (sličice)
+            const thumbnails = document.querySelectorAll('.card__image');
+
+            // Pronađi overlay element i sliku unutar overlay-a
+            const overlay = document.getElementById('overlay');
+            const overlayImg = document.getElementById('overlay-img');
+            const closeBtn = document.querySelector('.close-btn');
+
+            // Kada se klikne na sličicu, prikaži je u overlay-u
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    overlay.style.display = 'flex';
+                    overlayImg.src = this.src; // Postavi izvor slike na overlay sliku
+                });
+            });
+
+            // Kada se klikne na dugme za zatvaranje, sakrij overlay
+            closeBtn.addEventListener('click', function() {
+            overlay.style.display = 'none';
+            });
+
+            // Opcionalno: Zatvori overlay klikom na pozadinu
+            overlay.addEventListener('click', function(event) {
+            if (event.target === overlay) {
+                overlay.style.display = 'none';
+            }
+            });
+        </script>
+    <%- include('../includes/end.ejs') %>

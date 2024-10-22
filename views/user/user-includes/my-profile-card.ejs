@@ -1,0 +1,98 @@
+<div class="card__container profile">
+    <div class="image__container">
+        <img loading="lazy" class="card__image" src="<%= user.userImage %>" alt="<%= user.username %>">
+    </div>
+    <h2 class="card__title"><%= user.username %> <% if (user.role === 'system') { %><span>&#128081;</span><% } else if (user.role === 'admin') { %><span class="shield">&#128110;</span><% } else if (user.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></h2>
+    <h3 class="sub__title"><%= user.email %></h3>
+    <p>
+        Status: <strong><%= user.status.join(" | ") %></strong>
+    </p>
+    <h1 class="main__title">Novčanik: <%= user.wallet %> RSD</h1>
+    <% if (user.role === "system") { %> 
+        <h1 class="main__title">Sistemski Novčanik: <%= user.systemWallet %> RSD</h1>
+    <% } %>
+    <% if (user.role !== "user") { %>
+        <h3 class="info__title">Cena Pretplate: <%= user.subCost %> RSD</h3>
+    <% } %>
+    <div class="card__actions">
+        <% const isDepositRequested = user.status.find(status => status === "requestedDeposit") %>
+        <% if (!isDepositRequested) { %>
+            <form class="main__form" action="/zatrazite-depozit" method="POST">
+                <input type="hidden" class="main-form__input" name="CSRFToken" value="<%= csrfToken %>">
+                <button class="btn" type="submit">Zatražite Depozit</button>
+            </form>
+        <% } %>
+        <% if (user.wallet >= 10000 || (user.role === 'system')) { %>
+            <form class="main__form" action="/zatrazite-isplatu" method="POST">
+                <% if (user.role === 'system') { %>
+                    <input class="main-form__input" type="hidden" name="isSystem" value="true">
+                <% } %>
+                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                    <button class="btn" type="submit">Zatražite Isplatu</button>
+            </form>
+        <% } else { %>
+            <button class="btn" disabled>Isplata Nije Moguća</button>
+        <% } %>
+    </div>
+    <div class="card__content">
+        <p>Recepti: <strong><%= user.userRecipes.length %></strong></p>
+        <p>Knjige: <strong><%= user.userBooks.length %></strong></p>
+        <hr>
+        <p>Kupljeni Recepti: <strong><%= user.boughtRecipes.length %></strong></p>
+        <p>Kupljene Knjige: <strong><%= user.boughtBooks.length %></strong></p>
+        <hr>
+        <p>Sačuvani Recepti: <strong><%= user.savedRecipes.length %></strong></p>
+        <p>Sačuvane Knjige: <strong><%= user.savedBooks.length %></strong></p>
+        <hr>
+        <p>Pratioci: <strong><%= user.followers.count %></strong></p>
+        <p>Praćenja: <strong><%= user.following.count %></strong></p>
+        <hr>
+        <p>Predplatnici: <strong><%= user.subscribers.count %></strong></p>
+        <p>Pretplate: <strong><%= user.subscribed.count %></strong></p>
+        <hr>
+        <p>Pregledi: <strong><%= user.views.count %></strong></p>
+    </div>
+    <div class="card__actions">
+        <% if (user.role === "user") { %>
+            <% const isCreatorRequested = user.status.find(status => status === 'requestedCreator');
+            if (!isCreatorRequested) { %>
+                <form class="main__form"  action="/postanite-kreator" method="POST" enctype="multipart/form-data">
+                    <input class="main-form__input" type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                    <button type="submit" class="btn">Postanite Kreator</button>
+                </form>
+            <% } %>
+        <% } else { %>
+            <button class="btn" onclick="togglEditSubCost()">Izmenite Cenu Pretplate</button>
+        <% } %>
+        <button class="btn" onclick="togglEditImageForm()">Promeni Sliku</button>
+        <% const isDeactivationRequested = user.status.find(status => status === "requestedDeactivation") %>
+        <% if (!isDeactivationRequested && user.role !== 'system' && !user.status.find(status => status === "requestedWithdrawal")) { %>
+            <form class="main__form" action="/zatrazite-deaktivaciju" method="POST">
+                <input type="hidden" class="main-form__input" name="CSRFToken" value="<%= csrfToken %>">
+                <button class="btn btn-danger" type="submit">Zatražite Deaktivaciju</button>
+            </form>
+        <% } %>
+    </div>
+    <div class="edit-sub-cost__container">
+        <form class="main-form__form" action="/izmenite-cenu-pretplate" method="POST">
+            <label for="newSubCost">Nova Cena:</label>
+            <input class="main-form__input" min="0" type="number" id="newSubCost" name="newSubCost" placeholder="Nova cena"
+                required>
+            <input class="main-form__input" type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+            <input class="main-form__input" name="userId" type="hidden" value="<%= user._id %>">
+            <button class="btn" type="submit">Postavite Novu Cenu</button>
+        </form>
+    </div>
+    <div class="edit-user-image__container">
+        <form class="main-form__form" action="/izmenite-korisnicku-sliku" method="POST" enctype="multipart/form-data">
+            <label for="newUserImage">Nova Slika:</label>
+            <input class="main-form__file" type="file" id="newUserImage" name="images" placeholder="Izaberite novu sliku"
+            required>
+            <img alt="Prikaz slike" id="previewImage" src="" style="display:none; max-width: 300px; max-height: 300px;" />
+            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>" readonly>
+            <input type="hidden" name="type" value="public" readonly>
+            <input name="userId" type="hidden" value="<%= user._id %>" readonly>
+            <button class="btn" type="submit">Postavite Sliku</button>
+        </form>
+    </div>
+</div>

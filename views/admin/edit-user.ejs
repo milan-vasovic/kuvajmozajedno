@@ -1,0 +1,44 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/main.css">
+<%- include('../includes/navigation.ejs') %>
+    <section class="main__container">
+        <h1 class="main__title">Edit User</h1>
+        <div class="content__container">
+            <div class="main-form__container">
+                <form class="main-form" action="/admin/izmenite-korisnika" method="POST">
+                    <div class="main-form__group">
+                        <label  for="usernameInput"><strong>Korisničko Ime:</strong></label>
+                        <input class="main-form__input" id="usernameInput" type="text" name="username" value="<%= user.username %>" required>
+                    </div>
+                    <div class="main-form__group">
+                        <label  for="emailInput"><strong>Email:</strong></label>
+                        <input class="main-form__input" id="emailInput" type="email" name="email" value="<%= user.email %>" required>
+                    </div>
+                    <div class="main-form__group">
+                        <label for="userRoleSelect"><strong>Uloga:</strong></label>
+                        <select class="main-form__select" name="role" id="userRoleSelect">
+                            <% if (user.role) { %>
+                                <option value="<%= user.role %>"><%= user.role %></option>
+                            <% } %>
+                            <option value="user">user</option>
+                            <option value="creator">creator</option>
+                            <% if (loggedUser.role === "system") { %>
+                                <option value="admin">admin</option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="main-form__group">
+                        <label for="changeImage" >
+                            Promenite Sliku              
+                        </label>
+                        <input type="checkbox" id="changeImage" name="changeImage" class="main-form__checkbox">    
+                    </div>
+                    <input type="hidden" name="userId" value="<%= user._id %>">
+                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                    <button class="btn" type="submit">Izmenite</button>
+                    <a class="btn btn-danger" href="/admin/korisnik-detalji/<%= user._id %>">Nazad</a>
+                </form>
+            </div>
+        </div>
+    </section>
+<%- include('../includes/end.ejs') %>

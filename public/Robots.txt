@@ -1,0 +1,19 @@
+# Omogućava svim pretraživačima da indeksiraju sve osim /admin, /system i /user
+
+User-agent: *
+Allow: /
+Allow: /proandji
+Allow: /auth
+Allow: /zajednica
+Allow: /uslovi-koriscenja
+Allow: /politika-privatnosti
+Allow: /o-nama
+
+# Blokiraj pristup određenim delovima sajta
+Disallow: /admin
+Disallow: /system
+Disallow: /user
+Disallow: /fitness-family
+
+# Link ka sitemap-u
+Sitemap: https://www.kuvajmozajedno.com/sitemap.xml

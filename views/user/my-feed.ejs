@@ -1,0 +1,166 @@
+<!-- Include head part of html -->
+<%- include('../includes/head.ejs') %>
+<style>
+    .shield, .check_mark {
+    color: #009688;
+    font-weight: bold;
+    font-size: 1.2rem !important;
+}
+</style>
+<link rel="stylesheet" href="/css/main.css">
+<%- include('../includes/navigation.ejs') %>
+
+    <section class="main__container">
+        <% if (content.length > 0) { %>
+            <% function calculateAverageStars(ratings) {
+                if (!ratings || ratings.length === 0) {
+                    return 0;
+                }
+                let sum = 0;
+                for (let rating of ratings) {
+                    sum += rating.stars;
+                }
+                const average = sum / ratings.length;
+                return average;
+            } %>
+            <h1 class="main__title">Novosti</h1>
+            <div class="cards__container">
+                <% content.forEach(item => { %>
+                    <div class="card__container">
+                        <div class="card__header">
+                            <div class="author__box advance">
+                                <div class="author-box__link">
+                                    <% 
+                                        let username = (item.author && item.author.username) || 
+                                                    (item.recipeId && item.recipeId.author.username) || 
+                                                    (item.bookId && item.bookId.author.username) || 
+                                                    (item.purchaseId && item.purchaseId.data.author.username);
+                                        
+                                        let role = (item.author && item.author.role) || 
+                                                (item.recipeId && item.recipeId.author.role) || 
+                                                (item.bookId && item.bookId.author.role) || 
+                                                (item.purchaseId && item.purchaseId.data.author.role);
+                                    %>
+                                    <img loading="lazy" class="author-box__image" style="max-width: 25px; max-height: 25px;" src="<%= (item.author && item.author.userImage) || (item.recipeId && item.recipeId.author.userImage) || (item.bookId && item.bookId.author.userImage) || (item.purchaseId && item.purchaseId.data.author.userImage) %>" 
+                                    alt="<%= (item.author && item.author.username) || (item.recipeId && item.recipeId.author.username) || (item.bookId && item.bookId.author.username) || (item.purchaseId && item.purchaseId.data.author.username) %>">
+                                    <a class="main__link" href="/korisnik-profil/<%= (item.author && item.author._id) || (item.recipeId && item.recipeId.author._id) || (item.bookId && item.bookId.author._id) || (item.purchaseId && item.purchaseId.data.author._id) %>">
+                                        <%= username %>
+                                        <% if (role === 'system') { %>
+                                            <span>&#128081;</span> <!-- Crown for system role -->
+                                        <% } else if (role === 'admin') { %>
+                                            <span class="shield">&#128110;</span> <!-- Shield for admin role -->
+                                        <% } else if (role === 'creator') { %>
+                                            <span class="check_mark">&#10004;</span> <!-- Check mark for creator role -->
+                                        <% } %>
+                                    </a>
+                                </div>
+                                <div class="<%= item.type || (item.recipeId && item.recipeId.type) || (item.bookId && item.bookId.type) || 'protected' %>">
+                                    <%= item.type || (item.recipeId && item.recipeId.type) || (item.bookId && item.bookId.type) || 'zaštićeno' %>
+                                </div>
+                            </div>
+                            <h3 class="card__title"><%= item.title || (item.recipeId && item.recipeId.title) || (item.bookId && item.bookId.title) || (item.purchaseId && item.purchaseId.data.title) %></h3>
+                            <% if (item.coverImage || (item.bookId && item.bookId.coverImage) || (item.purchaseId && item.purchaseId.data.coverImage)) { %>
+                                <img loading="lazy" class="card__image" src="<%= item.coverImage || (item.bookId && item.bookId.coverImage) || (item.purchaseId && item.purchaseId.data.coverImage) %>" 
+                                     alt="<%= item.title || (item.bookId && item.bookId.title) || (item.purchaseId && item.purchaseId.data.title) %>">
+                            <% } else { %>
+                                <img loading="lazy" class="card__image" src="<%= item.featureImage || (item.recipeId && item.recipeId.featureImage) || (item.purchaseId && item.purchaseId.data.featureImage) %>" 
+                                     alt="<%= item.title || (item.recipeId && item.recipeId.title) || (item.purchaseId && item.purchaseId.data.title) %>">
+                                <div class="categories">
+                                    <% let categories = item.category || (item.recipeId && item.recipeId.category) || (item.bookId && item.bookId.category) || (item.purchaseId && item.purchaseId.data.category); %>
+                                    <% if (categories) { %>
+                                        <% categories.forEach(c => { %>
+                                            <a class="main__link" href="/recipe-category/<%= c %>"><%= c %></a>
+                                        <% }) %>
+                                    <% } %>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="card__content">
+                            <% if (item.featureImage || (item.recipeId && item.recipeId.featureImage) || (item.purchaseId && item.purchaseId.data.featureImage)) { %>
+                                <!-- Recipe specific content -->
+                                <h3 class="card__title">Recept</h3>
+                                <p><%= item.preparation && item.preparation.duration || (item.recipeId && item.recipeId.preparation && item.recipeId.preparation.duration) || (item.purchaseId && item.purchaseId.data.preparation.duration) %></p>
+                                <p class="rating">
+                                    <% const ratings = item.ratings || (item.recipeId && item.recipeId.ratings) || false; %>
+                                    <% if (ratings) { %>
+                                        <% const averageStars = calculateAverageStars(ratings); %>
+                                        <% if (averageStars > 0) { %>
+                                            <div class="stars">
+                                                <% for (let i = 1; i <= 5; i++) { %>
+                                                    <% const filledStars = Math.floor(averageStars); %>
+                                                    <% const hasHalfStar = averageStars - filledStars >= 0.5; %>
+                                                    <span class="star <%= i <= filledStars ? 'filled' : '' %>">
+                                                        <% if (i <= filledStars) { %>
+                                                            &#9733;
+                                                        <% } else if (hasHalfStar && averageStars > i - 1) { %>
+                                                            <span class="half-star">
+                                                                <span class="half-filled">&#9733;</span>
+                                                                <span class="half-empty">&#9734;</span>
+                                                            </span>
+                                                        <% } else { %>
+                                                            <span class="empty">&#9734;</span> 
+                                                        <% } %>
+                                                    </span>
+                                                <% } %>
+                                            </div>
+                                        <% } else { %>
+                                            <% for (let i = 1; i <= 5; i++) { %>
+                                                <span class="star">&#9734;</span>
+                                            <% } %>
+                                        <% } %>
+                                    <% } %>
+                                </p>
+                            <% } else { %>
+                                <!-- Book specific content -->
+                                <h3 class="card__title">Knjiga</h3>
+                                <p class="card__time">Recepti: <%= item.recipes && item.recipes.length || (item.bookId && item.bookId.recipes && item.bookId.recipes.length) || (item.purchaseId && item.purchaseId.data.recipes.length) || 0 %></p>
+                            <% } %>
+                            <p class="description"><%= (item.description && (item.description.length > 150 ? item.description.substring(0, 150) + '...' : item.description)) || (item.recipeId && item.recipeId.description && (item.recipeId.description.length > 150 ? item.recipeId.description.substring(0, 150) + '...' : item.recipeId.description)) || (item.bookId && item.bookId.description && (item.bookId.description.length > 150 ? item.bookId.description.substring(0, 150) + '...' : item.bookId.description)) || (item.purchaseId && item.purchaseId.data.description  && (item.purchaseId.data.description.length > 150 ? item.purchaseId.data.description.substring(0, 150) + '...' : item.purchaseId.data.description)) %></p> 
+                            <% if (item.cost >= 0 && item.type === 'protected') { %>
+                                <h3><%= item.cost %> RSD</h3>
+                            <% } %>
+                        </div>
+                        <div class="card__actions">
+                            <% if (item.featureImage || (item.recipeId && item.recipeId.featureImage) || (item.purchaseId && item.purchaseId.data.featureImage)) { %>
+                                <% if (item.cond && item.type === "protected") { %>
+                                    <% if (wallet >= +item.cost) { %>
+                                        <form action="/kupite-recept" method="POST">
+                                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                            <input name="recipeId" type="hidden" value="<%= item._id %>">
+                                            <button class="btn" type="submit">Kupite Recept</button>
+                                        </form>
+                                    <% } else { %>
+                                        <button class="btn" type="submit" disabled>Kupite Recept</button>
+                                    <% } %>
+                                <% } else if (item.cond && item.type === "private") { %>
+                                    <p>Morate biti pretplaćeni</p>
+                                <% } else { %>
+                                    <a href="/recept-detalji/<%= item._id %>" class="btn">Detalji</a>
+                                <% } %>
+                            <% } else { %>
+                                <% if (item.cond && item.type === "protected") { %>
+                                    <% if (wallet >= +item.cost) { %>
+                                        <form action="/kupite-knjigu" method="POST">
+                                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                            <input name="bookId" type="hidden" value="<%= item._id %>">
+                                            <button class="btn" type="submit">Kupite Knjigu</button>
+                                        </form>
+                                    <% } else { %>
+                                        <button class="btn" type="submit" disabled>Kupite Knjigu</button>
+                                    <% } %>
+                                <% } else if (item.cond && item.type === "private") { %>
+                                    <p>Morate biti pretplaćeni</p>
+                                <% } else { %>
+                                    <a href="/knjiga-detalji/<%= item._id %>" class="btn">Detalji</a>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <h2>Nema još sadržaja!</h2>
+        <% } %> 
+        <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, previousPage: previousPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPreviousPage: hasPreviousPage, pageType: 'page'}) %>       
+    </section>
+<%- include('../includes/end.ejs') %>

@@ -1,0 +1,140 @@
+<h1 class="main__title"><%= text %></h1>
+<% if (from.length > 0) { %>
+    <% function calculateAverageStars(ratings) {
+        if (!ratings || ratings.length === 0) {
+            return 0;
+        }
+        let sum = 0;
+        for (let rating of ratings) {
+            sum += rating.stars;
+        }
+        const average = sum / ratings.length;
+        return average;
+    } %>
+    <div class="cards__container cardView">
+        <% from.reverse().forEach(book => { %>
+            <div class="card__container">
+                <div class="card__header">
+                    <div class="author__box advance">
+                        <div class="author-box__link">
+                            <% if (authorBox) { %>
+                                <img class="author-box__image"
+                                    loading="lazy"
+                                    src="<%= (book.bookId && book.bookId.author.userImage) || (book.purchaseId && book.purchaseId.data.author.userImage) %>" 
+                                    alt="<%= (book.bookId && book.bookId.author.username) || (book.purchaseId && book.purchaseId.data.author.username) %>">
+                                <a class="main__link" href="/korisnik-profil/<%= (book.bookId && book.bookId.author._id) || (book.purchaseId && book.purchaseId.data.author._id) %>">
+                                    <%= (book.bookId && book.bookId.author.username) || (book.purchaseId && book.purchaseId.data.author.username) %>
+                                </a>
+                            <% } %>
+                        </div>
+                        <div class="<%= (book.bookId && book.bookId.type) || 'protected' %>">
+                            <%= (book.bookId && book.bookId.type) || 'protected' %>
+                        </div>
+                    </div>
+                    <h3 class="card__title"><%= (book.bookId && book.bookId.title) || (book.purchaseId && book.purchaseId.data.title) %></h3>
+                    <img loading="lazy" class="card__image" src="<%= (book.bookId && book.bookId.coverImage) || (book.purchaseId && book.purchaseId.data.coverImage) %>" alt="<%= (book.bookId && book.bookId.title) || (book.purchaseId && book.purchaseId.data.title)%>">
+                </div>
+                <div class="card__content">
+                    <p class="card__time">Recepti: <%= (book.bookId && book.bookId.recipes.length) || (book.purchaseId && book.purchaseId.data.recipes.length) || book.bookId.recipes %></p>
+                    <% if (book.purchaseId) { %>
+                        <p class="card__time">kupljeno</p>
+                    <% } else { %>
+                        <p class="card__time"><%= (book.bookId && book.bookId.cost) %> RSD</p>
+                    <% } %>
+                    <p class="description">
+                        <%= book.description || (book.bookId && book.bookId.description) || (book.purchaseId && book.purchaseId.data.description) %>
+                    </p>
+                </div>
+                <div class="card__actions">
+                    <% if ((book.cond === true) || (book.bookId && (book.bookId.cond === true ))) { %>
+                        <% if (book.bookId.type === "private") { %>
+                            <p>Morate biti Predplaćeni da biste videli ovaj sadržaj!</p>
+                        <% } else { %>
+                            <form action="/kupite-knjigu" method="POST">
+                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                <input name="bookId" type="hidden" value="<%= book.bookId._id %>">
+                                <button class="btn" type="submit">Kupite Knjigu</button>
+                            </form>
+                        <% } %>
+                    <% } else { %>
+                        <% if (book.bookId && book.bookId.author && loginUser._id.toString() === book.bookId.author._id.toString()) { %>
+                            <a href="/izmenite-knjigu/<%= book.bookId._id %>" class="btn">Izmenite</a>
+                        <% } %>
+                        <% if (book.purchaseId) { %>
+                            <a class="btn" href="/istorija-detalji/<%= book.purchaseId._id %>?purchase=true">Detalji</a>
+                        <% } else if (book.bookId) { %>
+                            <a class="btn" href="/knjiga-detalji/<%= book.bookId._id %>">Detalji</a>
+                        <% } %>
+                    <% } %>               
+                </div>
+            </div>
+        <% }) %>
+    </div>
+    <div class="table__container tableView">
+        <table id="myBooksTable">
+            <caption><%= text %></caption>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Slika</th>
+                    <th>Naziv</th>
+                    <th>Tip</th>
+                    <th>Cena</th>
+                    <th>Recepti</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% from.forEach(book => { %>
+                    <tr>
+                        <td data-label="ID"><%= (book.bookId && book.bookId._id) || (book.purchaseId && book.purchaseId._id) %></td>
+                        <td data-label="Image">
+                            <img class="table__image"
+                                loading="lazy"
+                                src="<%= book.coverImage || (book.bookId && book.bookId.coverImage) || (book.purchaseId && book.purchaseId.data.coverImage) %>"
+                                alt="<%= book.title || (book.bookId && book.bookId.title) || (book.purchaseId && book.purchaseId.data.title)%>">
+                        </td>
+                        <td data-label="Title">
+                            <%= book.title || (book.bookId && book.bookId.title) || (book.purchaseId && book.purchaseId.data.title) %>
+                        </td>
+                        <td data-label="Type"><%= (book.bookId && book.bookId.type) || 'zaštićeno' %></td>
+                        <% if (book.bookId && book.bookId.cost) { %>
+                            <td data-label="Cost"><%= (book.bookId && book.bookId.cost) %> RSD</td>
+                        <% } else if (book.purchaseId) { %>
+                            <td data-label="Cost">kupljeno</td>
+                        <% } else { %>
+                            <td data-label="Cost">0 RSD</td>
+                        <% } %>
+                        <td data-label="Recipes"><%= (book.bookId && book.bookId.recipes && book.bookId.recipes.length) || (book.purchaseId && book.purchaseId.data.recipes.length) || 0 %></td>
+                        <td data-label="Actions" class="table__action"> 
+                            <% if ((book.cond === true) || (book.bookId && (book.bookId.cond === true ))) { %>
+                                <% if (book.bookId.type === "private") { %>
+                                    <p>Morate biti Predplaćeni da biste videli ovaj sadržaj!</p>
+                                <% } else { %>
+                                    <form action="/kupite-knjigu" method="POST">
+                                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                        <input name="bookId" type="hidden" value="<%= book.bookId._id %>">
+                                        <button class="btn" type="submit">Kupite Knjigu</button>
+                                    </form>
+                                <% } %>
+                            <% } else { %>
+                                <% if (book.bookId && book.bookId.author && loginUser._id.toString() === book.bookId.author._id.toString()) { %>
+                                    <a href="/izmenite-knjigu/<%= book.bookId._id %>" class="btn">Izmenite</a>
+                                <% } %>
+                                <% if (book.purchaseId) { %>
+                                    <a class="btn" href="/istorija-detalji/<%= book.purchaseId._id %>?purchase=true">Detalji</a>
+                                <% } else if (book.bookId) { %>
+                                    <a class="btn" href="/knjiga-detalji/<%= book.bookId._id %>">Detalji</a>
+                                <% } %>
+                            <% } %>                        
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } else { %>
+    <div class="no-books__container">
+        <h3 class="info__title">Trenutno još nema <%= text %>!</h3>
+    </div>
+<% } %>

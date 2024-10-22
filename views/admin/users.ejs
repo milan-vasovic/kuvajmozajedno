@@ -1,0 +1,59 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="main__container">
+                <h1 class="main__title">Svi Korisnici</h1>
+                <div class="content__container">
+                    <div class="search-form__container">
+                        <form class="search-form" action="/admin/korisnici-pretraga" method="post">
+                            <div class="search-form__group">
+                                <input class="main-form__input" name="searchParams" type="text" placeholder="Search..">
+                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                <button class="btn">Pretraga</button>
+                            </div>
+                        </form>
+                <% if (users.length > 0) { %>
+                    <table id="adminUsersTable" class="recipe__table">
+                        <caption>Svi Korisnici:</caption>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Slika</th>
+                                <th>Korisničko Ime</th>
+                                <th>Email</th>
+                                <th>Uloga</th>
+                                <th>Status</th>
+                                <th>Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach(user => { %>
+                                <tr>
+                                    <td data-label="ID"><%= user._id %></td>
+                                    <td data-label="Image">
+                                        <img loading="lazy" style="max-width: 100px; max-height: 100px;" src="<%= user.userImage %>" alt="<%= user.username %>">
+                                    <td data-label="User"><a class="main__link" href="/admin/korisnik-detalji/<%= user._id %>"><%= user.username %> <% if (user.role === 'system') { %><span>&#128081;</span><% } else if (user.status.find(elem => elem === 'suspended')) { %><span class="shield">&#10060;</span><% } else if (user.status.find(elem => elem === 'inactive')) { %><span class="shield">&#128123;</span><% } else if (user.role === 'admin') { %><span class="shield">&#128110;</span><% } else if (user.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></a></td>
+                                    <td data-label="Email"><%= user.email %></td>
+                                    <td data-label="Role"><%= user.role %></td>
+                                    <td data-label="Status" 
+                                    class="<% if (user.status.find(elem => elem === 'inactive') || user.status.find(elem => elem === 'suspended')) { %>negative<% } else if (user.status.find(elem => elem === 'pending') || user.status.find(elem => elem === 'requestedCreator') || user.status.find(elem => elem === 'requestedDeposit') || user.status.find(elem => elem === 'requestedWithdrawal')) { %>neutral<% } else if (user.status.find(elem => elem === 'active')) { %>positive<% } else { %>negative<% } %>">
+                                        <%= user.status.join(', ') %>
+                                    </td>
+                                    <td data-label="Actions" class="table__action">
+                                        <a href="/admin/korisnik-detalji/<%= user._id %>" class="btn">Detalji</a>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                    <% } else { %>
+                        <h1>Trenutno nisu pronađeni Korisnici!</h1>
+                    <% } %>
+        <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, previousPage: previousPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPreviousPage: hasPreviousPage, pageType: 'userPage' }) %>
+                </div>
+            </div>
+        </section>
+    </body>
+    <%- include('../includes/end.ejs') %>
+

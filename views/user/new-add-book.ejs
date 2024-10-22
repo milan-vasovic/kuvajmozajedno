@@ -1,0 +1,146 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/new-main.css">
+<style>
+    .content__container {
+        margin: auto;
+        padding: auto;
+    }
+</style>
+<%- include('../includes/navigation.ejs') %>
+    <section class="main__container">
+        <h1 class="main__title">
+            <%= pageTitle %>
+        </h1>
+        <div class="content__container">
+            <div class="main-form__container">
+                <form class="main-form" action="<% if (isAdmin) { %>/admin/izmenite-knjigu<% } else if (editing) { %>/izmenite-knjigu<% } else { %>/dodajte-knjigu<% } %>" method="POST" enctype="multipart/form-data">
+                    <div class="main-form__group">
+                        <label for="title"><strong>Naziv:</strong></label>
+                        <input class="main-form__input" type="text" id="title" name="title" placeholder="Naziv"
+                            value="<% if(existingData) { %><%= existingData.title %><% } else if (editing) { %><%= book.title %><% } %>" required>
+                    </div>
+
+                    <div class="main-form__group">
+                        <label for="bookTypeSelect"><strong>Tip:</strong></label>
+                        <select class="main-form__select" name="type" id="bookTypeSelect">
+                            <% if (editing) { %>
+                                <option value="<%= book.type %>"><%= book.type %></option>
+                            <% } %>
+                            <option value="public">Public (Javan)</option>
+                            <option value="private">Private (Privatan)</option>
+                            <% if (userRole != "user") { %>
+                                <option value="protected">Protected (Zaštićen)</option>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <% if (existingData) { %>
+                        <% if (existingData.type === 'protected') { %>
+                            <div class="main-form__group" id="costInput">
+                                <label for="cost"><strong>Cena:</strong></label>
+                                <input class="main-form__input" type="number" name="cost" id="cost" value="<%= existingData.cost %>">
+                            </div>
+                        <% } else { %>
+                            <div class="main-form__group" id="costInput" style="display: none;">
+                                <label for="cost"><strong>Cena:</strong></label>
+                                <input class="main-form__input" type="number" name="cost" id="cost" value="0" readonly>
+                            </div>
+                        <% } %>
+                    <% } else if (editing) { %>
+                        <% if (book.type === 'protected') { %>
+                            <div class="main-form__group" id="costInput">
+                                <label for="cost"><strong>Cena:</strong></label>
+                                <input class="main-form__input" type="number" name="cost" id="cost" value="<%= book.cost %>">
+                            </div>
+                        <% } else { %>
+                            <div class="main-form__group" id="costInput" style="display: none;">
+                                <label for="cost"><strong>Cena:</strong></label>
+                                <input class="main-form__input" type="number" name="cost" id="cost" value="0" readonly>
+                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <div class="main-form__group" id="costInput" style="display: none;">
+                            <label for="cost"><strong>Cena:</strong></label>
+                            <input class="main-form__input" type="number" name="cost" id="cost" value="0" readonly>
+                        </div>
+                    <% } %>
+
+                    <div class="main-form__group">
+                        <label for="description"><strong>Description:</strong></label>
+                        <textarea class="main-form__textarea" id="description" name="description" rows="4"
+                            placeholder="Opis Knjige"
+                            required><% if(existingData) { %><%= existingData.description %><% } else if (editing) { %><%= book.description %><% } %></textarea>
+                    </div>
+
+                    <% if (editing) { %>
+                        <div class="main-form__group">
+                            <label for="coverImage"><strong>Naslovna Slika:</strong></label>
+                            <input class="main-form__input" type="file" id="coverImage" name="images"
+                                placeholder="Izaberite Naslovnu Sliku">
+                            <img alt="Prikaz slike" id="previewImage" src="" style="display:none; max-width: 300px; max-height: 300px;" />
+                        </div>
+                    <% } else { %>
+                        <div class="main-form__group">
+                            <label for="coverImage"><strong>Naslovna Slika:</strong></label>
+                            <input class="main-form__input" type="file" id="coverImage" name="images"
+                                placeholder="Izaberite Naslovnu Sliku">
+                            <img alt="Prikaz slike" id="previewImage" src="" style="display:none; max-width: 300px; max-height: 300px;" />
+                        </div>
+                    <% } %>
+                    
+                    <% if (editing) { %>
+                        <input type="hidden" name="bookId" value="<%= book._id %>">
+                    <% } %>
+                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                    <button class="btn-success" type="submit"><% if (editing) { %>Izmenite Knjigu<% } else { %>Sačuvajte Knjigu<% } %></button>
+                </form>
+                <% if (errorMessage) { %>
+                    <div class="user-message user-message--error">
+                        <%= errorMessage %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.getElementById('bookTypeSelect').addEventListener('change', function () {
+            var selectedValueForBook = this.value;
+            var bookCostInput = document.getElementById('costInput');
+            var bookcCstInputField = document.getElementById('cost');
+
+            if (selectedValueForBook === 'protected') {
+                bookCostInput.style.display = 'block';
+                bookcCstInputField.removeAttribute('readonly'); // Allow editing
+            } else {
+                bookCostInput.style.display = 'none';
+                bookcCstInputField.value = 0; // Reset value to 0
+                bookcCstInputField.setAttribute('readonly', 'readonly'); // Make it readonly
+            }
+        });
+
+                // Function to handle image preview
+        function handleImagePreview(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const previewImage = document.getElementById(previewId);
+                    previewImage.src = e.target.result;  // Set image source to the selected file
+                    previewImage.style.display = "block";  // Display the image
+                }
+
+                reader.readAsDataURL(file);  // Read file as Data URL
+            }
+        }
+
+        // Event listener for the 'featureImage' input
+        const featureImage = document.getElementById('coverImage');
+        if(featureImage) {
+            featureImage.addEventListener('change', function() {
+                handleImagePreview(this, 'previewImage');
+            });
+        }
+    </script>
+</body>
+<%- include('../includes/end.ejs') %>

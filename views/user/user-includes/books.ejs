@@ -1,0 +1,21 @@
+<div class="tab-container">
+    <div class="tabs">
+        <button type="button" class="book-tab active btn" onclick="openTab('user-books__container',4)"
+            data-tab="user-books__container">Vaše Knjige</button>
+        <button type="button" class="book-tab btn" onclick="openTab('saved-books__container',4)"
+            data-tab="saved-books__container">Sačuvane Knjige</button>
+        <button type="button" class="book-tab btn" onclick="openTab('bought-books__container',4)"
+            data-tab="bought-books__container">Kupljene Knjige</button>
+    </div>
+</div>
+<div class="result__container">
+    <div id="user-books__container" class="book-tab-content active" data-tab="user-books__container">
+        <%- include('user-books.ejs', {from:user['userBooks'], text:'Vaše Knjige', authorBox:false}) %>
+    </div>
+    <div id="saved-books__container" class="book-tab-content" data-tab="saved-books__container">
+        <%- include('user-books.ejs', {from:user['savedBooks'], text:'Sačuvane Knjige', authorBox:true}) %>
+    </div>
+    <div id="bought-books__container" class="book-tab-content" data-tab="bought-books__container">
+        <%- include('user-books.ejs', {from:user['boughtBooks'], text:'Kupljene Knjige', authorBox:true}) %>
+    </div>
+</div>

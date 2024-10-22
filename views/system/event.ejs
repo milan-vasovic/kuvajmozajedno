@@ -1,0 +1,107 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/new-main.css">
+    <%- include('../includes/navigation.ejs') %>
+        <section class="main__container">
+            <h1 class="main__title"><%= pageTitle %></h1>
+            <div class="content__container">
+                <div class="tab__container">
+                    <div class="tabs">
+                        <button type="button" class="tab <%= activeCurrent %> btn" onclick="openTab('current__container',1)"
+                            data-tab="current__container">U Toku</button>
+                        <button type="button" class="tab <%= activeFuture %> btn" onclick="openTab('future__container',1)"
+                            data-tab="future__container">Slede</button>
+                        <button type="button" class="tab <%= activePast %> btn" onclick="openTab('past__container',1)"
+                            data-tab="past__container">Prošli</button>
+                    </div>
+                </div>
+                <div class="result__container">
+                    <div id="current__container" class="current__container tab-content <%= activeCurrent %>" data-tab="current__container">
+                        <h2 class="sub__title">U Toku</h2>
+                        <div class="cards__container">
+                            <% if (currentEvents.length > 0) { %>
+                                <% currentEvents.forEach(event => { %>
+                                    <div class="card__container">
+                                        <div class="card__header">
+                                            <h3 class="card__title"><%= event.title %></h3>
+                                            <img loading="lazy" class="card__image" src="<%= event.image %>" alt="<%= event.title %>">
+                                        </div>
+                                        <div class="card__contnet">
+                                            <p class="description">
+                                                Početak: <strong><%= event.startDate.toLocaleDateString('sr-RS') %></strong>
+                                            </p>
+                                            <p class="description">
+                                                Kraj: <strong><%= event.endDate.toLocaleDateString('sr-RS') %></strong>
+                                            </p>
+                                        </div>
+                                        <div class="card__actions">
+                                            <a class="btn" href="/system/dogadjaj-detalji/<%= event._id %>">Detalji</a>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p>Trenutno nema događaja u toku!</p>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div id="future__container" class="future__container tab-content <%= activeFuture %>" data-tab="future__container">
+                        <h2 class="sub__title">Slede</h2>
+                        <div class="cards__container">
+                            <% if (upcommingEvents.length > 0) { %>
+                                <% upcommingEvents.forEach(event => { %>
+                                    <div class="card__container">
+                                        <div class="card__header">
+                                            <h3 class="card__title"><%= event.title %></h3>
+                                            <img loading="lazy" class="card__image" src="<%= event.image %>" alt="<%= event.title %>">
+                                        </div>
+                                        <div class="card__contnet">
+                                            <p class="description">
+                                                Početak: <strong><%= event.startDate.toLocaleDateString('sr-RS') %></strong>
+                                            </p>
+                                            <p class="description">
+                                                Kraj: <strong><%= event.endDate.toLocaleDateString('sr-RS') %></strong>
+                                            </p>
+                                        </div>
+                                        <div class="card__actions">
+                                            <a class="btn" href="/system/dogadjaj-detalji/<%= event._id %>">Detalji</a>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p>Trenutno nema događaja koji slede!</p>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div id="past__container" class="past__container tab-content <%= activePast %>" data-tab="past__container">
+                        <h2 class="sub__title">Prošli</h2>
+                        <div class="cards__container">
+                            <% if (pastEvents.length > 0) { %>
+                                <% pastEvents.forEach(event => { %>
+                                    <div class="card__container">
+                                        <div class="card__header">
+                                            <h3 class="card__title"><%= event.title %></h3>
+                                            <img loading="lazy" class="card__image" src="<%= event.image %>" alt="<%= event.title %>">
+                                        </div>
+                                        <div class="card__contnet">
+                                            <p class="description">
+                                                Početak: <strong><%= event.startDate.toLocaleDateString('sr-RS') %></strong>
+                                            </p>
+                                            <p class="description">
+                                                Kraj: <strong><%= event.endDate.toLocaleDateString('sr-RS') %></strong>
+                                            </p>
+                                        </div>
+                                        <div class="card__actions">
+                                            <a class="btn" href="/system/dogadjaj-detalji/<%= event._id %>">Detalji</a>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p>Trenutno nema završenih događaja!</p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+    <%- include('../includes/end.ejs') %>
+

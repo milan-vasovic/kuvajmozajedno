@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://www.kuvajmozajedno.com/kuvajmozajednologo.png" />
+    <meta name="description" content="<%= pageDescription %>">
+    <meta name="keywords" content="<%= pageKeyWords %>">
+    <meta name="author" content="kuvajmozajedno.com">
+    <title><%= pageTitle %></title>
+    <link rel="icon" href="/logo_recipesbook.png" type="image/png">
+    <link href="https://cdn.datatables.net/v/dt/dt-2.0.7/datatables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/new-main.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <style>
+        @media(min-width: 768px) {
+            .content__container {
+                text-align: left;
+                margin: 1rem;
+            }
+        }
+
+        .category__list {
+            text-align: left;
+        }
+
+        .content__container {
+                margin: 1rem;
+            }
+        .btn {
+            font-size: 1.5rem;
+        }
+
+    </style>
+</head>
+<body>
+    <header class="main-header"></header>
+    <div class="main__container">
+        <h1 class="main__title"><% if (isFemale) { %>Draga <% } else { %>Dragi <% } %><%= name %></h1>
+        <h2 class="sub__title">Pridružite nam se u izgradnji zajednice kuvajmozajedno</h2>
+        <div class="content__container">
+            <p class="text">Pozivam vas da se registrujete i postanete deo rastuće zajednice koja se fokusira na kuvanje, recepte, savete, inspiraciju, zabavu, stil života i deljenje znanja.</p>
+            <a href="/registracija" class="btn">Registracija</a>
+            <p class="text">Zajedno gradimo platformu koja vam omogućava:</p>
+            <ul class="category__list">
+                <li class="category-list__item"><strong>Jednostavno i brzo čuvanje recepata</strong> - vaši omiljeni recepti uvek na dohvat ruke.</li>
+                <li class="category-list__item"><strong>Inspiraciju</strong> - otkrijte nove recepte i kulinarske trikove.</li>
+                <li class="category-list__item"><strong>Edukaciju i zabavu</strong> - naučite nove tehnike i usavršite svoje kulinarske veštine.</li>
+                <li class="category-list__item"><strong>Mogućnost dodatnog prihoda</strong> - pretplate, kreirajte, delite i prodajte recepte i knjige recepata.</li>
+            </ul>
+            <p class="text">Zajednica je mesto gde kulinarstvo postaje iskustvo, a vaša kreativnost može doneti zaradu. Budite deo ove avanture – pridružite se danas!</p>
+            <p class="text">Web aplikaciju možete pronaći na <a class="main__link" href="https://www.kuvajmozajedno.com">kuvajmozajedno.com</a></p>
+            <p class="text">Zapratite nas na društvenim mrežama:</p>
+            <ul class="category__list">
+                <li class="category-list__item"><a class="main__link" href="https://www.instagram.com/kuvajmo.zajedno">Instagram<spna class="devider"> | </spna></a></li>
+                <li class="category-list__item"><a class="main__link" href="https://youtube.com/@kuvajmo">Youtube</a></li>
+            </ul>
+        </div>
+    </div>
+    <footer class="main-footer"></footer>
+</body>
+</html>

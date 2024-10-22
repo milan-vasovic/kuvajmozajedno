@@ -1,0 +1,219 @@
+<h1 class="main__title"><%= text %></h1>
+<% if (from.length > 0) { %>
+    <% function calculateAverageStars(ratings) {
+        if (!ratings || ratings.length === 0) {
+            return 0;
+        }
+        let sum = 0;
+        for (let rating of ratings) {
+            sum += rating.stars;
+        }
+        const average = sum / ratings.length;
+        return average;
+    } %>
+    <div class="cards__container cardView">
+        <% from.reverse().forEach(recipe => { %>
+            <div class="card__container">
+                <div class="card__header">
+                    <div class="author__box advance">
+                        <div class="author-box__link">
+                            <% if (authorBox) { %>
+                                <img class="author-box__image" 
+                                    loading="lazy"
+                                    src="<%= (recipe.recipeId && recipe.recipeId.author.userImage) || (recipe.purchaseId && recipe.purchaseId.data.author.userImage) %>" 
+                                    alt="<%= (recipe.recipeId && recipe.recipeId.author.username) || (recipe.purchaseId && recipe.purchaseId.data.author.username) %>">
+                                <a class="main__link" href="/korisnik-profil/<%= (recipe.recipeId && recipe.recipeId.author._id) || (recipe.purchaseId && recipe.purchaseId.data.author._id) %>">
+                                    <%= (recipe.recipeId && recipe.recipeId.author.username) || (recipe.purchaseId && recipe.purchaseId.data.author.username) %>
+                                </a>
+                            <% } %>
+                        </div>
+                        <div class="<%= (recipe.recipeId && recipe.recipeId.type) || 'protected' %>">
+                            <%= (recipe.recipeId && recipe.recipeId.type) || 'zaštićen' %>
+                        </div>
+                    </div>
+                    <h3 class="card__title">
+                        <%= (recipe.recipeId && recipe.recipeId.title) || (recipe.purchaseId && recipe.purchaseId.data.title) %>
+                    </h3>
+                    <img class="card__image"
+                        loading="lazy"
+                        src="<%= (recipe.recipeId && recipe.recipeId.featureImage) || (recipe.purchaseId && recipe.purchaseId.data.featureImage) %>" 
+                        alt="<%= (recipe.recipeId && recipe.recipeId.title) || (recipe.purchaseId && recipe.purchaseId.data.title) %>">
+                    <div class="card__categories">
+                        <% let categories = (recipe.recipeId && recipe.recipeId.category) || (recipe.purchaseId && recipe.purchaseId.data.category); %>
+                        <% if (categories) { %>
+                            <% categories.forEach(c => { %>
+                                <a class="main__link" href="?category=<%= c %>"><%= c %></a>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="card__content">
+                    <p class="card__time">
+                        <%= (recipe.recipeId && recipe.recipeId.preparation.duration) || (recipe.purchaseId && recipe.purchaseId.data.preparation.duration) %>
+                    </p>
+                    <% if (recipe.purchaseId) { %>
+                        <p class="card__time">kupljeno</p>
+                    <% } else { %>
+                        <p class="card__time"><%= (recipe.recipeId && recipe.recipeId.cost) %> RSD</p>
+                    <% } %>
+                    <p class="rating">
+                        <% const ratings = (recipe.recipeId && recipe.recipeId.ratings) || false; %>
+                        <% if (ratings) { %>
+                            <% const averageStars = calculateAverageStars(ratings); %>
+                            <% if (averageStars > 0) { %>
+                                <div class="stars">
+                                    <% for (let i = 1; i <= 5; i++) { %>
+                                        <span class="star <%= i <= Math.floor(averageStars) ? 'filled' : '' %>">
+                                            <% if (i <= Math.floor(averageStars)) { %>
+                                                &#9733;
+                                            <% } else if (averageStars - Math.floor(averageStars) >= 0.5 && averageStars > i - 1) { %>
+                                                <span class="half-star">
+                                                    <span class="half-filled">&#9733;</span>
+                                                    <span class="half-empty">&#9734;</span>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="empty">&#9734;</span>
+                                            <% } %>
+                                        </span>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <span class="star">&#9734;</span>
+                                <% } %>
+                            <% } %>
+                        <% } %>
+                    </p>
+                    <p class="description">
+                        <%= (recipe.recipeId && recipe.recipeId.description && (recipe.recipeId.description.length > 150 ? recipe.recipeId.description.substring(0, 150) + '...' : recipe.recipeId.description)) || (recipe.purchaseId && recipe.purchaseId.data.description && (recipe.purchaseId.data.description.length > 150 ? recipe.purchaseId.data.description.substring(0, 150) + '...' : recipe.purchaseId.data.description)) %>
+                    </p>
+                </div>
+                <div class="card__actions">
+                    <% if ((recipe.cond === true) || (recipe.recipeId && (recipe.recipeId.cond === true))) { %>
+                        <% if (recipe.recipeId.type === "private") { %>
+                            <p>Morate biti predplaćeni da biste videli ovaj sadržaj.</p>
+                        <% } else { %>
+                            <% if (wallet >= +recipe.recipeId.cost) { %>
+                                <form action="/buy-recipe" method="POST">
+                                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                    <input name="recipeId" type="hidden" value="<%= recipe.recipeId._id %>">
+                                    <button class="btn" type="submit">Kupite Recept</button>
+                                </form>
+                            <% } else { %>
+                                <button class="btn" type="submit" disabled>Kupite Recept</button>
+                            <% } %>
+                        <% } %>
+                    <% } else { %>
+                        <% if (recipe.recipeId && recipe.recipeId.author && loginUser._id.toString() === recipe.recipeId.author._id.toString()) { %>
+                            <a href="/izmenite-recept/<%= recipe.recipeId._id %>" class="btn">Izmenite</a>
+                        <% } %>
+                        <% if (recipe.purchaseId) { %>
+                            <a class="btn" href="/istorija-detalji/<%= recipe.purchaseId._id %>?purchase=true">Detalji</a>
+                        <% } else { %>
+                            <a class="btn" href="/recept-detalji/<%= recipe.recipeId._id || (recipe.purchaseId && recipe.purchaseId.data._id) %>">Detalji</a>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+    <div class="table__container tableView">
+        <table id="myRecipesTable">
+            <caption><%= text %></caption>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Slika</th>
+                    <th>Naziv</th>
+                    <th>Kategorija</th>
+                    <th>Trajanje</th>
+                    <th>Ocene</th>
+                    <th>Tip</th>
+                    <th>Cena</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% from.forEach(recipe => { %>
+                    <tr>
+                        <td data-label="ID">
+                            <%= (recipe.recipeId && recipe.recipeId._id) || (recipe.purchaseId && recipe.purchaseId._id) %>
+                        </td>
+                        <td data-label="Image">
+                            <img class="table__image"
+                                loading="lazy"
+                                src="<%= (recipe.recipeId && recipe.recipeId.featureImage) || (recipe.purchaseId && recipe.purchaseId.data.featureImage) %>"
+                                alt="<%= (recipe.recipeId && recipe.recipeId.title) || (recipe.purchaseId && recipe.purchaseId.data.title) %>">
+                        </td>
+                        <td data-label="Title">
+                            <%= (recipe.recipeId && recipe.recipeId.title) || (recipe.purchaseId && recipe.purchaseId.data.title) %>
+                        </td>
+                        <td data-label="Category">
+                            <%= (recipe.recipeId && Array.isArray(recipe.recipeId.category) && recipe.recipeId.category.length) 
+                            ? recipe.recipeId.category.join(', ') 
+                            : (recipe.purchaseId && Array.isArray(recipe.purchaseId.data.category) && recipe.purchaseId.data.category.length) 
+                            ? recipe.purchaseId.data.category.join(', ') 
+                            : 'Nema još kategorija' 
+                            %>
+                        </td>
+                        <td data-label="Duration">
+                            <%= (recipe.recipeId && recipe.recipeId.preparation.duration) || (recipe.purchaseId && recipe.purchaseId.data.preparation.duration) %>
+                        </td>
+                        <td data-label="Rating">
+                            <% const ratings = (recipe.recipeId && recipe.recipeId.ratings) || (recipe.purchaseId && recipe.purchaseId.ratings) || []; %>
+                            <%= (function() {
+                                if (!ratings || ratings.length === 0) {
+                                    return "Nema ocena još";
+                                }
+                                let sum = 0;
+                                for (let rating of ratings) {
+                                    sum += rating.stars;
+                                }
+                                const average = sum / ratings.length;
+                                return average.toFixed(1);
+                            })() %>  
+                        </td>
+                        <td data-label="Type">
+                            <%= (recipe.recipeId && recipe.recipeId.type) || 'protected' %>
+                        </td>
+                        <td data-label="Cost">
+                            <% if (recipe.recipeId && recipe.recipeId.cost) { %>
+                                <%= recipe.recipeId.cost %> RSD
+                            <% } else if (recipe.purchaseId) { %>
+                                kupljeno
+                            <% } else { %>
+                                0 RSD
+                            <% } %>
+                        </td>
+                        <td data-label="Actions" class="table__action">
+                            <% if ((recipe.cond === true) || (recipe.recipeId && (recipe.recipeId.cond === true))) { %>
+                                <% if (recipe.recipeId.type === "private") { %>
+                                    <p>Morate biti predplaćeni da biste videli ovaj sadržaj.</p>
+                                <% } else { %>
+                                    <form action="/buy-recipe" method="POST">
+                                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                        <input name="recipeId" type="hidden" value="<%= recipe.recipeId._id %>">
+                                        <button class="btn" type="submit">Kupite Recept</button>
+                                    </form>
+                                <% } %>
+                            <% } else { %>
+                                <% if (recipe.recipeId && recipe.recipeId.author && loginUser._id.toString() === recipe.recipeId.author._id.toString()) { %>
+                                    <a href="/izmenite-recept/<%= recipe.recipeId._id %>" class="btn">Izmenite</a>
+                                <% } %>
+                                <% if (recipe.purchaseId) { %>
+                                    <a class="btn" href="/istorija-detalji/<%= recipe.purchaseId._id %>?purchase=true">Detalji</a>
+                                <% } else { %>
+                                    <a class="btn" href="/recept-detalji/<%= recipe.recipeId._id || (recipe.purchaseId && recipe.purchaseId.data._id) %>">Detalji</a>
+                                <% } %>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } else { %>
+    <div class="no-recipes__container">
+        <h3 class="info__title">Trenutno još nema <%= text %>!</h3>
+    </div>
+<% } %>

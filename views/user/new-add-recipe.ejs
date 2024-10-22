@@ -1,0 +1,299 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/new-main.css">
+<%- include('../includes/navigation.ejs') %>
+    <section class="main__container">
+        <h1 class="main__title">
+            <%= pageTitle %>
+        </h1>
+        <div class="content__container">
+            <div class="main-form__container">
+                <form class="main-form" action="<% if (isAdmin) { %>/admin/izmenite-recept<% } else if (editing) { %>/izmenite-recept<% } else { %>/dodajte-recept<% } %>" method="POST" enctype="multipart/form-data">
+                    <div class="main-form__group">
+                        <label for="title"><strong>Naziv:</strong></label>
+                        <input class="main-form__input" type="text" id="title" name="title" placeholder="Naziv" value="<% if(existingData) { %><%= existingData.title %><% } else if (editing) { %><%= recipe.title %><% } %>" required>
+                    </div>
+        
+                    <% if (existingData) { %>
+                        <div class="main-form__group" id="categoryContainer">
+                            <% existingData.category.forEach((category, index) => { %>
+                                <label for="category-select<%= index %>"><strong>Kategorije:</strong></label>
+                                <div class="main-form__category-container">
+                                    <select class="main-form__select" name="category" id="category-select<%= index %>" required>
+                                        <% categories.categories.forEach(mainCategory => { %>
+                                          <optgroup label="<%= mainCategory.mainCategory %>">
+                                            <option value="<%= existingData.category %>" selected><% existingData.category %></option>
+                                            <% mainCategory.subCategories.forEach(subCategory => { %>
+                                                <!-- Proveri da li se category podudara sa subCategory -->
+                                                <option value="<%= subCategory %>"><%= subCategory %></option>
+                                            <% }) %>
+                                          </optgroup>
+                                        <% }) %>
+                                    </select>
+                                    <button type="button" class="btn btn-danger removeCategory" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else if (editing) { %>
+                        <div class="main-form__group" id="categoryContainer">
+                            <% recipe.category.forEach((category, index) => { %>
+                                <label for="category-select<%= index %>"><strong>Kategorije:</strong></label>
+                                <div class="main-form__category-container">
+                                    <select class="main-form__select" name="category" id="category-select<%= index %>" required>
+                                        <option value="<%= category %>" selected><%= category %></option>
+                                    <% categories.categories.forEach(mainCategory => { %>
+                                      <optgroup label="<%= mainCategory.mainCategory %>">
+                                        <% mainCategory.subCategories.forEach(subCategory => { %>
+                                          <option value="<%= subCategory %>"><%= subCategory %></option>
+                                        <% }) %>
+                                      </optgroup>
+                                    <% }) %>
+                                </select>
+                                    <button type="button" class="btn btn-danger removeCategory" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="main-form__group" id="categoryContainer">
+                            <label for="category-select"><strong>Kategorije:</strong></label>
+                            <div class="main-form__category-container">
+                                <select class="main-form__select" name="category" id="category-select" required>
+                                    <% categories.categories.forEach(mainCategory => { %>
+                                      <optgroup label="<%= mainCategory.mainCategory %>">
+                                        <% mainCategory.subCategories.forEach(subCategory => { %>
+                                          <option value="<%= subCategory %>"><%= subCategory %></option>
+                                        <% }) %>
+                                      </optgroup>
+                                    <% }) %>
+                                </select>
+                                <button type="button" class="btn btn-danger removeCategory" data-index="0">Izbacite</button>
+                            </div>
+                        </div>
+                    <% } %>
+                    <button class="btn" id="addCategory">Dodajte Kategoriju</button>
+        
+                    <div class="main-form__group">
+                        <label for="recipeTypeSelect"><strong>Tip:</strong></label>
+                        <select class="main-form__select" name="type" id="recipeTypeSelect">
+                            <% if (existingData) { %>
+                                <option value="<%= existingData.type %>"><%=existingData.type %></option>
+                            <% } else if (editing) { %>
+                                <option value="<%= recipe.type %>"><%=recipe.type %></option>
+                            <% } %>
+                            <option value="public">Public (Javan)</option>
+                            <option value="private">Private (Privatan)</option>
+                            <% if (userRole != "user") { %>
+                                <option value="protected">Protected (Zaštićen)</option>
+                            <% } %>
+                        </select>
+                    </div>
+                    
+                    <% if (existingData) { %>
+                        <% if (existingData.type === 'protected') { %>
+                            <div class="main-form__group" id="costInput">
+                                <label for="cost"><strong>Cena:</strong></label>
+                                <input class="main-form__input" type="number" name="cost" id="cost" value="<%= existingData.cost %>">
+                            </div>
+                        <% } else { %>
+                            <div class="main-form__group" id="costInput" style="display: none;">
+                                <label for="cost"><strong>Cena:</strong></label>
+                                <input class="main-form__input" type="number" name="cost" id="cost" value="0" readonly>
+                            </div>
+                        <% } %>
+                    <% } else if (editing) { %>
+                        <% if (recipe.type === 'protected') { %>
+                            <div class="main-form__group" id="costInput">
+                                <label for="cost"><strong>Cena:</strong></label>
+                                <input class="main-form__input" type="number" name="cost" id="cost" value="<%= recipe.cost %>">
+                            </div>
+                        <% } else { %>
+                            <div class="main-form__group" id="costInput" style="display: none;">
+                                <label for="cost"><strong>Cena:</strong></label>
+                                <input class="main-form__input" type="number" name="cost" id="cost" value="0" readonly>
+                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <div class="main-form__group" id="costInput" style="display: none;">
+                            <label for="cost"><strong>Cena:</strong></label>
+                            <input class="main-form__input" type="number" name="cost" id="cost" value="0" readonly>
+                        </div>
+                    <% } %>
+                    
+                    <div class="main-form__group">
+                        <label for="description"><strong>Opis:</strong></label>
+                        <textarea class="main-form__textarea" id="description" name="description" rows="4" placeholder="Opis Recepta" required><% if(existingData) { %><%= existingData.description %><% } else if (editing) { %><%= recipe.description %><% } %></textarea>
+                    </div>
+        
+                    <% if (existingData) { %>
+                        <div class="main-form__group" id="ingredientsContainer">
+                            <% existingData.ingredients.forEach((ingredient, index) => { %>
+                                <label for="ingredient<%= index %>"><strong>Sastojci:</strong></label>
+                                <div class="input-container">
+                                    <input class="main-form__input" id="ingredient<%= index %>" type="text" name="ingredients" value="<%= ingredient.name %>" placeholder="Sastojak" required>
+                                    <input class="main-form__input" id="ingredientAmount<%= index %>" type="text" name="ingredientsAmount" value="<%= ingredient.amount %>" placeholder="Količina" required>
+                                    <button type="button" class="btn btn-danger removeIngredient" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else if (editing) { %>
+                        <div class="main-form__group" id="ingredientsContainer">
+                            <% recipe.ingredients.forEach((ingredient, index) => { %>
+                                <label for="ingredient<%= index %>"><strong>Sastojci:</strong></label>
+                                <div class="input-container">
+                                    <input class="main-form__input" id="ingredient<%= index %>" type="text" name="ingredients" value="<%= ingredient.name %>" placeholder="Sastojak" required>
+                                    <input class="main-form__input" id="ingredientAmount<%= index %>" type="text" name="ingredientsAmount" value="<%= ingredient.amount %>" placeholder="Količina" required>
+                                    <button type="button" class="btn btn-danger removeIngredient" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="main-form__group" id="ingredientsContainer">
+                            <label for="ingredient0"><strong>Sastojci:</strong></label>
+                            <div class="input-container">
+                                <input class="main-form__input" id="ingredient0" type="text" name="ingredients" placeholder="Sastojak" required>
+                                <input class="main-form__input" id="ingredientAmount" type="text" name="ingredientsAmount" placeholder="Količina" required>
+                                <button type="button" class="btn btn-danger removeIngredient" data-index="0">Izbacite</button>
+                            </div>
+                        </div>
+                    <% } %>
+                    <button class="btn" id="addIngredient">Dodajte Sastojak</button>
+        
+                    <div class="main-form__group">
+                        <label for="duration"><strong>Trajanje Pripreme:</strong></label>
+                        <input class="main-form__input" type="text" id="duration" name="duration" placeholder="Trajanje Pripreme" value="<% if(existingData) { %><%= existingData.preparation.duration %><% } else if (editing) { %><%= recipe.preparation.duration %><% } %>" required>
+                    </div>
+        
+                    <% if (existingData) { %>
+                        <div class="main-form__group" id="stepsContainer">
+                            <% existingData.preparation.steps.forEach((step, index) => { %>
+                                <label for="step<%= index %>"><strong>Koraci Pripreme:</strong></label>
+                                <div class="main-form__step-container">
+                                    <textarea class="main-form__textarea" id="step<%= index %>" name="steps" rows="4" placeholder="Korak" required><%= step %></textarea>
+                                    <button type="button" class="btn btn-danger removeSteps" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else if (editing) { %>
+                        <div class="main-form__group" id="stepsContainer">
+                            <% recipe.preparation.steps.forEach((step, index) => { %>
+                                <label for="step<%= index %>"><strong>Koraci Pripreme:</strong></label>
+                                <div class="main-form__step-container">
+                                    <textarea class="main-form__textarea" id="step<%= index %>" name="steps" rows="4" placeholder="Korak" required><%= step %></textarea>
+                                    <button type="button" class="btn btn-danger removeSteps" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="main-form__group" id="stepsContainer">
+                            <label for="step0"><strong>Koraci Pripreme:</strong></label>
+                            <div class="main-form__step-container">
+                                <textarea class="main-form__textarea" id="step0" name="steps" rows="4" placeholder="Korak" required></textarea>
+                                <button type="button" class="btn btn-danger removeSteps" data-index="0">Izbacite</button>
+                            </div>
+                        </div>
+                    <% } %>
+                    <button class="btn" id="addStep">Dodajte Korak</button>
+        
+                    <div class="main-form__group">
+                        <label for="note"><strong>Napomena:</strong></label>
+                        <textarea class="main-form__textarea" id="note" name="note" rows="4" placeholder="Napomena" value="<% if(existingData) { %><%= existingData.preparation.note %><% } else if (editing) { %><%= recipe.preparation.note %><% } %>" required><% if (existingData) { %><%= existingData.preparation.note %><% } else if (editing) { %><%= recipe.preparation.note %><% } %></textarea>
+                    </div>
+        
+                    <% if (!editing) { %>
+                        <div class="main-form__group">
+                            <p>Nije obavezno ali je poželjno!</p>
+                            <label for="featureImage"><strong>Istaknuta Slika:</strong></label>
+                            <input class="main-form__input" type="file" id="featureImage" name="images" placeholder="Izaberite Istaknutu Sliku">
+                            <img alt="Prikaz slike" id="previewImage" src="" style="display:none; max-width: 300px; max-height: 300px;" />
+                        </div>
+                    <% } %>
+        
+                    <% if (existingData) { %>
+                        <div class="main-form__group" id="imagesContainer">
+                            <% existingData.images.forEach((image, index) => { %>
+                                <label for="image<%= index %>"><strong>Slika:</strong></label>
+                                <div class="main-form__image-container">
+                                    <input class="main-form__input imgs" id="image<%= index %>" type="file" name="images" value="<%= image %>" placeholder="Izaberite Sliku">
+                                    <button type="button" class="btn btn-danger removeImage" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                                <img alt="Prikaz slike" id="imagesPreview<%= index %>" src="<%= image %>" style="display:none; max-width: 300px;" />
+                            <% }) %>
+                        </div>
+                    <% } else if (editing) { %>
+                        <div class="main-form__group" id="imagesContainer">
+                            <p>Ako želite da promenite samo istaknutu sliku ubacite samo JEDNU sliku!</p>
+                            <p>Ako ubacite više slika stare slike se brišu!</p>
+                            <% recipe.images.forEach((image, index) => { %>
+                                <label for="image<%= index %>"><strong>Slika:</strong></label>
+                                <div class="main-form__image-container">
+                                    <input class="main-form__input imgs" id="image<%= index %>" type="file" name="images" value="<%= image %>" placeholder="Izaberite Sliku">
+                                    <button type="button" class="btn btn-danger removeImage" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                                <img alt="Prikaz slike" id="imagesPreview<%= index %>" src="<%= image %>" style="display:none; max-width: 300px;" />
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="main-form__group" id="imagesContainer">
+                            <label for="image0"><strong>Slike:</strong></label>
+                            <div class="main-form__image-container">
+                                <input class="main-form__input imgs" id="image0" type="file" name="images" placeholder="Izaberite Sliku">
+                                <button type="button" class="btn btn-danger removeImage" data-index="0">Izbacite</button>
+                                <img alt="Prikaz slike" id="imagesPreview0" src="" style="display:none; max-width: 300px;" />
+                            </div>
+                        </div>
+                    <% } %>   
+                    <button class="btn" id="addImage">Dodajte Sliku</button>
+        
+                    <% if (existingData) { %>
+                        <p>Ovo nije obavezno!</p>
+                        <% existingData.nutritions.forEach((nutrition, index) => { %>
+                            <div class="main-form__group" id="nutritionsContainer">
+                                <label for="nutrition<%= index %>"><strong>Nutritivne Vrednosti:</strong></label>
+                                <div class="input-container">
+                                    <input class="main-form__input" id="nutrition<%= index %>" type="text" name="nutritions" value="<%= nutrition.name %>" placeholder="Nutritivna Vrednost">
+                                    <input class="main-form__input" id="nutritionsAmount<%= index %>" type="text" name="nutritionsAmount" value="<%= nutrition.amount %>" placeholder="Količina">
+                                    <button type="button" class="btn btn-danger removeNutrition" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else if (editing) { %>
+                        <div class="main-form__group" id="nutritionsContainer">
+                            <p>Ovo nije obavezno!</p>
+                            <% recipe.nutritions.forEach((nutrition, index) => { %>
+                                <label for="nutrition<%= index %>"><strong>Nutritivne Vrednosti:</strong></label>
+                                <div class="input-container">
+                                    <input class="main-form__input" id="nutrition<%= index %>" type="text" name="nutritions" value="<%= nutrition.name %>" placeholder="Nutritivna Vrednost">
+                                    <input class="main-form__input" id="nutritionsAmount<%= index %>" type="text" name="nutritionsAmount" value="<%= nutrition.amount %>" placeholder="Količina">
+                                    <button type="button" class="btn btn-danger removeNutrition" data-index="<%= index %>">Izbacite</button>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p>Ovo nije obavezno!</p>
+                        <div class="main-form__group" id="nutritionsContainer">
+                            <label for="nutrition0"><strong>Nutritivne Vrednosti:</strong></label>
+                            <div class="input-container">
+                                <input class="main-form__input" id="nutrition0" type="text" name="nutritions" placeholder="Nutritivna Vrednost">
+                                <input class="main-form__input" id="nutritionsAmount0" type="text" name="nutritionsAmount" placeholder="Količina">
+                                <button type="button" class="btn btn-danger removeNutrition" data-index="0">Izbacite</button>
+                            </div>
+                        </div>
+                    <% } %>
+                    <button class="btn" id="addNutrition">Dodajte Nutritivnu Vrednost</button>
+        
+                    <% if (editing) { %>
+                        <input type="hidden" name="recipeId" value="<%= recipe._id %>">
+                    <% } %>
+                    <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                    <button class="btn-success" type="submit"><% if (editing) { %>Izmenite Recept<% } else { %>Napravite Recept<% } %></button>
+                </form>
+                <% if (errorMessage) { %>
+                    <div class="user-message user-message--error">
+                        <%= errorMessage %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+    <script src="/js/add-fields.js"></script>
+</body>
+<%- include('../includes/end.ejs') %>

@@ -1,0 +1,21 @@
+<div class="tab-container">
+    <div class="tabs">
+        <button type="button" class="recipe-tab active btn" onclick="openTab('user-recipes__container',3)"
+            data-tab="user-recipes__container">Vaši Recepti</button>
+        <button type="button" class="recipe-tab btn" onclick="openTab('saved-recipes__container',3)"
+            data-tab="saved-recipes__container">Sačuvani Recepti</button>
+        <button type="button" class="recipe-tab btn" onclick="openTab('bought-recipes__container',3)"
+            data-tab="bought-recipes__container">Kupljeni Recepti</button>
+    </div>
+</div>
+<div class="result__container">
+    <div id="user-recipes__container" class="recipe-tab-content active" data-tab="user-recipes__container">
+        <%- include('user-recipes.ejs', {from:user['userRecipes'], text:'Vaši Recepti', authorBox:false}) %>
+    </div>
+    <div id="saved-recipes__container" class="recipe-tab-content" data-tab="saved-recipes__container">
+        <%- include('user-recipes.ejs', {from:user['savedRecipes'], text:'Sačuvani Recepti', authorBox:true}) %>
+    </div>
+    <div id="bought-recipes__container" class="recipe-tab-content" data-tab="bought-recipes__container">
+        <%- include('user-recipes.ejs', {from:user['boughtRecipes'], text:'Kupljeni Recepti', authorBox:true}) %>
+    </div>    
+</div>

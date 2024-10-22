@@ -1,0 +1,252 @@
+.content__container {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+.left-content__container {
+    width: 20%;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.right-content__container {
+    width: 80%;
+    min-width: calc(80% - 350px);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
+}
+
+.card__container.profile {
+    text-align: left;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 10vh;
+}
+
+.tab-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    justify-items: start;
+}
+
+.my-tab-content,
+.recipe-tab-content,
+.book-tab-content,
+.sub-tab-content,
+.follow-tab-content {
+    display: none;
+}
+
+.my-tab-content.active,
+.recipe-tab-content.active,
+.book-tab-content.active,
+.sub-tab-content.active,
+.follow-tab-content.active {
+    display: block;
+}
+
+.image__container {
+    text-align: center;
+}
+
+.result__container {
+    width: 100%;
+}
+
+.edit-user-image__container,
+.edit-sub-cost__container {
+    display: none;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.edit-user-image__container.active,
+.edit-sub-cost__container.active {
+    display: flex;
+}
+
+.my-tab.active,
+.recipe-tab.active,
+.book-tab.active,
+.sub-tab.active,
+.follow-tab.active {
+    background-color: #009688;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .content__container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .left-content__container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .right-content__container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .result__container {
+        margin-bottom: 0;
+    }
+    
+    .tab-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tabs {
+        justify-content: center;
+    }
+
+    table {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    thead {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 7vh;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+
+    thead tr {
+        display: inherit;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        background-color: white;
+    }
+
+    tbody {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        text-align: start;
+        border-top: 1px solid #ccc;
+    }
+
+    tbody tr:not(:first-child) {
+        margin-top: 1rem;
+    }
+
+    td {
+        display: block;
+        width: 100%;
+        font-weight: bold;
+    }
+
+    td>img {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+    }
+
+    .table__action {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+    }
+
+    .dt-type-numeric {
+        text-align: start !important;
+    }
+
+    td:before {
+        font-weight: normal;
+    }
+
+    tbody td[data-label*="ID"]:before {
+        content: "ID: ";
+    }
+    
+    tbody td[data-label*="Title"]:before {
+        content: "Title: ";
+    }
+    
+    tbody td[data-label="Category"]:before {
+        content: "Category: ";
+    }
+    
+    tbody td[data-label="Duration"]:before {
+        content: "Duration: ";
+    }
+    
+    tbody td[data-label="Rating"]:before {
+        content: "Rating: ";
+    }
+    
+    tbody td[data-label*="Type"]:before {
+        content: "Type: ";
+    }
+    
+    tbody td[data-label*="Cost"]:before {
+        content: "Cost: ";
+    }
+    
+    tbody td[data-label*="Actions"]:before {
+        content: "Actions: ";
+    }
+    
+    tbody td[data-label="Recipes"]:before {
+        content: "Recipes: ";
+    }
+    
+    tbody td[data-label="User"]:before {
+        content: "User: ";
+    }
+    
+    tbody td[data-label="Expiration Date"]:before {
+        content: "Expiration Date: ";
+    }
+    
+    tbody td[data-label*="User Image"]:before {
+        content: "User Image: ";
+    }   
+    
+    tbody td[data-label="What"]:before {
+        content: "What: ";
+    }
+
+    tbody td[data-label="Who"]:before {
+        content: "Who: ";
+    }
+
+    tbody td[data-label="Date"]:before {
+        content: "Date: ";
+    }
+}

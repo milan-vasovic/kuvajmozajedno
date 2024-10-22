@@ -1,0 +1,18 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/new-main.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="main__container">
+                <h1 class="main__title">Realizovanje Depozita</h1>
+                    <form class="main-form" action="/system/fulfill-deposit" method="POST">
+                        <div class="main-form__group">
+                            <label for="amount">Količina:</label>
+                            <input class="main-form__input" type="number" name="amount" id="amount" min="1" required>
+                        </div>
+                        <input type="hidden" name="userId" value="<%= userId %>">
+                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                        <button class="btn" type="submit">Realizuj Depozit</button>
+                        <a class="btn btn-danger" href="/system/deposit-requests">Nazad</a>
+                    </form>   
+            </section>
+        <%- include('../includes/end.ejs') %>
+

@@ -1,0 +1,85 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/main.css">
+    <%- include('../includes/navigation.ejs') %>
+        <section class="main__container">
+            <h1 class="main__title">
+                <%= pageTitle %>
+            </h1>
+            <div class="content__container">
+                <div class="main-form__container">
+                    <form class="main-form" action="/registracija" method="POST" enctype="multipart/form-data">
+                        <div class="main-form__group">
+                            <label for="username">Korisničko Ime</label>
+                            <input type="text" id="username" name="username" class="main-form__input"
+                                placeholder="Korisničko Ime"
+                                value="<% if (existingData) { %><%= existingData.username %><% } %>" required>
+                        </div>
+                        <div class="main-form__group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" class="main-form__input" placeholder="Email"
+                                value="<% if (existingData) { %><%= existingData.email %><% } %>" required>
+                        </div>
+                        <div class="main-form__group">
+                            <label for="password">Šifra</label>
+                            <input type="password" id="password" name="password" class="main-form__input"
+                                placeholder="Šifra" required>
+                        </div>
+                        <div class="main-form__group">
+                            <label for="confirmPassword">Potvrdi Šifru</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword"
+                                placeholder="Potvridte Šifru" class="main-form__input" required>
+                        </div>
+                        <div class="main-form__group">
+                            <label for="userImage">Korisnička Slika:</label>
+                            <input class="main-form__input" type="file" id="userImage" name="images"
+                                placeholder="Izaberite Korisničku Sliku">
+                            <img alt="Prikaz slike" id="previewImage" src=""
+                                style="display:none; max-width: 300px; max-height: 300px;" />
+                        </div>
+                        <div class="main-form__group-acceptance">
+                            <input type="checkbox" id="acceptTerms" name="acceptance" class="main-form__checkbox"
+                                required>
+                            <label for="acceptTerms" id="acceptTermsLabel" class="main-form__label">
+                                Saglasan sam i prihvatam <a class="main__link" href="/uslovi-koriscenja">Uslove
+                                    Korišćenja</a> i <a class="main__link" href="/politika-privatnosti">Politiku
+                                    Privatnosti</a>
+                            </label>
+                        </div>
+                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                        <button class="btn" type="submit">Registruj Se</button>
+                    </form>
+                    <% if (errorMessage) { %>
+                        <div class="user-message user-message--error">
+                            <%= errorMessage %>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+            </div>
+        </section>
+        <script>
+            // Function to handle image preview
+            function handleImagePreview(input, previewId) {
+                const file = input.files[0];
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const previewImage = document.getElementById(previewId);
+                        previewImage.src = e.target.result; // Set image source to the selected file
+                        previewImage.style.display = "block"; // Display the image
+                    };
+
+                    reader.readAsDataURL(file); // Read file as Data URL
+                }
+            }
+
+            // Event listener for the 'featureImage' input
+            const featureImage = document.getElementById("userImage");
+            if (featureImage) {
+                featureImage.addEventListener("change", function () {
+                    handleImagePreview(this, "previewImage");
+                });
+            }
+        </script>
+        <%- include('../includes/end.ejs') %>

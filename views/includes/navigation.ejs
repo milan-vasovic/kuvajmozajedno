@@ -1,0 +1,175 @@
+<!-- Creat navigation that is mobile responsive and have checks for isAuth and isAdmin -->
+</head>
+<body>
+    <div class="backdrop"></div>
+    <header class="main-header">
+        <button id="side-menu-toggle">Meni</button>
+        <nav class="main-header__nav">
+            <ul class="main-header__item-list">
+                <li class="main-header__item">
+                    <a class="<%= path === '/pronadji' ? 'active' : '' %>" href="/pronadji">Pronađi</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/zajednica' ? 'active' : '' %>" href="/zajednica">Zajednica</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/dogadjaji' ? 'active' : '' %>" href="/dogadjaji">Događaji</a>
+                </li>
+                <% if (isAuthenticated) { %>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/moj-profil' ? 'active' : '' %>" href="/moj-profil">Moj Profil</a>
+                    </li>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/novosti' ? 'active' : '' %>" href="/novosti">Novosti</a>
+                    </li>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/dodajte-recept' ? 'active' : '' %>" href="/dodajte-recept">Dodajte Recept</a>
+                    </li>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/dodajte-knjigu' ? 'active' : '' %>" href="/dodajte-knjigu">Dodajte Knjigu</a>
+                    </li>
+                    <% if (role == "admin" || role == "system") { %>
+                        <li class="main-header__item">
+                            <a class="<%= path === '/admin/recepti' ? 'active' : '' %>" href="/admin/recepti">Admin Recepti</a>
+                        </li>
+                        <li class="main-header__item">
+                            <a class="<%= path === '/admin/knjige' ? 'active' : '' %>" href="/admin/knjige">Admin Knjige</a>
+                        </li>
+                        <li class="main-header__item">
+                            <a class="<%= path === '/admin/korisnici' ? 'active' : '' %>" href="/admin/korisnici">Admin Korisnici</a>
+                        </li>
+                    <% } %>
+                    <% if (role === "system") { %>
+                        <li class="main-header__item">
+                            <a class="<%= path === '/system/dogadjaji' ? 'active' : '' %>" href="/system/dogadjaji">Događaji</a>
+                        </li>
+                        <li class="main-header__item">
+                            <a class="<%= path === '/system/withdrawal-requests' ? 'active' : '' %>" href="/system/withdrawal-requests">Zatražene Isplate</a>
+                        </li>
+                        <li class="main-header__item">
+                            <a class="<%= path === '/system/deposit-requests' ? 'active' : '' %>" href="/system/deposit-requests">Zatraženi Depoziti</a>
+                        </li>
+                        <li class="main-header__item">
+                            <a class="<%= path === '/system/withdrawals' ? 'active' : '' %>" href="/system/withdrawals">Isplate</a>
+                        </li>
+                        <li class="main-header__item">
+                            <a class="<%= path === '/system/deposits' ? 'active' : '' %>" href="/system/deposits">Depositi</a>
+                        </li>
+                    <% } %>
+                <% } %>
+            </ul>
+            <ul class="main-header__item-list">
+                <li class="main-header__item">
+                    <a class="<%= path === '/fitness-family' ? 'active' : '' %>">Fitness Family</a>
+                </li>
+                <% if (!isAuthenticated) { %>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/prijava' ? 'active' : '' %>" href="/prijava?redirectTo=/novosti">Prijava</a>
+                    </li>
+                    <li class="main-header__item">
+                        <a class="<%= path === '/registracija' ? 'active' : '' %>" href="/registracija">Registracija</a>
+                    </li>
+                <% } else { %>
+                    <li class="main-header__item">
+                        <form action="/logout" method="POST">
+                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                            <button class="btn" type="submit">Odjava</button>
+                        </form>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+        <nav class="mobile-nav">
+            <ul class="mobile-nav__item-list">
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/pronadji' ? 'active' : '' %>" href="/pronadji">Pronađi</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/zajednica' ? 'active' : '' %>" href="/zajednica">Zajednica</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/dogadjaji' ? 'active' : '' %>" href="/dogadjaji">Događaji</a>
+                </li>
+                <% if (isAuthenticated) { %>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/moj-profil' ? 'active' : '' %>" href="/moj-profil">Moj Profil</a>
+                    </li>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/novosti' ? 'active' : '' %>" href="/novosti">Novosti</a>
+                    </li>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/dodajte-recept' ? 'active' : '' %>" href="/dodajte-recept">Dodajte Recept</a>
+                    </li>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/dodajte-knjigu' ? 'active' : '' %>" href="/dodajte-knjigu">Dodajte Knjigu</a>
+                    </li>
+                    <% if (role == "admin" || role == "system") { %>
+                        <hr>
+                        <li class="mobile-nav__item">
+                            <a class="<%= path === '/admin/recepti' ? 'active' : '' %>" href="/admin/recepti">Admin Recepti</a>
+                        </li>
+                        <li class="mobile-nav__item">
+                            <a class="<%= path === '/admin/knjige' ? 'active' : '' %>" href="/admin/knjige">Admin Knjige</a>
+                        </li>
+                        <li class="mobile-nav__item">
+                            <a class="<%= path === '/admin/korisnici' ? 'active' : '' %>" href="/admin/korisnici">Admin Korisnici</a>
+                        </li>
+                    <% } %>
+                    <% if (role === "system") { %>
+                        <hr>
+                        <li class="mobile-nav__item">
+                            <a class="<%= path === '/system/dogadjaji' ? 'active' : '' %>" href="/system/dogadjaji">Događaji</a>
+                        </li>
+                        <li class="mobile-nav__item">
+                            <a class="<%= path === '/system/withdrawal-requests' ? 'active' : '' %>" href="/system/withdrawal-requests">Zatražene Isplate</a>
+                        </li>
+                        <li class="mobile-nav__item">
+                            <a class="<%= path === '/system/deposit-requests' ? 'active' : '' %>" href="/system/deposit-requests">Zatraženi Depoziti</a>
+                        </li>
+                        <li class="mobile-nav__item">
+                            <a class="<%= path === '/system/withdrawals' ? 'active' : '' %>" href="/system/withdrawals">Isplate</a>
+                        </li>
+                        <li class="mobile-nav__item">
+                            <a class="<%= path === '/system/deposits' ? 'active' : '' %>" href="/system/deposits">Depositi</a>
+                        </li>
+                    <% } %>
+                <% } %>
+                <hr>
+                
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/tutorijali' ? 'active' : '' %>" href="https://www.youtube.com/playlist?list=PLFnv2VazqCCPU3aPbuQWnIQG9fbBookYv">Tutorijali</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/uslovi-koriscenja' ? 'active' : '' %>" href="/uslovi-koriscenja">Uslovi Korišćenja</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/politika-privatnosti' ? 'active' : '' %>" href="/politika-privatnosti">Politika Privatnosti</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/o-nama' ? 'active' : '' %>" href="/o-nama">O Nama</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/support' ? 'active' : '' %>" href="https://forms.gle/GZ8Bygy5J89Viz7f9">Pomoć</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/feedback' ? 'active' : '' %>" href="https://forms.gle/4gioWf65pVqfBQVc6">Sugestije</a>
+                </li>                
+                <hr>
+                <% if (!isAuthenticated) { %>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/prijava' ? 'active' : '' %>" href="/prijava?redirectTo=/novosti">Prijava</a>
+                    </li>
+                    <li class="mobile-nav__item">
+                        <a class="<%= path === '/registracija' ? 'active' : '' %>" href="/registracija">Registracija</a>
+                    </li>
+                <% } else { %>
+                    <li class="mobile-nav__item">
+                        <form action="/logout" method="POST">
+                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                            <button class="btn" type="submit">Odjava</button>
+                        </form>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+    </header>

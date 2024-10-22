@@ -1,0 +1,21 @@
+<div class="tab-container">
+    <div class="tabs">
+        <button type="button" class="follow-tab active btn" onclick="openTab('followers__container',6)"
+            data-tab="followers__container">Pratioci</button>
+        <button type="button" class="follow-tab btn" onclick="openTab('following__container',6)"
+            data-tab="following__container">Praćenje</button>
+        <button type="button" class="follow-tab btn" onclick="openTab('blocking__container',6)"
+            data-tab="blocking__container">Blokiranje</button>   
+    </div>
+</div>
+<div class="result__container">
+    <div id="followers__container" class="follow-tab-content active" data-tab="followers__container">
+        <%- include('followers', { data: { count: user.followers.count, users: user.followers.users }, heading: 'Pratioci', tableId: 'myFollowersTable' }) %>
+    </div>
+    <div id="following__container" class="follow-tab-content" data-tab="following__container">
+        <%- include('followers', { data: { count: user.following.count, users: user.following.users }, heading: 'Praćenje', tableId: 'myFollowingTable' }) %>
+    </div>
+    <div id="blocking__container" class="follow-tab-content" data-tab="blocking__container">
+        <%- include('followers', { data: { count: user.blocking.length, users: user.blocking }, heading: 'Blokiranje', tableId: 'myBlockingTable' }) %>
+    </div>
+</div>

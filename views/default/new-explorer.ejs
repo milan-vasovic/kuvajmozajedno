@@ -1,0 +1,309 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/explorer.css">
+<link rel="stylesheet" href="/css/new-main.css">
+<%- include('../includes/navigation.ejs') %>
+    <section class="main__container">
+        <% function calculateAverageStars(ratings) {
+            if (!ratings || ratings.length === 0) {
+                return 0;
+            }
+            let sum = 0;
+            for (let rating of ratings) {
+                sum += rating.stars;
+            }
+            const average = sum / ratings.length;
+            return average;
+        } %>
+        <h1 class="main__title">Pronađi</h1>
+        <div class="content__container">
+            <div class="left-content__container">
+                <div class="tab__container">
+                    <div class="tabs">
+                        <button type="button" class="tab <%= activeRecipe %> btn" onclick="openTab('recipes__container',1)"
+                            data-tab="recipes__container">Recepti</button>
+                        <button type="button" class="tab <%= activeBook %> btn" onclick="openTab('books__container',1)"
+                            data-tab="books__container">Knjige</button>
+                        <button type="button" class="tab <%= activeUser %> btn" onclick="openTab('users__container',1)"
+                            data-tab="users__container">Korisnici</button>
+                    </div>
+                </div>
+                <div class="result__container">
+                    <div id="recipes__container" class="recipes__container tab-content <%= activeRecipe %>" data-tab="recipes__container">
+                        <h2 class="sub__title">Recepti</h2>
+                        <div class="search__container">
+                            <form>
+                                <input class="main-form__input" type="text" name="searchRecipes">
+                                <button class="btn">Pretraži</button>
+                            </form>
+                        </div>
+                        <div class="recipes-content__container">
+                            <div class="left__container">
+                                <h3 class="sub__title">Kategorije</h3>
+                                <ul class="category__list">
+                                    <% categories.forEach(category => { %>
+                                        <li class="category-list__item">
+                                            <a class="main__link" href="?category=<%=category._id %>">
+                                                <%= category._id %><spna class="devider"> | </spna>
+                                            </a>
+                                        </li>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                            <div class="right__container">
+                                <% if (recipes.length> 0) { %>
+                                    <div class="cards__container">
+                                        <% recipes.forEach(recipe=> { %>
+                                            <div class="card__container">
+                                                <div class="card__header">
+                                                    <div class="author__box">
+                                                        <img loading="lazy" class="author-box__image" src="<%= recipe.author.userImage %>" alt="<%= recipe.author.username %>">
+                                                        <a class="main__link" href="/korisnik-profil/<%= recipe.author._id %>"><%= recipe.author.username %> <% if (recipe.author.role === 'system') { %><span>&#128081;</span><% } else if (recipe.author.role === 'admin') { %><span class="shield">&#128110;</span><% } else if (recipe.author.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></a> 
+                                                    </div>
+                                                    <h3 class="card__title"><%= recipe.title %></h3>
+                                                    <img loading="lazy" class="card__image" src="<%= recipe.featureImage %>" alt="<%= recipe.title %>">
+                                                    <div class="card__categories">
+                                                        <% for (let c of recipe.category) { %>
+                                                            <a class="main__link" href="?category=<%= c %>"><%= c %></a>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="card__contnet">
+                                                    <p class="card__time"><%= recipe.preparation.duration %></p>
+                                                    <p class="rating">
+                                                        <% const averageStars=calculateAverageStars(recipe.ratings); %>
+                                                        <% if (averageStars> 0) { %>
+                                                            <div class="stars">
+                                                            <% for (let i=1; i <=5; i++) { %>
+                                                                <% const filledStars=Math.floor(averageStars); %>
+                                                                <% const hasHalfStar=averageStars - filledStars>= 0.5; %>
+                                                                <span class="star <%= i <= filledStars ? 'filled' : '' %>">
+                                                                    <% if (i <=filledStars) { %>
+                                                                        &#9733;
+                                                                    <% } else if (hasHalfStar && averageStars > i - 1) { %>
+                                                                        <span class="half-star">
+                                                                            <span class="half-filled">&#9733;</span>
+                                                                            <span class="half-empty">&#9734;</span>
+                                                                        </span>
+                                                                    <% } else { %>
+                                                                        <span class="empty">&#9734;</span>
+                                                                    <% } %>
+                                                                </span>
+                                                            <% } %>
+                                                            </div>
+                                                        <% } else { %>
+                                                            <% for (let i=1; i <=5; i++) { %>
+                                                                <span class="star">&#9734;</span>
+                                                            <% } %>
+                                                        <% } %>
+                                                    </p>
+                                                    <p class="description">
+                                                        <%= recipe.description && recipe.description.length > 150 ? recipe.description.substring(0, 150) + '...' : recipe.description %>
+                                                    </p>
+                                                </div>
+                                                <div class="card__actions">
+                                                    <a class="btn" href="/recept-detalji/<%= recipe._id %>">Detalji</a>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } else { %>
+                                    <div class="no-recipes__container">
+                                        <h3 class="info__title">Trenutno nema Recepta!</h3>
+                                    </div>
+                                <% } %>
+                                <%- include('../includes/pagination.ejs', {currentPage: currentRecipePage, nextPage: nextRecipePage, previousPage: previousRecipePage, lastPage: lastRecipePage, hasNextPage: hasNextRecipePage, hasPreviousPage: hasPreviousRecipePage, pageType: 'recipePage', searchCond: searchCond}) %>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="books__container" class="books__container tab-content <%= activeBook %>" data-tab="books__container">
+                        <h2 class="sub__title">Knjige</h2>
+                        <div class="search__container">
+                            <form>
+                                <input class="main-form__input" type="text" name="searchBooks">
+                                <button class="btn">Pronađi</button>
+                            </form>
+                        </div>
+                        <% if (books.length> 0) { %>
+                            <div class="cards__container">
+                                <% books.forEach(book=> { %>
+                                    <div class="card__container">
+                                        <div class="card__header">
+                                            <div class="author__box">
+                                                <img loading="lazy" class="author-box__image" style="max-width: 25px; max-height: 25px;" src="<%= book.author.userImage %>" alt="<%= book.author.username %>">
+                                                <a class="main__link" href="/korisnik-profil/<%= book.author._id %>"><%= book.author.username %> <% if (book.author.role === 'system') { %><span>&#128081;</span><% } else if (book.author.role === 'admin') { %><span class="shield">&#128110;</span><% } else if (book.author.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></a> 
+                                            </div>
+                                            <h3 class="card__title"><%= book.title %></h3>
+                                            <img loading="lazy" class="card__image" src="<%= book.coverImage %>" alt="<%= book.title %>">
+                                        </div>
+                                        <div class="card__contnet">
+                                            <p class="card__time">Recipes: <%= book.recipes.length %></p>
+                                            <p class="description">
+                                                <%= book.description && book.description.length > 150 ? book.description.substring(0, 150) + '...' : book.description %>
+                                            </p>
+                                        </div>
+                                        <div class="card__actions">
+                                            <a class="btn" href="/knjiga-detalji/<%= book._id %>">Detalji</a>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <div class="no-books__container">
+                                <h3 class="info__title">Trenutno nema Knjiga!</h3>
+                            </div>
+                        <% } %>
+                        <%- include('../includes/pagination.ejs', {currentPage: currentBookPage, nextPage: nextBookPage, previousPage: previousBookPage, lastPage: lastBookPage, hasNextPage: hasNextBookPage, hasPreviousPage: hasPreviousBookPage, pageType: 'bookPage', searchCond: searchCond}) %>
+                    </div>
+                    <div id="users__container" class="users__container tab-content <%= activeUser %>" data-tab="users__container">
+                        <h2 class="sub__title">Korisnici</h2>
+                        <div class="search__container">
+                            <form>
+                                <input class="main-form__input" type="text" name="searchUsers">
+                                <button class="btn">Pronađi</button>
+                            </form>
+                        </div>
+                        <% if (users.length> 0) { %>
+                        <div class="cards__container">
+                            <% users.forEach(user=> { %>
+                                <div class="card__container">
+                                    <div class="card__header">
+                                        <h3 class="card__title"><%= user.username %> <% if (user.role === 'system') { %><span>&#128081;</span><% } else if (user.role === 'admin') { %><span class="shield">&#128110;</span><% } else if (user.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></h3>
+                                        <img loading="lazy" class="card__image" src="<%= user.userImage %>" alt="<%= user.username %>">
+                                    </div>
+                                    <div class="card__contnet">
+        
+                                    </div>
+                                    <div class="card__actions">
+                                        <a class="btn" href="/korisnik-profil/<%= user._id %>">Detalji</a>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                        <% } else { %>
+                            <div class="no-users__container">
+                                <h3 class="info__title">Trenutno nema Korisnika!</h3>
+                            </div>
+                        <% } %>
+                        <%- include('../includes/pagination.ejs', {currentPage: currentUserPage, nextPage: nextUserPage, previousPage: previousUserPage, lastPage: lastUserPage, hasNextPage: hasNextUserPage, hasPreviousPage: hasPreviousUserPage, pageType: 'userPage', searchCond: searchCond}) %>
+                    </div>
+                </div>
+            </div>
+            <div class="right-content__container">
+                <h2 class="sub__title">Recept Dana</h2>
+                <% if (recipeOfTheDay) { %>
+                    <div class="card__container">
+                        <div class="card__header">
+                            <div class="author__box">
+                                <img loading="lazy" class="author-box__image" style="max-width: 25px; max-height: 25px;" src="<%= recipeOfTheDay.author.userImage %>" alt="<%= recipeOfTheDay.author.username %>">
+                                <a class="main__link" href="/korisnik-profil/<%= recipeOfTheDay.author._id %>"><%= recipeOfTheDay.author.username %> <% if (recipeOfTheDay.author.role === 'system') { %><span>&#128081;</span><% } else if (recipeOfTheDay.author.role === 'admin') { %><span class="shield">&#128110;</span><% } else if (recipeOfTheDay.author.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></a> 
+                            </div>
+                            <h3 class="card__title"><%= recipeOfTheDay.title %></h3>
+                            <img loading="lazy" class="card__image" src="<%= recipeOfTheDay.featureImage %>" alt="<%= recipeOfTheDay.title %>">
+                            <div class="card__categories">
+                                <% for (let c of recipeOfTheDay.category) { %>
+                                    <a class="main__link" href="?category=<%= c %>"><%= c %></a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="card__contnet">
+                            <p class="card__time"><%= recipeOfTheDay.preparation.duration %></p>
+                            <p class="rating">
+                                <% const averageStars=calculateAverageStars(recipeOfTheDay.ratings); %>
+                                <% if (averageStars> 0) { %>
+                                    <div class="stars">
+                                    <% for (let i=1; i <=5; i++) { %>
+                                        <% const filledStars=Math.floor(averageStars); %>
+                                        <% const hasHalfStar=averageStars - filledStars>= 0.5; %>
+                                        <span class="star <%= i <= filledStars ? 'filled' : '' %>">
+                                            <% if (i <=filledStars) { %>
+                                                &#9733;
+                                            <% } else if (hasHalfStar && averageStars > i - 1) { %>
+                                                <span class="half-star">
+                                                    <span class="half-filled">&#9733;</span>
+                                                    <span class="half-empty">&#9734;</span>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="empty">&#9734;</span>
+                                            <% } %>
+                                        </span>
+                                    <% } %>
+                                    </div>
+                                <% } else { %>
+                                    <% for (let i=1; i <=5; i++) { %>
+                                        <span class="star">&#9734;</span>
+                                    <% } %>
+                                <% } %>
+                            </p>
+                            <p class="description">
+                                <%= recipeOfTheDay.description && recipeOfTheDay.description.length > 150 ? recipeOfTheDay.description.substring(0, 150) + '...' : recipeOfTheDay.description %>
+                            </p>
+                        </div>
+                        <div class="card__actions">
+                            <a class="btn" href="/recept-detalji/<%= recipeOfTheDay._id %>">Detalji</a>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <h3 class="info__title">Trenutno nema podataka!</h3>
+                <% } %>
+                <h2 class="sub__title">Najgledaniji Recept</h2>
+                <% if (mostViewsRecipe) { %>
+                    <div class="card__container">
+                        <div class="card__header">
+                            <div class="author__box">
+                                <img loading="lazy" class="author-box__image" style="max-width: 25px; max-height: 25px;" src="<%= mostViewsRecipe.author.userImage %>" alt="<%= mostViewsRecipe.author.username %>">
+                                <a class="main__link" href="/korisnik-profil/<%= mostViewsRecipe.author._id %>"><%= mostViewsRecipe.author.username %> <% if (mostViewsRecipe.author.role === 'system') { %><span>&#128081;</span><% } else if (mostViewsRecipe.author.role === 'admin') { %><span class="shield">&#128110;</span><% } else if (mostViewsRecipe.author.role === 'creator') { %><span class="check_mark">&#10004;</span><% } %></a> 
+                            </div>
+                            <h3 class="card__title"><%= mostViewsRecipe.title %></h3>
+                            <img loading="lazy" class="card__image" src="<%= mostViewsRecipe.featureImage %>" alt="<%= mostViewsRecipe.title %>">
+                            <div class="card__categories">
+                                <% for (let c of mostViewsRecipe.category) { %>
+                                    <a class="main__link" href="?category=<%= c %>"><%= c %></a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="card__contnet">
+                            <p class="card__time"><%= mostViewsRecipe.preparation.duration %></p>
+                            <p class="rating">
+                                <% const averageStars=calculateAverageStars(mostViewsRecipe.ratings); %>
+                                <% if (averageStars> 0) { %>
+                                    <div class="stars">
+                                    <% for (let i=1; i <=5; i++) { %>
+                                        <% const filledStars=Math.floor(averageStars); %>
+                                        <% const hasHalfStar=averageStars - filledStars>= 0.5; %>
+                                        <span class="star <%= i <= filledStars ? 'filled' : '' %>">
+                                            <% if (i <=filledStars) { %>
+                                                &#9733;
+                                            <% } else if (hasHalfStar && averageStars > i - 1) { %>
+                                                <span class="half-star">
+                                                    <span class="half-filled">&#9733;</span>
+                                                    <span class="half-empty">&#9734;</span>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="empty">&#9734;</span>
+                                            <% } %>
+                                        </span>
+                                    <% } %>
+                                    </div>
+                                <% } else { %>
+                                    <% for (let i=1; i <=5; i++) { %>
+                                        <span class="star">&#9734;</span>
+                                    <% } %>
+                                <% } %>
+                            </p>
+                            <p class="description">
+                                <%= mostViewsRecipe.description && mostViewsRecipe.description.length > 150 ? mostViewsRecipe.description.substring(0, 150) + '...' : mostViewsRecipe.description %>
+                            </p>
+                        </div>
+                        <div class="card__actions">
+                            <a class="btn" href="/recept-detalji/<%= mostViewsRecipe._id %>">Detalji</a>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="no-recipe__container">
+                        <h3 class="info__title">Trenutno nema podataka!</h3>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+<%- include('../includes/end.ejs') %>

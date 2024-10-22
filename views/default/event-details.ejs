@@ -1,0 +1,197 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/event.css">
+<link rel="stylesheet" href="/css/new-main.css">
+    <%- include('../includes/navigation.ejs') %>
+        <section class="main__container">
+            <h1 class="main__title"><%= pageTitle %></h1>
+            <h2 class="sub__title"><% if (event.startDate > Date.now()) { %>Predstojeći<% } else if (event.startDate <= Date.now() && (event.endDate > Date.now())) { %>Trenutni<% } else { %>Završeni<% } %> Događaj</h2>
+            <div class="content__container">
+                <div class="left-content__container">
+                    <div class="description">
+                        <h2 class="">Datumi</h2>
+                        <p>Početak: <strong><%= event.startDate.toLocaleDateString('sr-RS') %></strong></p>
+                        <p>Kraj: <strong><%= event.endDate.toLocaleDateString('sr-RS') %></strong></p>
+                        <h2 class="sub__title">Opis</h2>
+                        <% event.description.forEach(desc => { %>
+                            <p><%= desc %></p>
+                        <% }) %>
+                        <h2 class="sub__title">Pravila</h2>
+                        <% if (event.rules.length > 0) { %>
+                            <% event.rules.forEach(rule => { %>
+                                <p><%= rule %></p>
+                            <% }) %>
+                        <% } else { %>
+                            <p>Trenutno nema Pravila!</p>
+                        <% } %>
+                        <h2 class="sub__title">Nagrade</h2>
+                        <% if (event.rewards.length > 0) { %>
+                            <% event.rewards.forEach(reward => { %>
+                                <div>
+                                    <img src="<%= reward.image %>" alt="<%= reward.title %>">
+                                    <p><%= reward.title %></p>
+                                    <p><%= reward.description %></p>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p>Nagrade će biti dodate!</p>
+                        <% } %>
+                    </div>
+                    <img src="<%= event.image %>" alt="<%= event.title %>">
+                </div>
+                <% if (status) { %>
+                    <div class="right-content__container">
+                        <div class="tab__container">
+                            <div class="tabs">
+                                <% if (!alredyEnrolled && status) { %>
+                                    <button type="button" class="tab <%= activeEnroll %> btn" onclick="openTab('enroll__container',1)"
+                                        data-tab="enroll__container">Prijava</button>
+                                <% } %>
+                                <button type="button" class="tab <%= activeParticipant %> btn" onclick="openTab('participants__container',1)"
+                                    data-tab="participants__container">Učesnici</button>
+                                <button type="button" class="tab <%= activeRecipes %> btn" onclick="openTab('recipes__container',1)"
+                                    data-tab="recipes__container">Sadržaj</button>
+                            </div>
+                        </div>
+                        <div class="result__container">
+                            <% if (!alredyEnrolled && status) { %>
+                                <div id="enroll__container" class="enroll__container tab-content <%= activeEnroll %>" data-tab="enroll__container">
+                                    <% if (loggedUser) { %>
+                                        <% if (event.type === 'public') { %>
+                                            <h2 class="sub__title">Klikom na dugme prijavljujete se na događaj!</h2>
+                                            <form action="/dogadjaj-prijava" method="POST">
+                                                <input type="hidden" name="eventId" value="<%= event._id %>">
+                                                <input type="hidden" name="userId" value="<%= loggedUser._id %>">
+                                                <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                                <button class="btn" type="submit">Prijavite Se Na Događaj</button>
+                                            </form>
+                                        <% } else { %>
+                                            <!-- Dodati kupovinu dogadjaja -->
+                                        <% } %>
+                                    <% } else { %>
+                                        <h2 class="sub__title">Da biste učestvovali u ovom događaju morate biti prijavljeni na aplikaciju!</h2>
+                                        <a class="btn" href="/prijava?redirectTo=/dogadjaj-detalji/<%= event._id %>">Prijavite Se</a>
+                                    <% } %>
+                                </div>
+                            <% } %>
+                            <div id="participants__container" class="participants__container tab-content <%= activeParticipant %>" data-tab="participants__container">
+                                <% if (event.participants.length > 0) { %>
+                                    <table class="table">
+                                        <caption>Učesnici:</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Slika</th>
+                                            <th>Korisničko Ime</th>
+                                            <th>Akcije</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% event.participants.forEach(part => { %>
+                                            <tr>
+                                                <td><img style="max-width: 100px; max-height: 100px;" src="<%= part.userImage %>" alt="part.username"></td>
+                                                <td><a class="main__link" href="/korisnik-profil/<%= part.userId %>"><%= part.username %></a></td>    
+                                                <td>
+                                                    <a class="btn" href="/korisnik-profil/<%= part.userId %>">Vidi</a>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                        </tbody>
+                                    </table>
+                                <% } else { %>
+                                    <p>Trenutno nema Učesnika!</p>
+                                <% } %>
+                            </div>
+                            <div id="recipes__container" class="recipes__container tab-content <%= activeRecipes %>" data-tab="recipes__container">
+                                <% if (!haveRecipe && loggedUser && alredyEnrolled && status) { %>
+                                    <h2 class="sub__title">Dodajte Vaš Recept</h2>
+                                    <% if (recipes.length > 0) { %>
+                                        <form class="main-form" action="/dogadjaj-dodavanje-recepta" method="POST">
+                                            <div class="main-form__group">
+                                                <label for="recipeSelect"><strong>Izaberite Recept:</strong></label>
+                                                <select class="main-form__select" name="recipeId" id="recipeSelect">
+                                                    <% recipes.forEach(r => { %>
+                                                        <option value="<%= r._id %>"><%= r.title %></option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                            <input type="hidden" name="eventId" value="<%= event._id %>">
+                                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                            <button class="btn" type="submit">Dodajte Recept</button>
+                                        </form>
+                                    <% } else { %>
+                                        <% if (status) { %>
+                                            <p>Trenutno nemate ni jedan recept sa kategorijom <strong><%= event.category %></strong>, molimo vas da napravite novi!</p>
+                                        <% } %>
+                                    <% } %>
+                                <% } else { %>
+                                    <% if (status && !alredyEnrolled) { %>
+                                        <h2 class="sub__title">Morate biti prijavljeni na događaj da biste ubacili vaš recept!</h2>
+                                    <% } %>
+                                <% } %>
+                                <% if (event.content.length > 0) { %>
+                                    <table class="table">
+                                        <caption>Sadržaj:</caption>
+                                        <thead>
+                                        <tr>
+                                            <% if (!status) { %>
+                                                <th>Mesto</th>
+                                            <% } %>
+                                            <th>Slika</th>
+                                            <th>Naziv</th>
+                                            <th>Autor</th>
+                                            <th>Akcije</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% event.content.forEach(content => { %>
+                                            <tr>
+                                                <% if (!status) { %>
+                                                    <% const user = event.participants.find(participant => participant.userId.equals(content.author.userId)); %>
+                                                    <% if (user) { %>
+                                                        <td><strong><%= user.place %>.</strong></td>
+                                                    <% } %>
+                                                <% } %>
+                                                <td><img style="max-width: 100px; max-height: 100px;" src="<%= content.recipe.featureImage %>" alt="content.recipe.title"></td>
+                                                <td><a class="main__link" href="/recept-detalji/<%= content.recipe.recipeId %>"><%= content.recipe.title %></a></td>
+                                                <td><a class="main__link" href="/korisnik-profil/<%= content.author.userId %>"><%= content.author.username %></a></td>    
+                                                <td>
+                                                    <% if (status) { %>
+                                                        <% if (loggedUser) { %>
+                                                            <% if (content.author.userId.toString() !== loggedUser._id.toString()) { %>
+                                                                <% const hasVoted = content.votes.users.some(vote => vote.userId.equals(loggedUser._id)); %>
+                                                                <% if (!hasVoted) { %>
+                                                                    <form action="/glasanje-recept" method="POST">
+                                                                        <input type="hidden" name="eventId" value="<%= event._id %>">
+                                                                        <input type="hidden" name="recipeId" value="<%= content.recipe.recipeId %>">
+                                                                        <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                                                                        <button class="btn" type="submit">❤️ Vaš Glas ❤️</button>
+                                                                    </form>
+                                                                <% } else { %>
+                                                                    <p>Već ste glasali za ovaj recept!</p>
+                                                                <% } %>
+                                                            <% } else { %>
+                                                                <p>Nije mogće da glasate za sebe!</p>
+                                                            <% } %>
+                                                        <% } else { %>
+                                                            <p>Prijavite se da biste mogli glasati!</p>
+                                                            <a class="btn" href="/prijava?redirectTo=/dogadjaj-detalji/<%= event._id %>">Prijavite Se</a>
+                                                        <% } %>
+                                                    <% } else { %>
+                                                        <a class="btn" href="/recept-detalji/<%= content.recipe.recipeId %>">Vidi</a>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                        </tbody>
+                                    </table>
+                                <% } else { %>
+                                    <p>Trenutno nema Sadržaja!</p>
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                    </div>
+                <% } %>
+            </div>
+        </section>
+    <%- include('../includes/end.ejs') %>
+

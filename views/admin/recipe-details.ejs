@@ -1,0 +1,254 @@
+<!-- Include head part of html -->
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/recipe-details.css">
+    <%- include('../includes/navigation.ejs') %>
+            <section class="recipe-details__container">
+                <div class="left__container">
+                    <div>
+                        <a class="btn" href="/edit-recipe/<%= recipe._id %>">Edit</a>
+
+                        <form action="/delete-recipe" method="POST">
+                            <input type="hidden" name="CSRFToken" value="<%= csrfToken %>">
+                            <input name="recipeId" type="hidden" value="<%= recipe._id %>">
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    </div>
+                    <div class="gallery-container">
+                        <div class="main-image">
+                            <img src="<%= recipe.featureImage %>" alt="<%= recipe.title %>">
+                        </div>
+                        <div class="thumbnail-container">
+                            <img src="<%= recipe.featureImage %>" alt="<%= recipe.title %>" class="thumbnail"
+                                onclick="changeImage('<%= recipe.featureImage %>')">
+                            <% recipe.images.forEach(image=> { %>
+                                <img src="<%= image %>" alt="<%= recipe.title %>" class="thumbnail"
+                                    onclick="changeImage('<%= image %>')">
+                                <% }) %>
+                        </div>
+                    </div>
+                    <p>Views: <strong>
+                            <%= recipe.views.count %>
+                        </strong></p>
+                    <p>Saves: <strong>
+                            <%= recipe.saves.count %>
+                        </strong></p>
+                    <div class="author">
+                        <div class="img__container">
+                            <img src="<%= recipe.author.userImage %>" alt="<%= recipe.author.username %>">
+                            <p>
+                                <a href="/korisnik-profil/<%= recipe.author._id %>">
+                                    <%= recipe.author.username %>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="right__container">
+                    <h1 class="title">
+                        <%=recipe.title %>
+                    </h1>
+                    <div class="categories">
+                        <% recipe.category.forEach( c=> { %>
+                            <h5><a href="/recipes-category/<%= c %>">
+                                    <%= c %>
+                                </a></h5>
+                            <% }) %>
+                    </div>
+                    <div class="description">
+                        <%= recipe.description %>
+                    </div>
+                    <br>
+                    <div class="tab-container">
+                        <div class="tabs">
+                            <button type="button" class="tab active btn" onclick="openTab('ingredients')"
+                                data-tab="ingredients">Ingredients</button>
+                            <button type="button" class="tab btn" onclick="openTab('nutritions')"
+                                data-tab="nutritions">Nutritions</button>
+                            <button type="button" class="tab btn" onclick="openTab('preparation')"
+                                data-tab="preparation">Prepariton</button>
+                            <button type="button" class="tab btn" onclick="openTab('ratings')"
+                                data-tab="ratings">Ratings</button>
+                            <% if (recipe.type=="protected" ) { %>
+                                <button type="button" class="tab btn" onclick="openTab('buyers')"
+                                    data-tab="buyers">Buyers</button>
+                                <button type="button" class="tab btn" onclick="openTab('history')"
+                                    data-tab="history">History</button>
+                                <% } %>
+                        </div>
+                    </div>
+                    <div id="ingredients" class="tab-content active" data-tab="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <% recipe.ingredients.forEach(ingredinet=> { %>
+                                <li>
+                                    <%= ingredinet.name %> | <%= ingredinet.amount %>
+                                </li>
+                                <% }) %>
+                        </ul>
+                    </div>
+                    <div id="nutritions" class="tab-content" data-tab="nutritions">
+                        <h4>Nutritions:</h4>
+                        <ul>
+                            <% recipe.nutritions.forEach(nutrition=> { %>
+                                <li>
+                                    <%= nutrition.name %> | <%= nutrition.amount %>
+                                </li>
+                                <% }) %>
+                        </ul>
+                    </div>
+                    <div id="preparation" class="tab-content" data-tab="preparation">
+                        <h4>Prepartion:</h4>
+                        <p>
+                            <strong>
+                                <%= recipe.preparation.note %>
+                            </strong>
+                        </p>
+                        <p>
+                            <%= recipe.preparation.duration %>
+                        </p>
+                        <ul>
+                            <% recipe.preparation.steps.forEach(step=> { %>
+                                <li>
+                                    <%= step %>
+                                </li>
+                                <% }) %>
+                        </ul>
+                    </div>
+                    <div id="ratings" class="tab-content" data-tab="ratings">
+                                <table id="recipeRatingsTable">
+                                    <caption>Recipe Ratings</caption>
+                                    <thead>
+                                        <tr>
+                                            <th>User Image</th>
+                                            <th>Username</th>
+                                            <th>Stars</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% recipe.ratings.forEach(rating=> { %>
+                                            <tr>
+                                                <td>
+                                                    <img style="max-width: 75px; max-height: 75px;"
+                                                        src="<%= rating.userId.userImage %>"
+                                                        alt="<%= rating.userId.userImage %>">
+                                                </td>
+                                                <td>
+                                                    <a href="/korisnik-profil/<%= rating.userId._id %>">
+                                                        <%= rating.userId.username %>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <% const stars=rating.stars; %>
+                                                        <div class="stars">
+                                                            <%= stars %>
+                                                                <% for (let i=1; i <=5; i++) { %>
+                                                                    <span
+                                                                        class="star <%= i <= stars ? 'filled' : '' %>">
+                                                                        <% if (i <=stars) { %>
+                                                                            &#9733;
+                                                                            <% } else { %>
+                                                                                &#9734;
+                                                                                <% } %>
+                                                                    </span>
+                                                                    <% } %>
+                                                        </div>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                    <tfoot></tfoot>
+                                </table>
+                    </div>
+                    <div id="buyers" class="user tab-content" data-tab="buyers">
+                        <% if (recipe.buyers.length> 0) { %>
+                            <table id="recipeBuyersTable" class="table">
+                                <caption>Buyers:</caption>
+                                <thead>
+                                    <tr>
+                                        <th>User Image</th>
+                                        <th>Username</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% recipe.buyers.forEach(buyer=> { %>
+                                        <tr>
+                                            <td>
+                                                <img style="max-width: 100px; max-height: 100px;"
+                                                    src="<%= buyer.userId.userImage %>"
+                                                    alt="<%= buyer.userId.userImage %>">
+                                            </td>
+                                            <td>
+                                                <%= buyer.userId.username %>
+                                            </td>
+                                            <td>
+                                                <a class="btn" href="/korisnik-profil/<%= buyer.userId._id %>">View</a>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                            <% } else { %>
+                                <p>There aren't any buyer yet!</p>
+                                <% } %>
+                    </div>
+                    <div id="history" class="tab-content" data-tab="history">
+                        <% if (recipe.history.length> 0) { %>
+                            <table id="recipeHistoryTable" class="table">
+                                <caption>History:</caption>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Type</th>
+                                        <th>What</th>
+                                        <th>Who</th>
+                                        <th>Cost</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% recipe.history.forEach(history=> { %>
+                                        <tr>
+                                            <td><a href="/istorija-detalji/<%= history.historyId._id %>">
+                                                    <%= history.historyId._id %>
+                                                </a></td>
+                                            <td>
+                                                <%= history.historyId.type %>
+                                            </td>
+                                            <% if (history.historyId.type==='recipeBuy' ||
+                                                history.historyId.type==='bookBuy' ) { %>
+                                                <td>
+                                                    <%= history.historyId.purchaseId.data.title %>
+                                                </td>
+                                                <td>
+                                                    <%= history.historyId.purchaseId.data.author.username %>
+                                                </td>
+                                                <% } else { %>
+                                                    <td>
+                                                        <%= history.historyId.purchaseId.data.dataTitle %>
+                                                    </td>
+                                                    <td>
+                                                        <%= history.historyId.purchaseId.data.username %>
+                                                    </td>
+                                                    <% } %>
+                                                        <td>
+                                                            <%= history.historyId.cost %> $
+                                                        </td>
+                                                        <td>
+                                                            <%= history.historyId.date.toLocaleString('sr-RS', {
+                                                                day: '2-digit' , month: '2-digit' , year: 'numeric' ,
+                                                                hour: '2-digit' , minute: '2-digit' }) %>
+                                                        </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                            <% } else { %>
+                                <p>There aren't any history yet!</p>
+                                <% } %>
+
+                    </div>
+            </section>
+
+            <%- include('../includes/end.ejs') %>

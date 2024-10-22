@@ -1,0 +1,128 @@
+.content__container {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.left-content__container {
+    width: 70%;
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.right-content__container {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.result__container {
+    margin-bottom: 10px;
+}
+
+.recipes__container {
+    display: flex;
+    flex-direction: column;
+}
+
+.recipes-content__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: auto;
+    padding: 10px;
+}
+
+.left__container {
+    width: 20svw;
+}
+
+.right__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    width: 80svw;
+}
+
+.books__container {
+    display: none;
+}
+
+.no-recipes__container,
+.no-books__container,
+.no-users__container {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    padding: auto;
+}
+
+.users__container {
+    display: none;
+}
+
+.shield, .check_mark {
+    color: #009688;
+    font-weight: bold;
+    font-size: 1.2rem !important;
+}
+
+@media (max-width: 768px) {
+    .content__container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    .left-content__container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
+    .right-content__container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .result__container {
+        margin-bottom: 0;
+    }
+
+    .recipes__container {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recipes-content__container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .left__container {
+        margin: 1rem 0;
+        width: 100%;
+    }
+    
+    .right__container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+}
